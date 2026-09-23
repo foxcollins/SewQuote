@@ -32,10 +32,14 @@ export function formatMoney(
   currency: string,
   locale: Locale,
 ): string {
-  return new Intl.NumberFormat(locale, {
-    style: "currency",
-    currency,
-  }).format(amount);
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency: currency || "BRL",
+    }).format(amount);
+  } catch {
+    return `${currency || ""} ${amount.toFixed(2)}`.trim();
+  }
 }
 
 export function formatDate(
@@ -44,8 +48,13 @@ export function formatDate(
   timeZone?: string,
 ): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat(locale, {
-    dateStyle: "medium",
-    timeZone,
-  }).format(d);
+  if (Number.isNaN(d.getTime())) return "—";
+  try {
+    return new Intl.DateTimeFormat(locale, {
+      dateStyle: "medium",
+      ...(timeZone ? { timeZone } : {}),
+    }).format(d);
+  } catch {
+    return d.toISOString().slice(0, 10);
+  }
 }
