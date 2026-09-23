@@ -1,10 +1,8 @@
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/", "/login", "/auth", "/orcamento"];
-
 function isPublicPath(pathname: string) {
-  if (PUBLIC_PATHS.includes(pathname)) return true;
+  if (pathname === "/" || pathname === "/login") return true;
   if (pathname.startsWith("/auth")) return true;
   if (pathname.startsWith("/orcamento")) return true;
   return false;

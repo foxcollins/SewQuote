@@ -1,0 +1,26 @@
+{
+  "name": "SewQuote — Atelier",
+  "short_name": "SewQuote",
+  "description": "Presupuestos inteligentes para modistas y ateliers",
+  "start_url": "/dashboard",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#faf9fb",
+  "theme_color": "#c85a32",
+  "lang": "es",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

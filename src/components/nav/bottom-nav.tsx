@@ -7,6 +7,7 @@ const items = [
   { href: "/quotes/new" as Route, key: "nav.new_quote" as const, label: "+ Nuevo" },
   { href: "/works" as Route, key: "nav.work_orders" as const, label: "Trabajos" },
   { href: "/clients" as Route, key: "nav.clients" as const, label: "Clientes" },
+  { href: "/catalog" as Route, key: "nav.more" as const, label: "Catálogo" },
 ];
 
 export function BottomNav() {
