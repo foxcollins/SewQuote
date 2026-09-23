@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState, PageHeader } from "@/components/ui/primitives";
 import { formatDate, type Locale } from "@/lib/i18n";
 
 const WORK_LABEL: Record<string, string> = {
@@ -34,13 +35,11 @@ export default async function WorksPage() {
     .limit(50);
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <header className="mb-4">
-        <h1 className="text-2xl font-semibold">Trabajos</h1>
-        <p className="text-xs text-[var(--ink-muted)]">
-          Desde presupuesto aprobado hasta entrega
-        </p>
-      </header>
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <PageHeader
+        title="Trabajos"
+        subtitle="Desde presupuesto aprobado hasta entrega"
+      />
 
       <ul className="space-y-2">
         {(works ?? []).map((w) => {
@@ -52,7 +51,7 @@ export default async function WorksPage() {
             <li key={w.id}>
               <Link
                 href={`/works/${w.id}` as Route}
-                className="block rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4"
+                className="block rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -77,8 +76,11 @@ export default async function WorksPage() {
           );
         })}
         {!works?.length && (
-          <li className="rounded-[6px] border border-dashed border-[var(--border)] p-6 text-center text-sm text-[var(--ink-muted)]">
-            Sin trabajos activos. Aprueba un presupuesto para convertirlo.
+          <li>
+            <EmptyState
+              title="Sin trabajos activos"
+              description="Aprueba un presupuesto para convertirlo en trabajo."
+            />
           </li>
         )}
       </ul>

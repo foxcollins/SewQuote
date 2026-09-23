@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { QuoteBuilder } from "@/modules/quotes/quote-builder";
+import { PageHeader } from "@/components/ui/primitives";
 import type { TenantPricingConfig } from "@/modules/pricing/engine";
 import type { Locale } from "@/lib/i18n";
 
@@ -73,13 +74,11 @@ export default async function NewQuotePage({
   };
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <header className="mb-4">
-        <h1 className="text-2xl font-semibold">Nuevo presupuesto</h1>
-        <p className="text-xs text-[var(--ink-muted)]">
-          Cliente → trabajos (N) → servicios/materiales → cálculo → borrador
-        </p>
-      </header>
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <PageHeader
+        title="Nuevo presupuesto"
+        subtitle="Cliente → trabajos (N) → servicios/materiales → cálculo → borrador"
+      />
       <QuoteBuilder
         clients={clientsRes.data ?? []}
         persons={personsRes.data ?? []}

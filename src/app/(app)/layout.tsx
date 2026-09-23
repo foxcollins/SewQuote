@@ -1,11 +1,53 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import type { Route } from "next";
 import { BottomNav } from "@/components/nav/bottom-nav";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { ToastProvider, useQueryToasts } from "@/components/ui/toast";
 import { getSessionContext } from "@/lib/session";
 
 export const metadata: Metadata = { title: "SewQuote" };
 export const dynamic = "force-dynamic";
+
+function Shell({
+  tenantName,
+  children,
+}: {
+  tenantName: string;
+  children: React.ReactNode;
+}) {
+  useQueryToasts();
+  return (
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--canvas)]/92 backdrop-blur-md">
+        <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
+          <Link
+            href={"/dashboard" as Route}
+            className="font-display text-xl tracking-tight text-[var(--ink)]"
+          >
+            SewQuote
+          </Link>
+          <div className="flex items-center gap-2">
+            <span className="max-w-[120px] truncate rounded-full bg-[var(--surface-2)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ink-muted)]">
+              {tenantName}
+            </span>
+            <Link
+              href={"/settings" as Route}
+              className="flex size-10 items-center justify-center rounded-[6px] text-sm text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
+              aria-label="Configuración"
+            >
+              ⚙
+            </Link>
+            <SignOutButton label="Salir" />
+          </div>
+        </div>
+      </header>
+      {children}
+      <BottomNav />
+    </div>
+  );
+}
 
 export default async function AppLayout({
   children,
@@ -16,27 +58,8 @@ export default async function AppLayout({
   if (!ctx) redirect("/");
 
   return (
-    <div className="min-h-screen">
-      <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--canvas)]/95 backdrop-blur">
-        <div className="mx-auto flex h-12 max-w-lg items-center justify-between px-4">
-          <span className="font-display text-lg">SewQuote</span>
-          <div className="flex items-center gap-3">
-            <span className="max-w-[140px] truncate text-xs font-semibold text-[var(--ink-muted)]">
-              {ctx.tenantName}
-            </span>
-            <SignOutButton label="Salir" />
-            <a
-              href="/settings"
-              className="text-xs font-semibold text-[var(--ink-muted)] hover:text-[var(--primary)]"
-              aria-label="Configuración"
-            >
-              ⚙
-            </a>
-          </div>
-        </div>
-      </header>
-      {children}
-      <BottomNav />
-    </div>
+    <ToastProvider>
+      <Shell tenantName={ctx.tenantName}>{children}</Shell>
+    </ToastProvider>
   );
 }

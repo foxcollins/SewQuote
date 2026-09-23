@@ -15,9 +15,11 @@ export function SignOutButton({ label }: { label: string }) {
         router.push("/");
         router.refresh();
       }}
-      className="text-xs font-semibold text-[var(--ink-muted)] hover:text-[var(--primary)]"
+      className="flex size-10 items-center justify-center rounded-[6px] text-[11px] font-semibold text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--error)]"
+      aria-label={label}
     >
-      {label}
+      <span aria-hidden>⏻</span>
+      <span className="sr-only">{label}</span>
     </button>
   );
 }

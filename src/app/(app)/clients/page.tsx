@@ -4,6 +4,8 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
+import { EmptyState, PageHeader, PrimaryLink, inputClass } from "@/components/ui/primitives";
+
 export default async function ClientsPage({
   searchParams,
 }: {
@@ -26,23 +28,22 @@ export default async function ClientsPage({
   const { data: clients } = await query;
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <header className="mb-4 flex items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold">Clientes</h1>
-        <Link
-          href={"/clients/new" as Route}
-          className="rounded-[6px] bg-[var(--primary)] px-3 py-2 text-xs font-semibold text-[var(--on-primary)]"
-        >
-          + Nuevo
-        </Link>
-      </header>
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <PageHeader
+        title="Clientes"
+        action={
+          <PrimaryLink href={"/clients/new" as Route} size="sm">
+            + Nuevo
+          </PrimaryLink>
+        }
+      />
 
-      <form className="mb-4">
+      <form className="mb-4" role="search">
         <input
           name="q"
           defaultValue={q}
           placeholder="Buscar por nombre o teléfono"
-          className="h-10 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
+          className={`${inputClass} h-10`}
         />
       </form>
 
@@ -51,12 +52,13 @@ export default async function ClientsPage({
           <li key={c.id}>
             <Link
               href={`/clients/${c.id}` as Route}
-              className="flex items-center justify-between rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3"
+              className="flex items-center justify-between gap-2 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
             >
-              <div>
-                <p className="text-sm font-semibold">{c.name}</p>
-                <p className="text-xs text-[var(--ink-muted)]">
-                  {[c.phone, c.whatsapp, c.email].filter(Boolean).join(" · ")}
+              <div className="min-w-0">
+                <p className="truncate text-sm font-semibold">{c.name}</p>
+                <p className="truncate text-xs text-[var(--ink-muted)]">
+                  {[c.phone, c.whatsapp, c.email].filter(Boolean).join(" · ") ||
+                    "Sin contacto"}
                 </p>
               </div>
               <span aria-hidden className="text-[var(--ink-muted)]">
@@ -66,8 +68,22 @@ export default async function ClientsPage({
           </li>
         ))}
         {!clients?.length && (
-          <li className="rounded-[6px] border border-dashed border-[var(--border)] p-6 text-center text-sm text-[var(--ink-muted)]">
-            Sin clientes. Crea el primero para emitir presupuestos.
+          <li>
+            <EmptyState
+              title={q ? "Sin resultados" : "Sin clientes"}
+              description={
+                q
+                  ? "Prueba con otro nombre o teléfono."
+                  : "Crea el primero para emitir presupuestos."
+              }
+              action={
+                !q ? (
+                  <PrimaryLink href={"/clients/new" as Route} size="sm">
+                    Nuevo cliente
+                  </PrimaryLink>
+                ) : undefined
+              }
+            />
           </li>
         )}
       </ul>

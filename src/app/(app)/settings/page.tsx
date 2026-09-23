@@ -1,10 +1,13 @@
 import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
-import { updateTenantSettingsAction } from "@/modules/tenant/actions";
-
-const input =
-  "mt-1 h-11 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm";
+import { SettingsForm } from "@/modules/tenant/settings-form";
+import {
+  Card,
+  PageHeader,
+  SectionTitle,
+  inputClass,
+} from "@/components/ui/primitives";
 
 export default async function SettingsPage() {
   const ctx = await getSessionContext();
@@ -21,43 +24,40 @@ export default async function SettingsPage() {
   const ur = (tenant?.urgency_factors ?? {}) as Record<string, number>;
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <h1 className="mb-4 text-2xl font-semibold">Configuración</h1>
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <PageHeader title="Configuración" subtitle="Atelier, precios y factores" />
 
-      <form
-        action={updateTenantSettingsAction}
-        className="space-y-4 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4"
-      >
-        <h2 className="text-sm font-semibold">Atelier</h2>
+      <SettingsForm>
+        <SectionTitle>Atelier</SectionTitle>
         <label className="block text-sm font-semibold">
           Nombre
-          <input name="name" required defaultValue={tenant?.name ?? ""} className={input} />
+          <input name="name" required defaultValue={tenant?.name ?? ""} className={inputClass} />
         </label>
         <div className="grid grid-cols-2 gap-3">
           <label className="block text-sm font-semibold">
             País
-            <input name="country" defaultValue={tenant?.country ?? ""} className={input} />
+            <input name="country" defaultValue={tenant?.country ?? ""} className={inputClass} />
           </label>
           <label className="block text-sm font-semibold">
             Moneda
-            <input name="currency" defaultValue={tenant?.currency ?? "BRL"} className={input} />
+            <input name="currency" defaultValue={tenant?.currency ?? "BRL"} className={inputClass} />
           </label>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <label className="block text-sm font-semibold">
             Zona horaria
-            <input name="timezone" defaultValue={tenant?.timezone ?? "UTC"} className={input} />
+            <input name="timezone" defaultValue={tenant?.timezone ?? "UTC"} className={inputClass} />
           </label>
           <label className="block text-sm font-semibold">
             Idioma
-            <select name="locale" defaultValue={tenant?.locale ?? "es"} className={input}>
+            <select name="locale" defaultValue={tenant?.locale ?? "es"} className={inputClass}>
               <option value="es">Español</option>
               <option value="pt-BR">Português (BR)</option>
             </select>
           </label>
         </div>
 
-        <h2 className="pt-2 text-sm font-semibold">Precios base</h2>
+        <SectionTitle>Precios base</SectionTitle>
         <div className="grid grid-cols-2 gap-3">
           <label className="block text-sm font-semibold">
             Tarifa horaria
@@ -66,7 +66,7 @@ export default async function SettingsPage() {
               type="number"
               step="0.01"
               defaultValue={tenant?.hourly_rate ?? 0}
-              className={input}
+              className={inputClass}
             />
           </label>
           <label className="block text-sm font-semibold">
@@ -76,7 +76,7 @@ export default async function SettingsPage() {
               type="number"
               step="0.01"
               defaultValue={tenant?.default_margin_percent ?? 40}
-              className={input}
+              className={inputClass}
             />
           </label>
         </div>
@@ -88,7 +88,7 @@ export default async function SettingsPage() {
               type="number"
               step="0.01"
               defaultValue={tenant?.default_waste_percent ?? 0}
-              className={input}
+              className={inputClass}
             />
           </label>
           <label className="block text-sm font-semibold">
@@ -97,12 +97,12 @@ export default async function SettingsPage() {
               name="measurement_stale_days"
               type="number"
               defaultValue={tenant?.measurement_stale_days ?? 30}
-              className={input}
+              className={inputClass}
             />
           </label>
         </div>
 
-        <h2 className="pt-2 text-sm font-semibold">Factores de complejidad</h2>
+        <SectionTitle>Factores de complejidad</SectionTitle>
         <div className="grid grid-cols-4 gap-2">
           {(
             [
@@ -125,7 +125,7 @@ export default async function SettingsPage() {
           ))}
         </div>
 
-        <h2 className="pt-2 text-sm font-semibold">Factores de urgencia</h2>
+        <SectionTitle>Factores de urgencia</SectionTitle>
         <div className="grid grid-cols-3 gap-2">
           {(
             [
@@ -146,22 +146,15 @@ export default async function SettingsPage() {
             </label>
           ))}
         </div>
+      </SettingsForm>
 
-        <button
-          type="submit"
-          className="h-12 w-full rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)]"
-        >
-          Guardar configuración
-        </button>
-      </form>
-
-      <section className="mt-6 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4 text-sm">
-        <h2 className="mb-2 text-sm font-semibold">Cuenta</h2>
+      <Card className="mt-6 p-4 text-sm">
+        <SectionTitle>Cuenta</SectionTitle>
         <p className="text-[var(--ink-muted)]">{ctx.profileName}</p>
         <p className="text-xs text-[var(--ink-muted)]">
           {ctx.tenantName} · {ctx.currency} · {ctx.locale}
         </p>
-      </section>
+      </Card>
     </main>
   );
 }

@@ -4,11 +4,10 @@ import { notFound, redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Button, Card, PageHeader, SectionTitle, inputClass } from "@/components/ui/primitives";
 import { formatMoney, formatDate, type Locale } from "@/lib/i18n";
-import {
-  transitionWorkOrderAction,
-  updateWorkOrderMetaAction,
-} from "@/modules/works/actions";
+import { WorkLifecycleActions } from "@/modules/works/work-lifecycle-actions";
+import { updateWorkOrderMetaAction } from "@/modules/works/actions";
 
 const WORK_LABEL: Record<string, string> = {
   accepted: "Aceptado",
@@ -71,44 +70,38 @@ export default async function WorkDetailPage({
   const money = (n: number) => formatMoney(n, quote?.currency ?? ctx.currency, locale);
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <header className="mb-4 flex items-start justify-between gap-2">
-        <div>
-          <p className="text-xs text-[var(--ink-muted)]">
-            {(quote?.clients as { name?: string } | null)?.name ?? ""} ·{" "}
-            <Link
-              href={`/quotes/${quote?.id}` as Route}
-              className="text-[var(--primary)]"
-            >
-              #{String(quote?.quote_number ?? 0).padStart(3, "0")}
-            </Link>
-          </p>
-          <h1 className="text-2xl font-semibold">Orden de trabajo</h1>
-          <p className="text-xs text-[var(--ink-muted)]">
-            v{work.quote_version_number} ·{" "}
-            {money(Number(work.actual_price ?? 0))}
-          </p>
-        </div>
-        <StatusBadge
-          status={work.status}
-          label={WORK_LABEL[work.status] ?? work.status}
-        />
-      </header>
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <PageHeader
+        title="Orden de trabajo"
+        subtitle={`${(quote?.clients as { name?: string } | null)?.name ?? ""} · ${money(Number(work.actual_price ?? 0))} · v${work.quote_version_number}`}
+        action={
+          <StatusBadge
+            status={work.status}
+            label={WORK_LABEL[work.status] ?? work.status}
+          />
+        }
+      />
 
-      <section className="mb-4 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4 text-xs text-[var(--ink-muted)]">
+      <Card className="mb-4 p-4 text-xs text-[var(--ink-muted)]">
         <p>Creado: {formatDate(work.created_at, locale, ctx.timezone)}</p>
         {work.started_at && <p>Iniciado: {formatDate(work.started_at, locale)}</p>}
         {work.completed_at && (
           <p>Completado: {formatDate(work.completed_at, locale)}</p>
         )}
-      </section>
+        <p className="mt-1">
+          <Link href={`/quotes/${quote?.id}` as Route} className="text-[var(--primary)]">
+            Ver presupuesto #
+            {String(quote?.quote_number ?? 0).padStart(3, "0")}
+          </Link>
+        </p>
+      </Card>
 
       <section className="mb-4 space-y-2">
-        <h2 className="text-sm font-semibold">Piezas</h2>
+        <SectionTitle>Piezas</SectionTitle>
         {jobs.map((j, i) => (
           <article
             key={i}
-            className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-3"
+            className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)]"
           >
             <p className="text-sm font-semibold">
               {j.garment_type || `Pieza ${i + 1}`}
@@ -142,28 +135,15 @@ export default async function WorkDetailPage({
       </section>
 
       {!terminal && (
-        <section className="mb-4 space-y-2">
-          <h2 className="text-sm font-semibold">Siguiente estado</h2>
-          {nexts.map((s) => (
-            <form key={s} action={transitionWorkOrderAction.bind(null, work.id, s)}>
-              <button
-                type="submit"
-                className={`h-11 w-full rounded-[6px] text-sm font-semibold ${
-                  s === "cancelled"
-                    ? "border border-[var(--error)] text-[var(--error)]"
-                    : "bg-[var(--primary)] text-[var(--on-primary)]"
-                }`}
-              >
-                {WORK_LABEL[s] ?? s}
-              </button>
-            </form>
-          ))}
+        <section className="mb-4">
+          <SectionTitle>Siguiente estado</SectionTitle>
+          <WorkLifecycleActions workId={work.id} nexts={nexts} />
         </section>
       )}
 
       {!terminal && (
-        <section className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4">
-          <h2 className="mb-3 text-sm font-semibold">Editar trabajo</h2>
+        <Card className="p-4">
+          <SectionTitle>Editar trabajo</SectionTitle>
           <form action={updateWorkOrderMetaAction.bind(null, work.id)} className="space-y-3">
             <label className="block text-sm font-semibold">
               Minutos reales
@@ -171,7 +151,7 @@ export default async function WorkDetailPage({
                 name="actual_minutes"
                 type="number"
                 defaultValue={work.actual_minutes ?? ""}
-                className="mt-1 h-11 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
+                className={`${inputClass} mt-1`}
               />
             </label>
             <label className="block text-sm font-semibold">
@@ -181,7 +161,7 @@ export default async function WorkDetailPage({
                 type="number"
                 step="0.01"
                 defaultValue={work.actual_price ?? ""}
-                className="mt-1 h-11 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
+                className={`${inputClass} mt-1`}
               />
             </label>
             <label className="block text-sm font-semibold">
@@ -190,17 +170,14 @@ export default async function WorkDetailPage({
                 name="notes"
                 rows={3}
                 defaultValue={work.notes ?? ""}
-                className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
+                className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm focus:border-[var(--primary)] focus:outline-none"
               />
             </label>
-            <button
-              type="submit"
-              className="h-11 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold"
-            >
+            <Button type="submit" variant="secondary" className="w-full">
               Guardar
-            </button>
+            </Button>
           </form>
-        </section>
+        </Card>
       )}
     </main>
   );

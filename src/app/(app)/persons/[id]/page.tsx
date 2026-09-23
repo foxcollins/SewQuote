@@ -5,6 +5,7 @@ import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { PersonForm } from "@/modules/clients/person-form";
 import { MeasurementForm } from "@/modules/clients/measurement-form";
+import { Card, EmptyState, PageHeader, SectionTitle } from "@/components/ui/primitives";
 import { formatDate, type Locale } from "@/lib/i18n";
 
 export default async function PersonDetailPage({
@@ -36,22 +37,21 @@ export default async function PersonDetailPage({
   const now = Date.now();
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <header className="mb-4">
-        <p className="text-xs text-[var(--ink-muted)]">
-          Persona destinataria
-          {(person.clients as { name?: string } | null)?.name
-            ? ` · de ${(person.clients as { name?: string }).name}`
-            : ""}
-        </p>
-        <h1 className="text-2xl font-semibold">{person.name}</h1>
-        {person.notes && (
-          <p className="mt-1 text-sm text-[var(--ink-muted)]">{person.notes}</p>
-        )}
-      </header>
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <PageHeader
+        title={person.name}
+        subtitle={
+          (person.clients as { name?: string } | null)?.name
+            ? `Persona destinataria · de ${(person.clients as { name?: string }).name}`
+            : "Persona destinataria"
+        }
+      />
+      {person.notes && (
+        <p className="mb-4 text-sm text-[var(--ink-muted)]">{person.notes}</p>
+      )}
 
       <section className="mb-6">
-        <h2 className="mb-2 text-sm font-semibold">Historial de medidas</h2>
+        <SectionTitle>Historial de medidas</SectionTitle>
         <ul className="space-y-3">
           {(sets ?? []).map((set) => {
             const ageMs = now - new Date(set.recorded_at).getTime();
@@ -60,7 +60,7 @@ export default async function PersonDetailPage({
             return (
               <li
                 key={set.id}
-                className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-3"
+                className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)]"
               >
                 <div className="mb-2 flex items-center justify-between gap-2">
                   <p className="text-sm font-semibold">
@@ -92,22 +92,25 @@ export default async function PersonDetailPage({
             );
           })}
           {!sets?.length && (
-            <li className="text-sm text-[var(--ink-muted)]">
-              Sin medidas todavía.
+            <li>
+              <EmptyState
+                title="Sin medidas todavía"
+                description="Registra el primer set para congelarlo en presupuestos."
+              />
             </li>
           )}
         </ul>
       </section>
 
-      <section className="mb-6 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="mb-3 text-sm font-semibold">Nuevo set de medidas</h2>
+      <Card className="mb-6 p-4">
+        <SectionTitle>Nuevo set de medidas</SectionTitle>
         <MeasurementForm personId={id} />
-      </section>
+      </Card>
 
-      <section className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="mb-3 text-sm font-semibold">Añadir otra persona</h2>
+      <Card className="p-4">
+        <SectionTitle>Añadir otra persona</SectionTitle>
         <PersonForm clientId={typeof person.client_id === "string" ? person.client_id : undefined} />
-      </section>
+      </Card>
 
       {typeof person.client_id === "string" && (
         <p className="mt-4">

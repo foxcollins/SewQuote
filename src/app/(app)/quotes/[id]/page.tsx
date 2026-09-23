@@ -4,17 +4,10 @@ import { notFound, redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { Button, Card, PageHeader, SectionTitle, inputClass } from "@/components/ui/primitives";
 import { formatMoney, formatDate, type Locale } from "@/lib/i18n";
-import {
-  acceptQuoteAction,
-  cancelQuoteAction,
-  expireQuoteAction,
-  overrideFinalPriceAction,
-  recalculateQuoteAfterExpiryAction,
-  rejectQuoteAction,
-  sendQuoteAction,
-} from "@/modules/quotes/actions";
-import { convertQuoteToWorkOrderAction } from "@/modules/works/actions";
+import { overrideFinalPriceAction } from "@/modules/quotes/actions";
+import { QuoteLifecycleActions } from "@/modules/quotes/quote-lifecycle-actions";
 
 const STATUS_LABEL: Record<string, string> = {
   draft: "Borrador",
@@ -24,36 +17,6 @@ const STATUS_LABEL: Record<string, string> = {
   expired: "Vencido",
   cancelled: "Cancelado",
 };
-
-function Btn({
-  action,
-  children,
-  tone = "primary",
-  disabled,
-}: {
-  action: () => Promise<void>;
-  children: React.ReactNode;
-  tone?: "primary" | "ghost" | "danger";
-  disabled?: boolean;
-}) {
-  const cls =
-    tone === "primary"
-      ? "bg-[var(--primary)] text-[var(--on-primary)]"
-      : tone === "danger"
-        ? "border border-[var(--error)] text-[var(--error)]"
-        : "border border-[var(--border)] bg-[var(--surface)]";
-  return (
-    <form action={action}>
-      <button
-        type="submit"
-        disabled={disabled}
-        className={`h-11 w-full rounded-[6px] text-sm font-semibold ${cls} disabled:opacity-50`}
-      >
-        {children}
-      </button>
-    </form>
-  );
-}
 
 export default async function QuoteDetailPage({
   params,
@@ -134,32 +97,25 @@ export default async function QuoteDetailPage({
     : null;
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <header className="mb-4 flex items-start justify-between gap-2">
-        <div>
-          <p className="text-xs text-[var(--ink-muted)]">
-            {(quote.clients as { name?: string } | null)?.name ?? ""}
-          </p>
-          <h1 className="text-2xl font-semibold">
-            #{String(quote.quote_number).padStart(3, "0")}
-          </h1>
-          <p className="text-xs text-[var(--ink-muted)]">
-            v{quote.version_number} · {tLabel(quote.status)}
-            {quote.valid_until
-              ? ` · ${formatDate(quote.valid_until, locale)}`
-              : ""}
-          </p>
-        </div>
-        <StatusBadge status={quote.status} label={STATUS_LABEL[quote.status] ?? quote.status} />
-      </header>
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <PageHeader
+        title={`#${String(quote.quote_number).padStart(3, "0")}`}
+        subtitle={`${(quote.clients as { name?: string } | null)?.name ?? ""} · v${quote.version_number} · ${tLabel(quote.status)}${quote.valid_until ? ` · ${formatDate(quote.valid_until, locale)}` : ""}`}
+        action={
+          <StatusBadge
+            status={quote.status}
+            label={STATUS_LABEL[quote.status] ?? quote.status}
+          />
+        }
+      />
 
       {(pastDue || quote.status === "expired") && (
-        <p className="mb-4 rounded-[6px] bg-[var(--warning-bg)] px-3 py-2 text-xs text-[var(--warning)]">
+        <p className="mb-4 rounded-[6px] border border-[var(--warning)]/40 bg-[var(--warning-bg)] px-3 py-2 text-xs text-[var(--warning)]">
           Este presupuesto está vencido. Los precios pueden haber cambiado.
         </p>
       )}
 
-      <section className="mb-4 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4">
+      <Card className="mb-4 p-4">
         <dl className="space-y-1 text-sm">
           <div className="flex justify-between">
             <dt>Materiales</dt>
@@ -213,29 +169,26 @@ export default async function QuoteDetailPage({
               type="number"
               step="0.01"
               placeholder="Precio final"
-              className="h-10 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
+              className={`${inputClass} h-10`}
             />
             <input
               name="override_reason"
               placeholder="Motivo"
-              className="h-10 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
+              className={`${inputClass} h-10`}
             />
-            <button
-              type="submit"
-              className="h-10 rounded-[6px] border border-[var(--border)] px-3 text-xs font-semibold"
-            >
+            <Button type="submit" variant="secondary" size="sm">
               OK
-            </button>
+            </Button>
           </form>
         )}
-      </section>
+      </Card>
 
       <section className="mb-4 space-y-3">
-        <h2 className="text-sm font-semibold">Trabajos / piezas</h2>
+        <SectionTitle>Trabajos / piezas</SectionTitle>
         {jobs.map((job, i) => (
           <article
             key={job.id}
-            className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4"
+            className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_1px_2px_rgba(28,29,31,0.04)]"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -309,56 +262,21 @@ export default async function QuoteDetailPage({
       </section>
 
       <section className="mb-6 space-y-2">
-        <h2 className="text-sm font-semibold">Acciones</h2>
-
-        {quote.status === "draft" && (
-          <>
-            <Btn action={() => sendQuoteAction(quote.id)}>Enviar / publicar</Btn>
-            <Btn action={() => cancelQuoteAction(quote.id)} tone="danger">
-              Cancelar
-            </Btn>
-          </>
-        )}
-
-        {quote.status === "sent" && (
-          <>
-            <Btn action={() => acceptQuoteAction(quote.id)}>Aprobar (interna)</Btn>
-            <Btn action={() => rejectQuoteAction(quote.id)} tone="danger">
-              Rechazar
-            </Btn>
-            <Btn action={() => expireQuoteAction(quote.id)} tone="ghost">
-              Marcar vencido
-            </Btn>
-            <Btn action={() => cancelQuoteAction(quote.id)} tone="danger">
-              Cancelar
-            </Btn>
-            {publicHref && (
-              <Link
-                href={`/orcamento/${quote.public_token}` as Route}
-                className="flex h-11 items-center justify-center rounded-[6px] border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold"
-              >
-                Abrir página pública
-              </Link>
-            )}
-          </>
-        )}
-
-        {quote.status === "expired" && (
-          <Btn action={() => recalculateQuoteAfterExpiryAction(quote.id)}>
-            Recalcular y reenviar
-          </Btn>
-        )}
-
-        {quote.status === "accepted" && !workOrder && (
-          <Btn action={() => convertQuoteToWorkOrderAction(quote.id)}>
-            Convertir en orden de trabajo
-          </Btn>
-        )}
+        <SectionTitle>Acciones</SectionTitle>
+        <QuoteLifecycleActions
+          quoteId={quote.id}
+          status={quote.status}
+          publicHref={
+            publicHref && quote.public_token
+              ? `/orcamento/${quote.public_token}`
+              : null
+          }
+        />
 
         {workOrder && (
           <Link
             href={`/works/${workOrder.id}` as Route}
-            className="flex h-11 items-center justify-center rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)]"
+            className="flex h-12 items-center justify-center rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
           >
             Ver orden de trabajo
           </Link>

@@ -1,48 +1,62 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Field, inputClass } from "@/components/ui/primitives";
+import { useToast } from "@/components/ui/toast";
 import { createPersonAction } from "@/modules/clients/actions";
 
 export function PersonForm({ clientId }: { clientId?: string }) {
+  const router = useRouter();
+  const { toast } = useToast();
   const [pending, setPending] = useState(false);
 
   return (
     <form
       action={async (fd) => {
+        if (pending) return;
         setPending(true);
         try {
           await createPersonAction(fd);
+          toast("Persona añadida", "success");
+        } catch (e) {
+          if (
+            e &&
+            typeof e === "object" &&
+            "digest" in e &&
+            typeof e.digest === "string" &&
+            e.digest.includes("NEXT_REDIRECT")
+          ) {
+            return;
+          }
+          const msg = e instanceof Error ? e.message : "Error al guardar";
+          toast(msg, "error");
         } finally {
           setPending(false);
+          router.refresh();
         }
       }}
-      className="space-y-3 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4"
+      className="space-y-3"
     >
       <input type="hidden" name="client_id" value={clientId ?? ""} />
-      <label className="block text-sm font-semibold">
-        Nombre de la persona *
+      <Field label="Nombre de la persona *">
         <input
           name="name"
           required
           placeholder="ej: Ana"
-          className="mt-1 h-11 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
+          className={inputClass}
         />
-      </label>
-      <label className="block text-sm font-semibold">
-        Notas
+      </Field>
+      <Field label="Notas">
         <textarea
           name="notes"
           rows={2}
-          className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
+          className={`${inputClass} h-auto min-h-[64px] py-2`}
         />
-      </label>
-      <button
-        type="submit"
-        disabled={pending}
-        className="h-10 rounded-[6px] bg-[var(--primary)] px-4 text-sm font-semibold text-[var(--on-primary)] disabled:opacity-60"
-      >
-        {pending ? "Guardando…" : "Añadir persona"}
-      </button>
+      </Field>
+      <Button type="submit" loading={pending} className="w-full">
+        Añadir persona
+      </Button>
     </form>
   );
 }

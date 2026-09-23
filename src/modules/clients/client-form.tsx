@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Field, inputClass } from "@/components/ui/primitives";
+import { useToast } from "@/components/ui/toast";
 import {
   createClientAction,
   updateClientAction,
 } from "@/modules/clients/actions";
-
-const inputClass =
-  "h-11 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm outline-none focus:border-[var(--primary)]";
 
 export function ClientForm({
   mode,
@@ -25,6 +25,8 @@ export function ClientForm({
     notes: string | null;
   };
 }) {
+  const router = useRouter();
+  const { toast } = useToast();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,16 +34,31 @@ export function ClientForm({
     <form
       className="space-y-3"
       action={async (formData) => {
+        if (pending) return;
         setPending(true);
         setError(null);
         try {
           if (mode === "create") {
             await createClientAction(formData);
+            toast("Cliente creado", "success");
           } else if (clientId) {
             await updateClientAction(clientId, formData);
+            toast("Cliente guardado", "success");
+            router.refresh();
           }
         } catch (e) {
-          setError(e instanceof Error ? e.message : "Error");
+          if (
+            e &&
+            typeof e === "object" &&
+            "digest" in e &&
+            typeof e.digest === "string" &&
+            e.digest.includes("NEXT_REDIRECT")
+          ) {
+            return;
+          }
+          const msg = e instanceof Error ? e.message : "Error al guardar";
+          setError(msg);
+          toast(msg, "error");
         } finally {
           setPending(false);
         }
@@ -52,66 +69,58 @@ export function ClientForm({
           {error}
         </p>
       )}
-      <label className="block text-sm font-semibold">
-        Nombre *
+      <Field label="Nombre *">
         <input
           name="name"
           required
           defaultValue={initial?.name ?? ""}
-          className={`mt-1 ${inputClass}`}
+          className={inputClass}
         />
-      </label>
+      </Field>
       <div className="grid grid-cols-2 gap-3">
-        <label className="block text-sm font-semibold">
-          Teléfono
+        <Field label="Teléfono">
           <input
             name="phone"
+            type="tel"
             defaultValue={initial?.phone ?? ""}
-            className={`mt-1 ${inputClass}`}
+            className={inputClass}
           />
-        </label>
-        <label className="block text-sm font-semibold">
-          WhatsApp
+        </Field>
+        <Field label="WhatsApp">
           <input
             name="whatsapp"
+            type="tel"
             defaultValue={initial?.whatsapp ?? ""}
-            className={`mt-1 ${inputClass}`}
+            className={inputClass}
           />
-        </label>
+        </Field>
       </div>
-      <label className="block text-sm font-semibold">
-        Email
+      <Field label="Email">
         <input
           name="email"
           type="email"
           defaultValue={initial?.email ?? ""}
-          className={`mt-1 ${inputClass}`}
+          className={inputClass}
         />
-      </label>
-      <label className="block text-sm font-semibold">
-        Dirección
+      </Field>
+      <Field label="Dirección">
         <input
           name="address"
           defaultValue={initial?.address ?? ""}
-          className={`mt-1 ${inputClass}`}
+          className={inputClass}
         />
-      </label>
-      <label className="block text-sm font-semibold">
-        Notas
+      </Field>
+      <Field label="Notas">
         <textarea
           name="notes"
           rows={3}
           defaultValue={initial?.notes ?? ""}
-          className={`mt-1 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm`}
+          className={`${inputClass} h-auto min-h-[88px] py-2`}
         />
-      </label>
-      <button
-        type="submit"
-        disabled={pending}
-        className="h-11 w-full rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] disabled:opacity-60"
-      >
-        {pending ? "Guardando…" : mode === "create" ? "Crear cliente" : "Guardar"}
-      </button>
+      </Field>
+      <Button type="submit" size="lg" className="w-full" loading={pending}>
+        {mode === "create" ? "Crear cliente" : "Guardar"}
+      </Button>
     </form>
   );
 }

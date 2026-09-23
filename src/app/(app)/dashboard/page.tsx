@@ -45,8 +45,8 @@ export default async function DashboardPage() {
           : "Buenas noches";
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <header className="mb-4">
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <header className="mb-5">
         <p className="text-xs uppercase tracking-wide text-[var(--ink-muted)]">
           {formatDate(new Date(), locale, ctx.timezone)}
         </p>
@@ -65,7 +65,7 @@ export default async function DashboardPage() {
         ].map((m) => (
           <div
             key={m.label}
-            className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4"
+            className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_1px_2px_rgba(28,29,31,0.04)]"
           >
             <p className="metric text-2xl font-semibold text-[var(--primary)]">
               {m.n}
@@ -75,28 +75,28 @@ export default async function DashboardPage() {
         ))}
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-2">
+      <div className="mt-5 grid grid-cols-2 gap-2">
         <Link
           href={"/quotes/new" as Route}
-          className="rounded-[6px] bg-[var(--primary)] px-3 py-3 text-center text-sm font-semibold text-[var(--on-primary)]"
+          className="rounded-[8px] bg-[var(--primary)] px-3 py-3.5 text-center text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
         >
           Nuevo presupuesto
         </Link>
         <Link
           href={"/clients/new" as Route}
-          className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3 text-center text-sm font-semibold"
+          className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3.5 text-center text-sm font-semibold transition-colors hover:border-[var(--primary)]/40"
         >
           Nuevo cliente
         </Link>
         <Link
           href={"/catalog" as Route}
-          className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3 text-center text-sm font-semibold"
+          className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3.5 text-center text-sm font-semibold transition-colors hover:border-[var(--primary)]/40"
         >
           Catálogo
         </Link>
         <Link
           href={"/settings" as Route}
-          className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3 text-center text-sm font-semibold"
+          className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-3 py-3.5 text-center text-sm font-semibold transition-colors hover:border-[var(--primary)]/40"
         >
           Configuración
         </Link>

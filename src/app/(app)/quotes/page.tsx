@@ -4,6 +4,11 @@ import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {
+  EmptyState,
+  PageHeader,
+  PrimaryLink,
+} from "@/components/ui/primitives";
 import { formatMoney, formatDate, type Locale } from "@/lib/i18n";
 
 const STATUS_LABEL: Record<string, string> = {
@@ -30,16 +35,15 @@ export default async function QuotesPage() {
     .limit(50);
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-24">
-      <header className="mb-4 flex items-center justify-between">
-        <h1 className="text-2xl font-semibold">Presupuestos</h1>
-        <Link
-          href={"/quotes/new" as Route}
-          className="inline-flex h-10 items-center rounded-[6px] bg-[var(--primary)] px-4 text-sm font-semibold text-[var(--on-primary)]"
-        >
-          + Nuevo
-        </Link>
-      </header>
+    <main className="mx-auto max-w-lg p-4 pb-28">
+      <PageHeader
+        title="Presupuestos"
+        action={
+          <PrimaryLink href={"/quotes/new" as Route} size="sm">
+            + Nuevo
+          </PrimaryLink>
+        }
+      />
 
       <ul className="space-y-2">
         {(quotes ?? []).map((q) => {
@@ -49,7 +53,7 @@ export default async function QuotesPage() {
             <li key={q.id}>
               <Link
                 href={`/quotes/${q.id}` as Route}
-                className="block rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4"
+                className="block rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
@@ -81,8 +85,16 @@ export default async function QuotesPage() {
           );
         })}
         {!quotes?.length && (
-          <li className="rounded-[6px] border border-dashed border-[var(--border)] p-6 text-center text-sm text-[var(--ink-muted)]">
-            Aún no hay presupuestos. Crea el primero.
+          <li>
+            <EmptyState
+              title="Sin presupuestos"
+              description="Crea el primero para enviar a tu clienta."
+              action={
+                <PrimaryLink href={"/quotes/new" as Route} size="sm">
+                  Nuevo presupuesto
+                </PrimaryLink>
+              }
+            />
           </li>
         )}
       </ul>

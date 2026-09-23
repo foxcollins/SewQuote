@@ -1,11 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button, Field, inputClass } from "@/components/ui/primitives";
+import { useToast } from "@/components/ui/toast";
 import { createMeasurementSetAction } from "@/modules/clients/actions";
 
 const DEFAULT_FIELDS = ["Busto", "Cintura", "Cadera", "Largo", "Manga", "Hombro", "Cuello"];
 
 export function MeasurementForm({ personId }: { personId: string }) {
+  const router = useRouter();
+  const { toast } = useToast();
   const [rows, setRows] = useState(
     DEFAULT_FIELDS.map((name) => ({ name, value: "", unit: "cm" })),
   );
@@ -14,6 +19,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
   return (
     <form
       action={async (fd) => {
+        if (pending) return;
         setPending(true);
         try {
           rows.forEach((r) => {
@@ -22,31 +28,43 @@ export function MeasurementForm({ personId }: { personId: string }) {
             fd.append("m_unit", r.unit);
           });
           await createMeasurementSetAction(fd);
+          toast("Medidas guardadas", "success");
+        } catch (e) {
+          if (
+            e &&
+            typeof e === "object" &&
+            "digest" in e &&
+            typeof e.digest === "string" &&
+            e.digest.includes("NEXT_REDIRECT")
+          ) {
+            return;
+          }
+          const msg = e instanceof Error ? e.message : "Error al guardar";
+          toast(msg, "error");
         } finally {
           setPending(false);
+          router.refresh();
         }
       }}
       className="space-y-3"
     >
       <input type="hidden" name="person_id" value={personId} />
       <div className="grid grid-cols-2 gap-3">
-        <label className="block text-sm font-semibold">
-          Etiqueta
+        <Field label="Etiqueta">
           <input
             name="label"
             placeholder="Medidas 2026-09"
-            className="mt-1 h-10 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
+            className={`${inputClass} h-10`}
           />
-        </label>
-        <label className="block text-sm font-semibold">
-          Fecha
+        </Field>
+        <Field label="Fecha">
           <input
             type="date"
             name="recorded_at"
             defaultValue={new Date().toISOString().slice(0, 10)}
-            className="mt-1 h-10 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
+            className={`${inputClass} h-10`}
           />
-        </label>
+        </Field>
       </div>
 
       <div className="space-y-2">
@@ -93,7 +111,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
         }
         className="text-xs font-semibold text-[var(--primary)]"
       >
-        + Campo
++ Campo
       </button>
 
       <label className="block text-sm font-semibold">
@@ -101,17 +119,13 @@ export function MeasurementForm({ personId }: { personId: string }) {
         <textarea
           name="notes"
           rows={2}
-          className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
+          className={`${inputClass} h-auto min-h-[64px] py-2`}
         />
       </label>
 
-      <button
-        type="submit"
-        disabled={pending}
-        className="h-11 w-full rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] disabled:opacity-60"
-      >
-        {pending ? "Guardando…" : "Guardar set de medidas"}
-      </button>
+      <Button type="submit" size="lg" className="w-full" loading={pending}>
+        Guardar set de medidas
+      </Button>
     </form>
   );
 }

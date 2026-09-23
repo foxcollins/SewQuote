@@ -2,7 +2,7 @@
 
 :root {
   /* Atelier Craft Tech — light (design.md) */
-  --canvas: #faf9fb;
+  --canvas: #faf8f5;
   --surface: #ffffff;
   --surface-2: #f3efea;
   --border: #e5dfd7;
@@ -30,6 +30,9 @@
   --radius: 6px;
   --radius-lg: 8px;
   --radius-xl: 12px;
+
+  --shadow-card: 0 1px 2px rgba(28, 29, 31, 0.04);
+  --shadow-elevated: 0 8px 28px rgba(28, 29, 31, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
