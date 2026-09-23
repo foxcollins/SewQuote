@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SewQuote - Ficha de Clientes y Medidas</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-background": "#1b1c1e",
+            "on-tertiary-fixed-variant": "#6a3b0f",
+            "primary-fixed-dim": "#ffb59c",
+            "on-primary": "#ffffff",
+            "surface-variant": "#e3e2e4",
+            "surface-container-lowest": "#ffffff",
+            "on-surface-variant": "#57423b",
+            "on-tertiary": "#ffffff",
+            "secondary": "#506358",
+            "surface-container": "#efedf0",
+            "on-tertiary-container": "#fffbff",
+            "surface-tint": "#a23e18",
+            "secondary-fixed-dim": "#b7cbbf",
+            "inverse-primary": "#ffb59c",
+            "tertiary-fixed": "#ffdcc4",
+            "on-primary-fixed": "#390c00",
+            "primary-container": "#bf542c",
+            "secondary-fixed": "#d3e7db",
+            "tertiary-fixed-dim": "#feb882",
+            "primary": "#9f3c16",
+            "error-container": "#ffdad6",
+            "on-surface": "#1b1c1e",
+            "surface-container-low": "#f5f3f5",
+            "outline": "#8a726a",
+            "outline-variant": "#dec0b7",
+            "surface-container-highest": "#e3e2e4",
+            "on-tertiary-fixed": "#2f1500",
+            "surface": "#faf9fb",
+            "on-secondary-fixed-variant": "#384b41",
+            "on-primary-container": "#fffbff",
+            "tertiary-container": "#a06739",
+            "error": "#ba1a1a",
+            "on-secondary-fixed": "#0d1f17",
+            "on-secondary": "#ffffff",
+            "surface-bright": "#faf9fb",
+            "on-secondary-container": "#54675d",
+            "surface-container-high": "#e9e8ea",
+            "background": "#faf9fb",
+            "surface-dim": "#dbd9dc",
+            "tertiary": "#845023",
+            "secondary-container": "#d0e5d8",
+            "inverse-surface": "#2f3032",
+            "on-primary-fixed-variant": "#822801",
+            "on-error": "#ffffff",
+            "primary-fixed": "#ffdbcf",
+            "on-error-container": "#93000a",
+            "inverse-on-surface": "#f2f0f3"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "gutter-md": "1.5rem",
+            "space-sm": "0.5rem",
+            "margin-lg": "2.5rem",
+            "margin": "1rem",
+            "space-xl": "2.5rem",
+            "space-lg": "1.5rem",
+            "margin-md": "1.5rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "space-md": "1rem",
+            "gutter-lg": "2rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Newsreader"],
+            "display-lg": ["Newsreader"],
+            "label-sm": ["Plus Jakarta Sans"],
+            "label-md": ["Plus Jakarta Sans"],
+            "metric-lg": ["JetBrains Mono"],
+            "body-lg": ["Plus Jakarta Sans"],
+            "headline-lg": ["Newsreader"],
+            "body-md": ["Plus Jakarta Sans"],
+            "headline-sm": ["Newsreader"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "title-md": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Newsreader"],
+            "display-lg-mobile": ["Newsreader"],
+            "metric-md": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "headline-md": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "display-lg": ["3rem", { "lineHeight": "3.5rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "label-sm": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "label-md": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "metric-lg": ["1.375rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "fontWeight": "400" }],
+            "headline-lg": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "body-md": ["0.9375rem", { "lineHeight": "1.5rem", "fontWeight": "400" }],
+            "headline-sm": ["1.25rem", { "lineHeight": "1.75rem", "fontWeight": "600" }],
+            "body-sm": ["0.8125rem", { "lineHeight": "1.25rem", "fontWeight": "400" }],
+            "title-md": ["1rem", { "lineHeight": "1.5rem", "fontWeight": "600" }],
+            "headline-lg-mobile": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "display-lg-mobile": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "metric-md": ["0.9375rem", { "lineHeight": "1.25rem", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    .basting-stitch-border {
+      border-bottom: 1.5px dashed #dec0b7;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased min-h-screen pb-24">
+<!-- TOP APP BAR (Shared Component Exact Match) -->
+<header class="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-margin h-14 w-full bg-surface/95 backdrop-blur-md border-b border-outline-variant/40 shadow-sm">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary" data-icon="styler">styler</span>
+<span class="text-headline-sm font-headline-sm font-medium text-on-surface tracking-tight">SewQuote</span>
+</div>
+<div class="flex items-center space-x-2">
+<button aria-label="Notificaciones" class="p-1.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors active:scale-95 duration-100">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<div class="w-7 h-7 rounded-full bg-secondary-container text-secondary flex items-center justify-center font-label-sm text-label-sm border border-secondary/20">
+        AT
+      </div>
+</div>
+</header>
+<!-- MAIN WRAPPER -->
+<main class="pt-16 px-margin max-w-lg mx-auto space-y-4">
+<!-- SEARCH & FILTER SEGMENTATION -->
+<section class="space-y-3 pt-1">
+<!-- Search Input -->
+<div class="relative flex items-center">
+<span class="material-symbols-outlined absolute left-3 text-outline text-lg pointer-events-none" data-icon="search">search</span>
+<input class="w-full pl-9 pr-8 py-2 bg-surface-container-lowest border border-outline-variant/60 rounded-xl font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary transition-all" placeholder="Buscar cliente, portador o prenda..." type="text" value="María González"/>
+<button class="absolute right-2.5 text-outline hover:text-on-surface">
+<span class="material-symbols-outlined text-base" data-icon="cancel">cancel</span>
+</button>
+</div>
+<!-- Segmented Tabs -->
+<div class="flex items-center p-1 bg-surface-container rounded-xl gap-1 border border-outline-variant/30 text-center overflow-x-auto no-scrollbar">
+<button class="flex-1 min-w-[100px] py-1.5 px-2 rounded-lg bg-surface-container-lowest text-primary font-label-sm text-label-sm shadow-sm transition-all">
+          Clientes (24)
+        </button>
+<button class="flex-1 min-w-[140px] py-1.5 px-2 rounded-lg text-secondary font-label-sm text-label-sm hover:text-on-surface transition-all">
+          Personas portadoras (38)
+        </button>
+<button class="flex-1 min-w-[120px] py-1.5 px-2 rounded-lg text-secondary font-label-sm text-label-sm hover:text-on-surface transition-all">
+          Catálogo Materiales
+        </button>
+</div>
+</section>
+<!-- ACTIVE CLIENT PROFILE CARD (Level 1 Paper Surface) -->
+<section class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-space-md shadow-[0_2px_6px_-1px_rgba(28,29,31,0.04)] space-y-3 relative overflow-hidden">
+<!-- Craftsman chalk accent line -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-primary"></div>
+<div class="flex items-start justify-between gap-3 pt-1">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-xl bg-primary-fixed flex items-center justify-center text-primary font-headline-sm text-headline-sm font-medium border border-primary/20 shadow-inner">
+            MG
+          </div>
+<div>
+<div class="flex items-center gap-1.5 flex-wrap">
+<h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight">María González</h1>
+<span class="px-1.5 py-0.5 rounded bg-secondary-container/60 text-secondary font-label-sm text-label-sm border border-secondary/20">
+                Cliente principal
+              </span>
+</div>
+<p class="font-body-sm text-body-sm text-outline flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-sm text-primary" data-icon="payments">payments</span>
+              Pagadora titular del atelier
+            </p>
+</div>
+</div>
+<button class="p-1.5 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined" data-icon="edit_note">edit_note</span>
+</button>
+</div>
+<!-- Quick Contact Pills -->
+<div class="flex flex-wrap gap-2 pt-1 basting-stitch-border pb-3">
+<a class="flex items-center gap-1.5 text-body-sm font-body-sm text-secondary bg-surface-container px-2.5 py-1 rounded-lg border border-outline-variant/40 hover:bg-secondary-fixed transition-colors" href="https://wa.me/5511987654321">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="chat">chat</span>
+          +55 11 98765-4321
+        </a>
+<a class="flex items-center gap-1.5 text-body-sm font-body-sm text-secondary bg-surface-container px-2.5 py-1 rounded-lg border border-outline-variant/40 hover:bg-secondary-fixed transition-colors" href="mailto:maria.gonzalez@email.com">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="mail">mail</span>
+          maria.gonzalez@email.com
+        </a>
+</div>
+<!-- Quick Metrics Grid -->
+<div class="grid grid-cols-3 gap-2 text-center pt-1">
+<div class="p-2 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<p class="font-label-sm text-label-sm text-outline">Presupuestos</p>
+<div class="flex items-baseline justify-center gap-1 mt-0.5">
+<span class="font-metric-md text-metric-md text-on-surface font-semibold">4</span>
+<span class="text-[10px] text-secondary font-label-sm">(3 aprob.)</span>
+</div>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<p class="font-label-sm text-label-sm text-outline">Trabajos activos</p>
+<p class="font-metric-md text-metric-md text-primary font-semibold mt-0.5">2 en taller</p>
+</div>
+<div class="p-2 rounded-lg bg-surface-container-low border border-outline-variant/30">
+<p class="font-label-sm text-label-sm text-outline">Total Histórico</p>
+<p class="font-metric-md text-metric-md text-on-surface font-semibold mt-0.5">R$ 1.840</p>
+</div>
+</div>
+</section>
+<!-- SECTION: PERSONAS ASOCIADAS (PORTADORAS) -->
+<section class="space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="person_pin">person_pin</span>
+<h2 class="font-title-md text-title-md text-on-surface">Personas asociadas a María</h2>
+</div>
+<span class="font-label-sm text-label-sm text-outline">2 vinculadas</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant -mt-2">
+        Distingue quién encarga y paga de la anatomía real de quien portará la prenda confeccionada.
+      </p>
+<!-- PORTADORA 1: ANA GONZÁLEZ (DETAILED SNAPSHOT) -->
+<article class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-space-md shadow-sm space-y-3">
+<!-- Header Persona -->
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-9 h-9 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-title-md text-title-md flex items-center justify-center border border-outline-variant/40">
+              AG
+            </div>
+<div>
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface">Ana González</h3>
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm border border-outline-variant/40">
+                  Hija
+                </span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span>
+                Portadora frecuente
+              </span>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-metric-md text-[11px]">
+            Medición: 20/09/2026
+          </span>
+</div>
+<!-- Metric Snapshot Tiles (Density Optimized) -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-outline tracking-wider">MEDIDAS ATELIER (CM)</span>
+<span class="font-label-sm text-label-sm text-primary flex items-center gap-0.5 cursor-pointer">
+<span class="material-symbols-outlined text-xs" data-icon="straighten">straighten</span> Guía de sastre
+            </span>
+</div>
+<div class="grid grid-cols-3 gap-1.5">
+<div class="bg-surface-container-low p-2 rounded-lg border border-outline-variant/30 flex flex-col justify-between">
+<span class="font-body-sm text-[11px] text-outline">Busto</span>
+<span class="font-metric-md text-metric-md text-on-surface font-semibold">90 <span class="text-xs font-normal text-outline">cm</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg border border-outline-variant/30 flex flex-col justify-between">
+<span class="font-body-sm text-[11px] text-outline">Cintura</span>
+<span class="font-metric-md text-metric-md text-on-surface font-semibold">74 <span class="text-xs font-normal text-outline">cm</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg border border-outline-variant/30 flex flex-col justify-between">
+<span class="font-body-sm text-[11px] text-outline">Cadera</span>
+<span class="font-metric-md text-metric-md text-on-surface font-semibold">97 <span class="text-xs font-normal text-outline">cm</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg border border-outline-variant/30 flex flex-col justify-between">
+<span class="font-body-sm text-[11px] text-outline">Largo talle</span>
+<span class="font-metric-md text-metric-md text-on-surface font-semibold">42 <span class="text-xs font-normal text-outline">cm</span></span>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg border border-outline-variant/30 flex flex-col justify-between col-span-2">
+<span class="font-body-sm text-[11px] text-outline">Largo falda</span>
+<span class="font-metric-md text-metric-md text-on-surface font-semibold">102 <span class="text-xs font-normal text-outline">cm</span></span>
+</div>
+</div>
+</div>
+<!-- HIGH VISUAL ALERT (8-Month Gap Warning) -->
+<div class="p-2.5 rounded-lg bg-error-container/40 border border-error/30 text-on-surface space-y-1">
+<div class="flex items-start gap-2">
+<span class="material-symbols-outlined text-error text-lg flex-shrink-0 mt-0.5" data-icon="warning">warning</span>
+<div class="text-xs space-y-0.5">
+<p class="font-label-sm font-semibold text-error">
+                Última medición hace 8 meses
+              </p>
+<p class="text-on-surface-variant font-body-sm text-[11px] leading-relaxed">
+                Enero 2026 registraba: <span class="font-metric-md text-on-surface font-medium">Busto 88 | Cintura 70 | Cadera 94</span>. 
+                <span class="text-error font-medium">Se sugiere reconfirmación previa al corte de piezas.</span>
+</p>
+</div>
+</div>
+</div>
+<!-- Action Row -->
+<div class="grid grid-cols-2 gap-2 pt-1">
+<button class="h-10 px-3 rounded-lg bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-all">
+<span class="material-symbols-outlined text-base" data-icon="square_foot">square_foot</span>
+            + Nueva Medición
+          </button>
+<button class="h-10 px-3 rounded-lg border border-secondary text-secondary hover:bg-secondary-fixed/50 font-label-md text-label-md flex items-center justify-center gap-1.5 active:scale-95 transition-all">
+<span class="material-symbols-outlined text-base" data-icon="history">history</span>
+            Ver Historial
+          </button>
+</div>
+</article>
+<!-- PORTADOR 2: PEDRO GONZÁLEZ (COMPACT UP-TO-DATE SNAPSHOT) -->
+<article class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-space-md shadow-sm space-y-2.5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed text-on-secondary-fixed font-title-md text-title-md flex items-center justify-center border border-secondary/20">
+              PG
+            </div>
+<div>
+<div class="flex items-center gap-1.5">
+<h3 class="font-title-md text-title-md text-on-surface">Pedro González</h3>
+<span class="px-1.5 py-0.2 rounded bg-surface-container text-on-surface-variant font-label-sm text-[10px] border border-outline-variant/30">
+                  Hijo
+                </span>
+</div>
+<span class="text-[11px] text-secondary flex items-center gap-1 font-label-sm">
+<span class="material-symbols-outlined text-xs text-secondary" data-icon="event_available">event_available</span>
+                Medición: 10/08/2026 - Reciente ✓
+              </span>
+</div>
+</div>
+<button class="text-primary hover:text-primary-container p-1">
+<span class="material-symbols-outlined text-base" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+<div class="bg-surface-container-low p-2 rounded-lg border border-outline-variant/30 flex items-center justify-between text-center divide-x divide-outline-variant/40">
+<div class="flex-1 px-1">
+<p class="font-body-sm text-[10px] text-outline">Cuello</p>
+<p class="font-metric-md text-metric-md text-on-surface font-semibold">38 <span class="text-[10px] text-outline font-normal">cm</span></p>
+</div>
+<div class="flex-1 px-1">
+<p class="font-body-sm text-[10px] text-outline">Pecho</p>
+<p class="font-metric-md text-metric-md text-on-surface font-semibold">94 <span class="text-[10px] text-outline font-normal">cm</span></p>
+</div>
+<div class="flex-1 px-1">
+<p class="font-body-sm text-[10px] text-outline">Cintura</p>
+<p class="font-metric-md text-metric-md text-on-surface font-semibold">82 <span class="text-[10px] text-outline font-normal">cm</span></p>
+</div>
+</div>
+</article>
+</section>
+<!-- SECTION: HISTORIAL DE PRECIOS DE MATERIALES (ATELIER WIDGET) -->
+<section class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-space-md shadow-sm space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="texture">texture</span>
+<h2 class="font-title-md text-title-md text-on-surface">Historial de Precios de Materiales</h2>
+</div>
+<span class="px-2 py-0.5 rounded bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-[11px] border border-outline-variant/40">
+          Insumos Atelier
+        </span>
+</div>
+<!-- Item Card with Mini Timeline -->
+<div class="p-3 bg-surface-container-low rounded-xl border border-outline-variant/40 space-y-2.5">
+<div class="flex items-center justify-between">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="w-3 h-3 rounded-full bg-blue-700 border border-white"></span>
+<h4 class="font-title-md text-title-md text-on-surface">Tela Oxford azul</h4>
+</div>
+<p class="font-body-sm text-body-sm text-outline">Actualizado 20/09/2026</p>
+</div>
+<div class="text-right">
+<span class="font-metric-lg text-metric-lg text-primary font-bold">R$ 32.00</span>
+<span class="font-body-sm text-xs text-outline block">por metro</span>
+</div>
+</div>
+<!-- Mini Timeline Trace -->
+<div class="pt-1">
+<p class="font-label-sm text-[10px] text-outline mb-1.5 uppercase tracking-wider">Evolución de costo metro</p>
+<div class="relative flex items-center justify-between bg-surface-container-lowest p-2 rounded-lg border border-outline-variant/30 text-xs">
+<div class="text-center">
+<span class="block font-metric-md text-on-surface font-semibold">R$ 27</span>
+<span class="text-[10px] text-outline">15/05</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm" data-icon="arrow_forward">arrow_forward</span>
+<div class="text-center">
+<span class="block font-metric-md text-on-surface font-semibold">R$ 29</span>
+<span class="text-[10px] text-outline">02/08</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-sm" data-icon="arrow_forward">arrow_forward</span>
+<div class="text-center bg-primary-fixed/40 px-2 py-0.5 rounded border border-primary/20">
+<span class="block font-metric-md text-primary font-bold">R$ 32</span>
+<span class="text-[10px] text-primary font-medium">20/09 (Actual)</span>
+</div>
+</div>
+</div>
+<!-- Protection Note -->
+<div class="flex items-start gap-1.5 pt-1 text-[11px] text-outline">
+<span class="material-symbols-outlined text-sm text-secondary flex-shrink-0" data-icon="lock_clock">lock_clock</span>
+<p class="leading-tight">
+<strong class="text-on-surface-variant font-medium">Auditoría:</strong> Cambiar el precio actual no afecta presupuestos históricos cerrados.
+          </p>
+</div>
+</div>
+<!-- Quick Action Button -->
+<button class="w-full h-11 rounded-lg border border-dashed border-primary/60 hover:border-primary text-primary hover:bg-primary-fixed/20 font-label-md text-label-md flex items-center justify-center gap-1.5 transition-all active:scale-95">
+<span class="material-symbols-outlined text-base" data-icon="add_circle">add_circle</span>
+        + Registrar Material / Actualizar Precio
+      </button>
+</section>
+<div class="h-6"></div>
+</main>
+<!-- BOTTOM NAVIGATION BAR (Shared Component Exact Match, 'Clientes' Active) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-space-xs pb-safe bg-surface/95 backdrop-blur-md shadow-[0_-4px_16px_rgba(27,28,30,0.04)]">
+<!-- Tab 0: Dashboard -->
+<a class="flex flex-col items-center justify-center text-secondary py-1 hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="text-label-sm font-label-sm mt-0.5">Dashboard</span>
+</a>
+<!-- Tab 1: Presupuestos -->
+<a class="flex flex-col items-center justify-center text-secondary py-1 hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="text-label-sm font-label-sm mt-0.5">Presupuestos</span>
+</a>
+<!-- Tab 2: Trabajos -->
+<a class="flex flex-col items-center justify-center text-secondary py-1 hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="content_cut">content_cut</span>
+<span class="text-label-sm font-label-sm mt-0.5">Trabajos</span>
+</a>
+<!-- Tab 3: Clientes (ACTIVE EXACT MATCH) -->
+<a class="flex flex-col items-center justify-center text-primary font-semibold py-1 hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="group" data-weight="fill" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-label-sm font-label-sm mt-0.5">Clientes</span>
+</a>
+<!-- Tab 4: Más -->
+<a class="flex flex-col items-center justify-center text-secondary py-1 hover:text-primary transition-colors duration-150 active:scale-95" href="#">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+<span class="text-label-sm font-label-sm mt-0.5">Más</span>
+</a>
+</nav>
+</body></html>

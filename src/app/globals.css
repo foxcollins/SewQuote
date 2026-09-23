@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  /* Atelier Craft Tech — light (design.md) */
+  --canvas: #faf9fb;
+  --surface: #ffffff;
+  --surface-2: #f3efea;
+  --border: #e5dfd7;
+  --ink: #1c1d1f;
+  --ink-muted: #6d5d53;
+  --primary: #c85a32;
+  --primary-hover: #a84a28;
+  --on-primary: #ffffff;
+  --secondary: #2c3e35;
+  --tertiary: #c98a58;
+  --success: #2d5a43;
+  --success-bg: #ebf3ee;
+  --warning: #b8621b;
+  --warning-bg: #fdf3e7;
+  --error: #a83232;
+  --error-bg: #fbeaea;
+  --draft: #6d5d53;
+  --draft-bg: #f0ece9;
+
+  --font-display: "Newsreader", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+  --radius-sm: 4px;
+  --radius: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .dark {
+    --canvas: #161618;
+    --surface: #1e1e22;
+    --surface-2: #26262b;
+    --border: #333238;
+    --ink: #ede8e1;
+    --ink-muted: #a8a29a;
+    --primary: #e07148;
+    --primary-hover: #c85a32;
+    --on-primary: #ede8e1;
+    --secondary: #769785;
+    --tertiary: #d49b6a;
+    --success: #8ec5a6;
+    --success-bg: #1c2921;
+    --warning: #e4a76c;
+    --warning-bg: #2b2218;
+    --error: #e27878;
+    --error-bg: #2e1a1b;
+    --draft: #a8a29a;
+    --draft-bg: #26262b;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  min-height: 100%;
+}
+
+h1,
+h2,
+.display {
+  font-family: var(--font-display);
+  letter-spacing: -0.015em;
+}
+
+.metric {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}

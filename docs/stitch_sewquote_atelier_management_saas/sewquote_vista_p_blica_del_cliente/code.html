@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Presupuesto #102 - SewQuote &amp; Atelier Maria</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts for Newsreader, Plus Jakarta Sans, JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with custom configuration -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-background": "#1b1c1e",
+            "on-tertiary-fixed-variant": "#6a3b0f",
+            "primary-fixed-dim": "#ffb59c",
+            "on-primary": "#ffffff",
+            "surface-variant": "#e3e2e4",
+            "surface-container-lowest": "#ffffff",
+            "on-surface-variant": "#57423b",
+            "on-tertiary": "#ffffff",
+            "secondary": "#506358",
+            "surface-container": "#efedf0",
+            "on-tertiary-container": "#fffbff",
+            "surface-tint": "#a23e18",
+            "secondary-fixed-dim": "#b7cbbf",
+            "inverse-primary": "#ffb59c",
+            "tertiary-fixed": "#ffdcc4",
+            "on-primary-fixed": "#390c00",
+            "primary-container": "#bf542c",
+            "secondary-fixed": "#d3e7db",
+            "tertiary-fixed-dim": "#feb882",
+            "primary": "#9f3c16",
+            "error-container": "#ffdad6",
+            "on-surface": "#1b1c1e",
+            "surface-container-low": "#f5f3f5",
+            "outline": "#8a726a",
+            "outline-variant": "#dec0b7",
+            "surface-container-highest": "#e3e2e4",
+            "on-tertiary-fixed": "#2f1500",
+            "surface": "#faf9fb",
+            "on-secondary-fixed-variant": "#384b41",
+            "on-primary-container": "#fffbff",
+            "tertiary-container": "#a06739",
+            "error": "#ba1a1a",
+            "on-secondary-fixed": "#0d1f17",
+            "on-secondary": "#ffffff",
+            "surface-bright": "#faf9fb",
+            "on-secondary-container": "#54675d",
+            "surface-container-high": "#e9e8ea",
+            "background": "#faf9fb",
+            "surface-dim": "#dbd9dc",
+            "tertiary": "#845023",
+            "secondary-container": "#d0e5d8",
+            "inverse-surface": "#2f3032",
+            "on-primary-fixed-variant": "#822801",
+            "on-error": "#ffffff",
+            "primary-fixed": "#ffdbcf",
+            "on-error-container": "#93000a",
+            "inverse-on-surface": "#f2f0f3"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "gutter-md": "1.5rem",
+            "space-sm": "0.5rem",
+            "margin-lg": "2.5rem",
+            "margin": "1rem",
+            "space-xl": "2.5rem",
+            "space-lg": "1.5rem",
+            "margin-md": "1.5rem",
+            "space-xs": "0.25rem",
+            "gutter": "1rem",
+            "space-md": "1rem",
+            "gutter-lg": "2rem"
+          },
+          "fontFamily": {
+            "headline-md": ["Newsreader", "serif"],
+            "display-lg": ["Newsreader", "serif"],
+            "label-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "label-md": ["Plus Jakarta Sans", "sans-serif"],
+            "metric-lg": ["JetBrains Mono", "monospace"],
+            "body-lg": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg": ["Newsreader", "serif"],
+            "body-md": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-sm": ["Newsreader", "serif"],
+            "body-sm": ["Plus Jakarta Sans", "sans-serif"],
+            "title-md": ["Plus Jakarta Sans", "sans-serif"],
+            "headline-lg-mobile": ["Newsreader", "serif"],
+            "display-lg-mobile": ["Newsreader", "serif"],
+            "metric-md": ["JetBrains Mono", "monospace"]
+          },
+          "fontSize": {
+            "headline-md": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "display-lg": ["3rem", { "lineHeight": "3.5rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "label-sm": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "label-md": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "metric-lg": ["1.375rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "fontWeight": "400" }],
+            "headline-lg": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "body-md": ["0.9375rem", { "lineHeight": "1.5rem", "fontWeight": "400" }],
+            "headline-sm": ["1.25rem", { "lineHeight": "1.75rem", "fontWeight": "600" }],
+            "body-sm": ["0.8125rem", { "lineHeight": "1.25rem", "fontWeight": "400" }],
+            "title-md": ["1rem", { "lineHeight": "1.5rem", "fontWeight": "600" }],
+            "headline-lg-mobile": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "display-lg-mobile": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "metric-md": ["0.9375rem", { "lineHeight": "1.25rem", "fontWeight": "500" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-background min-h-screen antialiased flex flex-col items-center">
+<!-- Mobile Client View Canvas (Optimized for WhatsApp link preview & immediate trust) -->
+<main class="w-full max-w-md bg-background px-margin pt-6 pb-12 flex flex-col gap-5">
+<!-- Top Atelier & SewQuote Branding Anchor -->
+<header class="bg-surface-container-lowest border border-outline-variant/40 rounded-xl p-space-md shadow-sm">
+<div class="flex items-center justify-between border-b border-surface-container-high pb-space-sm mb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="styler">styler</span>
+<span class="font-headline-sm text-headline-sm text-primary font-bold tracking-tight">SewQuote</span>
+</div>
+<span class="font-label-sm text-label-sm text-secondary tracking-wider bg-secondary-fixed/40 px-2 py-0.5 rounded-full">
+          Portal Cliente
+        </span>
+</div>
+<div class="flex flex-col gap-1">
+<p class="font-label-sm text-label-sm text-on-surface-variant tracking-normal">
+          Smart quotes for sewing businesses
+        </p>
+<h1 class="font-headline-md text-headline-md text-on-surface mt-1">
+          Atelier Maria - Alta Costura &amp; Confección
+        </h1>
+<div class="flex flex-col gap-1 mt-2 pt-2 border-t border-dashed border-outline-variant/50 text-secondary">
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-base text-outline" data-icon="location_on">location_on</span>
+<span>Rua das Flores 142, São Paulo</span>
+</div>
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="chat">chat</span>
+<span>WhatsApp (11) 98765-4321</span>
+</div>
+</div>
+</div>
+</header>
+<!-- Quote Status & Validity Header -->
+<section class="bg-surface-container-lowest border border-outline-variant/50 rounded-xl p-space-md shadow-sm relative overflow-hidden">
+<!-- Decorative tailor stitch accent border at top -->
+<div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary via-primary-container to-secondary"></div>
+<div class="flex justify-between items-start gap-2 mb-space-sm pt-1">
+<div>
+<span class="font-label-sm text-label-sm text-outline uppercase tracking-wider block">Presupuesto Formal</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface mt-0.5">
+            Presupuesto #102 para María González
+          </h2>
+</div>
+<span class="font-label-sm text-label-sm text-secondary font-semibold bg-secondary-fixed text-on-secondary-fixed px-2.5 py-1 rounded-full whitespace-nowrap border border-secondary/20">
+          Activo para aprobación
+        </span>
+</div>
+<div class="grid grid-cols-2 gap-2 bg-surface-container-low rounded-lg p-2.5 mt-2 border border-outline-variant/30">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Fecha de emisión</span>
+<span class="font-metric-md text-metric-md text-on-surface font-medium">20/09/2026</span>
+</div>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Válido hasta</span>
+<span class="font-metric-md text-metric-md text-primary font-semibold">30/09/2026</span>
+</div>
+</div>
+</section>
+<!-- Garments Section Title -->
+<div class="flex items-center gap-2 px-1">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="content_cut">content_cut</span>
+<h3 class="font-headline-sm text-headline-sm text-on-surface">Trabajos y Confecciones Incluidas</h3>
+</div>
+<!-- Garment Card 1 -->
+<article class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-space-md shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-primary-fixed text-on-primary-fixed">Confección a Medida</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mt-1">
+            Vestido de fiesta largo
+          </h4>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Importe trabajo</span>
+<span class="font-metric-lg text-metric-lg text-primary font-bold">R$ 391.10</span>
+</div>
+</div>
+<!-- Person tag -->
+<div class="flex items-center gap-2 py-1 px-2.5 bg-surface-container rounded-lg">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="person">person</span>
+<span class="font-body-sm text-body-sm text-on-surface">
+          Persona que usará la prenda: <strong class="font-label-md text-label-md">Ana González</strong>
+</span>
+</div>
+<div class="border-t border-surface-container-high pt-2.5 flex flex-col gap-2 font-body-sm text-body-sm text-on-surface">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Detalle de confección:</span>
+<p class="mt-0.5">Confección de vestido de gala con forro y cremallera invisible trasera.</p>
+</div>
+<div class="bg-surface-container-low p-2 rounded border border-outline-variant/30 flex items-start gap-2">
+<span class="material-symbols-outlined text-base text-outline mt-0.5" data-icon="texture">texture</span>
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Tejidos seleccionados:</span>
+<p class="font-body-sm text-body-sm text-on-surface font-medium">Tela Oxford azul premium y encaje sutil.</p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1 text-on-surface-variant">
+<span class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="event">event</span>
+            Fecha pactada de entrega:
+          </span>
+<span class="font-metric-md text-metric-md text-on-surface font-semibold">30 de Septiembre de 2026</span>
+</div>
+</div>
+</article>
+<!-- Garment Card 2 -->
+<article class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl p-space-md shadow-sm flex flex-col gap-3">
+<div class="flex justify-between items-start">
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed">Ajuste de Precisión</span>
+</div>
+<h4 class="font-headline-sm text-headline-sm text-on-surface mt-1">
+            Ajuste fino de pantalón
+          </h4>
+</div>
+<div class="text-right">
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Importe trabajo</span>
+<span class="font-metric-lg text-metric-lg text-primary font-bold">R$ 79.50</span>
+</div>
+</div>
+<!-- Person tag -->
+<div class="flex items-center gap-2 py-1 px-2.5 bg-surface-container rounded-lg">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="person">person</span>
+<span class="font-body-sm text-body-sm text-on-surface">
+          Persona: <strong class="font-label-md text-label-md">Carlos Silva</strong>
+</span>
+</div>
+<div class="border-t border-surface-container-high pt-2.5 flex flex-col gap-2 font-body-sm text-body-sm text-on-surface">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block">Especificación técnica:</span>
+<p class="mt-0.5">Ajuste de basta y cintura con conservación de remate original.</p>
+</div>
+<div class="flex items-center justify-between pt-1 text-on-surface-variant">
+<span class="flex items-center gap-1 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-base text-secondary" data-icon="event">event</span>
+            Entrega coordinada:
+          </span>
+<span class="font-metric-md text-metric-md text-on-surface font-semibold">30 de Septiembre de 2026</span>
+</div>
+</div>
+</article>
+<!-- Financial Breakdown Card -->
+<section class="bg-surface-container-lowest border border-outline-variant/60 rounded-xl overflow-hidden shadow-sm">
+<div class="p-space-md border-b border-surface-container-high">
+<h4 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-xl" data-icon="receipt_long">receipt_long</span>
+          Resumen Económico
+        </h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">Desglose transparente garantizado</p>
+</div>
+<div class="p-space-md flex flex-col gap-2.5">
+<div class="flex justify-between font-body-sm text-body-sm text-on-surface">
+<span>Vestido de fiesta largo (confección &amp; encaje)</span>
+<span class="font-metric-md text-metric-md font-medium">R$ 391.10</span>
+</div>
+<div class="flex justify-between font-body-sm text-body-sm text-on-surface">
+<span>Ajuste fino de pantalón (cintura &amp; basta)</span>
+<span class="font-metric-md text-metric-md font-medium">R$ 79.50</span>
+</div>
+<div class="flex justify-between font-body-sm text-body-sm text-secondary pt-1 border-t border-dashed border-outline-variant/50">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+            Impuestos y materiales incluidos
+          </span>
+<span class="font-metric-md text-metric-md text-secondary font-medium">Incluido</span>
+</div>
+</div>
+<!-- Prominent Total Bar -->
+<div class="bg-surface-container px-space-md py-space-sm flex justify-between items-center border-t border-outline-variant/40">
+<div>
+<span class="font-label-sm text-label-sm text-on-surface-variant block uppercase tracking-wider">Total a pagar</span>
+<span class="font-body-sm text-body-sm text-secondary">Total prendas y confección</span>
+</div>
+<div class="text-right">
+<span class="font-metric-lg text-metric-lg text-primary font-bold">R$ 470.60</span>
+</div>
+</div>
+<!-- Atelier Guarantee Note -->
+<div class="p-space-md bg-surface-container-low border-t border-outline-variant/30 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-lg mt-0.5" data-icon="verified">verified</span>
+<div class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+<strong class="font-label-md text-label-md text-on-surface block mb-0.5">Compromiso del Atelier:</strong>
+          Los precios de tejidos e insumos quedan congelados durante la vigencia de este presupuesto. Entrega garantizada en la fecha convenida.
+        </div>
+</div>
+</section>
+<!-- Approval Status Notification Container (Dynamically updated via JS) -->
+<div class="hidden bg-secondary-fixed/50 border border-secondary/40 rounded-xl p-space-md text-on-secondary-fixed" id="approvalBanner">
+<div class="flex items-center gap-2 font-headline-sm text-headline-sm">
+<span class="material-symbols-outlined text-secondary" data-icon="check_circle">check_circle</span>
+        ¡Presupuesto Aprobado con Éxito!
+      </div>
+<p class="font-body-sm text-body-sm mt-1 text-on-secondary-fixed-variant" id="approvalTimestamp"></p>
+<p class="font-body-sm text-body-sm mt-2">Atelier Maria ha recibido tu confirmación. Nos pondremos en contacto contigo para coordinar las primeras pruebas.</p>
+</div>
+<!-- Approval & Interaction Call To Action Cluster -->
+<section class="flex flex-col gap-3 pt-2">
+<!-- Large Primary CTA Button -->
+<button class="w-full h-14 bg-primary text-on-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 shadow-md hover:bg-primary-container active:scale-[0.98] transition-all cursor-pointer" id="btnApprove" onclick="confirmQuote()">
+<span class="material-symbols-outlined text-2xl font-bold" data-icon="check">check</span>
+<span>✓ APROBAR PRESUPUESTO</span>
+</button>
+<!-- Secondary Contact Action -->
+<a class="w-full h-12 bg-surface-container-lowest border border-secondary text-secondary rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 hover:bg-surface-container-high active:scale-[0.98] transition-all" href="https://wa.me/5511987654321?text=Hola%20Atelier%20Maria,%20tengo%20consultas%20sobre%20el%20presupuesto%20%23102" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-xl" data-icon="chat">chat</span>
+<span>Consultar dudas por WhatsApp</span>
+</a>
+<!-- Security / Verified Stamp -->
+<div class="text-center pt-2">
+<p class="font-body-sm text-body-sm text-outline flex items-center justify-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="lock">lock</span>
+          Presupuesto digital verificado emitido por SewQuote para Atelier Maria
+        </p>
+<span class="font-label-sm text-label-sm text-surface-dim mt-0.5 block">Identificador: /orcamento/ABC102</span>
+</div>
+</section>
+</main>
+<script>
+    function confirmQuote() {
+      const now = new Date();
+      const dateStr = now.toLocaleDateString('es-ES', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric' 
+      });
+      const timeStr = now.toLocaleTimeString('es-ES', { 
+        hour: '2-digit', 
+        minute: '2-digit' 
+      });
+      
+      const banner = document.getElementById('approvalBanner');
+      const timeContainer = document.getElementById('approvalTimestamp');
+      const approveBtn = document.getElementById('btnApprove');
+      
+      timeContainer.innerText = `Registrado digitalmente el ${dateStr} a las ${timeStr} hrs.`;
+      banner.classList.remove('hidden');
+      
+      // Update approve button state to locked/confirmed
+      approveBtn.disabled = true;
+      approveBtn.classList.remove('bg-primary', 'hover:bg-primary-container');
+      approveBtn.classList.add('bg-secondary', 'opacity-90', 'cursor-not-allowed');
+      approveBtn.innerHTML = `
+        <span class="material-symbols-outlined text-2xl font-bold" data-icon="task_alt">task_alt</span>
+        <span>PRESUPUESTO APROBADO (${dateStr})</span>
+      `;
+      
+      // Smooth scroll into the approval feedback
+      banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  </script>
+</body></html>
