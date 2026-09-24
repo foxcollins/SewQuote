@@ -25,11 +25,11 @@ export function StatusBadge({
   return (
     <span
       data-status={status}
-      className={`inline-flex h-6 items-center rounded-[4px] border px-2 text-[11px] font-semibold uppercase tracking-wide ${
+      className={`inline-flex h-6 max-w-full items-center rounded-[4px] border px-2 text-[11px] font-semibold tracking-wide uppercase ${
         styles[t] ?? styles.sent
       }`}
     >
-      {label}
+      <span className="truncate">{label}</span>
     </span>
   );
 }

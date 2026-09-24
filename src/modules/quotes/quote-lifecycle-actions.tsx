@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import type { Route } from "next";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/primitives";
@@ -61,8 +63,15 @@ export function QuoteLifecycleActions({
   if (status === "draft") {
     return (
       <div className="space-y-2">
+        <Link
+          href={`/quotes/${quoteId}/edit` as Route}
+          className="flex h-12 items-center justify-center rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
+        >
+          Editar presupuesto
+        </Link>
         <Button
           size="lg"
+          variant="secondary"
           className="w-full"
           loading={busy || pending}
           onClick={() =>

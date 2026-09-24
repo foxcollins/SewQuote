@@ -14,16 +14,18 @@ export function PageHeader({
   action?: React.ReactNode;
 }) {
   return (
-    <header className="mb-5 flex items-start justify-between gap-3">
-      <div className="min-w-0">
-        <h1 className="text-[1.75rem] leading-tight font-semibold tracking-tight">
+    <header className="mb-5 flex flex-wrap items-start justify-between gap-x-3 gap-y-2">
+      <div className="min-w-0 flex-1">
+        <h1 className="text-xl leading-tight font-semibold tracking-tight break-words sm:text-2xl lg:text-[1.75rem]">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-0.5 text-sm text-[var(--ink-muted)]">{subtitle}</p>
+          <p className="mt-0.5 text-sm text-[var(--ink-muted)] break-words">
+            {subtitle}
+          </p>
         )}
       </div>
-      {action}
+      {action && <div className="shrink-0">{action}</div>}
     </header>
   );
 }
@@ -54,8 +56,8 @@ export function SectionTitle({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="mb-3 flex items-center justify-between gap-2">
-      <h2 className="text-sm font-semibold uppercase tracking-wide text-[var(--ink-muted)]">
+    <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+      <h2 className="min-w-0 text-sm font-semibold tracking-wide text-[var(--ink-muted)] uppercase break-words">
         {children}
       </h2>
       {action}

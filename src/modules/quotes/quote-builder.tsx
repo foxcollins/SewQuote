@@ -12,7 +12,7 @@ import {
   type Urgency,
 } from "@/modules/pricing/engine";
 import { formatDate, formatMoney, type Locale } from "@/lib/i18n";
-import { saveQuoteDraftAction } from "@/modules/quotes/actions";
+import { saveQuoteDraftAction, updateQuoteDraftAction } from "@/modules/quotes/actions";
 import type {
   MeasurementSetJson,
   PersonJson,
@@ -83,6 +83,18 @@ function setAgeDays(recordedAt: string): number {
   return Math.max(0, Math.floor((Date.now() - t) / 86_400_000));
 }
 
+export type QuoteBuilderJobDraft = JobLine;
+
+export type QuoteBuilderInitial = {
+  id: string;
+  clientId: string;
+  marginPercent: number | null;
+  validUntil: string;
+  notes: string;
+  otherCostsAmount: number;
+  jobs: QuoteBuilderJobDraft[];
+};
+
 export function QuoteBuilder({
   clients,
   persons: personsInitial,
@@ -96,6 +108,7 @@ export function QuoteBuilder({
   presetClientId,
   presetClientName,
   staleDays = 30,
+  initial,
 }: {
   clients: ClientOpt[];
   persons: PersonOpt[];
@@ -109,22 +122,28 @@ export function QuoteBuilder({
   presetClientId?: string;
   presetClientName?: string;
   staleDays?: number;
+  initial?: QuoteBuilderInitial;
 }) {
   const router = useRouter();
   const { toast } = useToast();
-  const [clientId, setClientId] = useState(presetClientId ?? "");
+  const [clientId, setClientId] = useState(initial?.clientId ?? presetClientId ?? "");
   const [persons, setPersons] = useState<PersonOpt[]>(personsInitial);
   const [measurementSets, setMeasurementSets] = useState<MeasurementSetOpt[]>(
     setsInitial ?? [],
   );
-  const [margin, setMargin] = useState(String(config.defaultMarginPercent));
+  const [margin, setMargin] = useState(
+    String(initial?.marginPercent ?? config.defaultMarginPercent),
+  );
   const [validUntil, setValidUntil] = useState(() => {
+    if (initial?.validUntil) return initial.validUntil;
     const d = new Date();
     d.setDate(d.getDate() + 15);
     return d.toISOString().slice(0, 10);
   });
-  const [notes, setNotes] = useState("");
-  const [jobs, setJobs] = useState<JobLine[]>([emptyJob()]);
+  const [notes, setNotes] = useState(initial?.notes ?? "");
+  const [jobs, setJobs] = useState<JobLine[]>(
+    initial?.jobs?.length ? initial.jobs : [emptyJob()],
+  );
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [personModalJob, setPersonModalJob] = useState<number | null>(null);
@@ -250,9 +269,15 @@ export function QuoteBuilder({
           other_costs: Number(job.other_costs || 0),
         })),
       };
-      await saveQuoteDraftAction(JSON.stringify(payload));
-      toast("Borrador guardado", "success");
-      router.push("/quotes" as Route);
+      if (initial?.id) {
+        await updateQuoteDraftAction(initial.id, JSON.stringify(payload));
+        toast("Borrador actualizado", "success");
+        router.push(`/quotes/${initial.id}` as Route);
+      } else {
+        await saveQuoteDraftAction(JSON.stringify(payload));
+        toast("Borrador guardado", "success");
+        router.push("/quotes" as Route);
+      }
       router.refresh();
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Error al guardar";
@@ -529,6 +554,26 @@ className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--sur
               className={inputClass}
             />
           </label>
+          <label className="mt-3 block text-sm font-semibold">
+            Descripción
+            <textarea
+              rows={2}
+              value={job.garment_description}
+              onChange={(e) => updateJob(i, { garment_description: e.target.value })}
+              placeholder="Detalles de la pieza, tela, acabados…"
+              className={`${inputClass} h-auto min-h-[64px] py-2`}
+            />
+          </label>
+          <label className="mt-3 block text-sm font-semibold">
+            Notas del trabajo
+            <textarea
+              rows={2}
+              value={job.notes}
+              onChange={(e) => updateJob(i, { notes: e.target.value })}
+              placeholder="Indicaciones internas…"
+              className={`${inputClass} h-auto min-h-[64px] py-2`}
+            />
+          </label>
 
           <div className="mt-3 grid grid-cols-2 gap-3">
             <label className="block text-sm font-semibold">
@@ -800,8 +845,17 @@ className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--sur
         onClick={submit}
         loading={pending}
       >
-        Guardar borrador
+        {initial?.id ? "Guardar cambios" : "Guardar borrador"}
       </Button>
+      {initial?.id && (
+        <button
+          type="button"
+          onClick={() => router.push(`/quotes/${initial.id}` as Route)}
+          className="w-full text-center text-sm font-semibold text-[var(--ink-muted)] hover:text-[var(--ink)]"
+        >
+          Volver al presupuesto
+        </button>
+      )}
     </div>
   );
 }

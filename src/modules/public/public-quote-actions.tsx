@@ -69,7 +69,7 @@ export function PublicQuoteActions({
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--border)] bg-[var(--canvas)]/95 p-4 backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--border)] bg-[var(--canvas)]/95 p-4 pb-[calc(1rem+env(safe-area-inset-bottom))] backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:p-0 lg:pb-0 lg:backdrop-blur-none">
       <div className="mx-auto max-w-lg space-y-2 lg:mx-0 lg:max-w-none">
         {message && (
           <p className="rounded-[6px] bg-[var(--surface-2)] px-3 py-2 text-center text-xs">
@@ -82,7 +82,7 @@ export function PublicQuoteActions({
               type="button"
               disabled={pending}
               onClick={() => act("accept")}
-              className="h-12 w-full rounded-[6px] bg-[var(--primary)] text-sm font-semibold uppercase tracking-wide text-[var(--on-primary)] disabled:opacity-60"
+              className="h-12 w-full rounded-[6px] bg-[var(--primary)] text-sm font-semibold tracking-wide text-[var(--on-primary)] uppercase disabled:opacity-60"
             >
               Aprobar presupuesto
             </button>
@@ -91,7 +91,7 @@ export function PublicQuoteActions({
                 type="button"
                 disabled={pending}
                 onClick={() => act("reject")}
-                className="h-11 rounded-[6px] border border-[var(--error)] text-sm font-semibold uppercase text-[var(--error)] disabled:opacity-60"
+                className="h-11 rounded-[6px] border border-[var(--error)] text-sm font-semibold text-[var(--error)] uppercase disabled:opacity-60"
               >
                 Rechazar
               </button>

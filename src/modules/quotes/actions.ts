@@ -75,13 +75,142 @@ export async function saveQuoteDraftAction(payloadJson: string) {
   if (!payload.jobs?.length) throw new Error("jobs required");
 
   const supabase = await createClient();
+  const resolved = await resolveDraftPricing(supabase, ctx, payload);
+  const quoteNumber = await nextQuoteNumber(supabase, ctx.tenantId);
+
+  const { data: quote, error: qErr } = await supabase
+    .from("quotes")
+    .insert({
+      tenant_id: ctx.tenantId,
+      client_id: payload.client_id,
+      quote_number: quoteNumber,
+      status: "draft",
+      version_number: 0,
+      margin_percent: resolved.margin ?? null,
+      currency: ctx.currency,
+      subtotal_materials: resolved.breakdown.materials,
+      subtotal_labor: resolved.breakdown.labor,
+      complexity_amount: resolved.breakdown.complexity,
+      urgency_amount: resolved.breakdown.urgency,
+      other_costs_amount: resolved.otherCosts,
+      margin_amount: resolved.breakdown.margin,
+      suggested_price: round2(resolved.breakdown.suggestedPrice + resolved.otherCosts),
+      final_price: null,
+      valid_until: payload.valid_until || defaultValidUntil(),
+      notes: payload.notes || null,
+    })
+    .select("id")
+    .single();
+  if (qErr) throw new Error(qErr.message);
+
+  await replaceDraftJobs(supabase, ctx, payload, resolved, quote.id);
+
+  revalidatePath("/quotes");
+  redirect((`/quotes/${quote.id}`) as never);
+}
+
+export async function updateQuoteDraftAction(
+  quoteId: string,
+  payloadJson: string,
+) {
+  const ctx = await requireSessionContext();
+  const payload = JSON.parse(payloadJson) as QuoteDraftPayload;
+  if (!payload.client_id) throw new Error("client required");
+  if (!payload.jobs?.length) throw new Error("jobs required");
+
+  const supabase = await createClient();
+  const { data: existing, error } = await supabase
+    .from("quotes")
+    .select("id, status, tenant_id, quote_number, version_number")
+    .eq("id", quoteId)
+    .eq("tenant_id", ctx.tenantId)
+    .single();
+  if (error || !existing) throw new Error("Quote not found");
+  if (existing.status !== "draft") {
+    throw new Error("Solo los borradores pueden editarse");
+  }
+
+  const resolved = await resolveDraftPricing(supabase, ctx, payload);
+
+  const { error: delErr } = await supabase
+    .from("quote_jobs")
+    .delete()
+    .eq("quote_id", quoteId)
+    .eq("tenant_id", ctx.tenantId);
+  if (delErr) throw new Error(delErr.message);
+
+  const { error: uErr } = await supabase
+    .from("quotes")
+    .update({
+      client_id: payload.client_id,
+      margin_percent: resolved.margin ?? null,
+      subtotal_materials: resolved.breakdown.materials,
+      subtotal_labor: resolved.breakdown.labor,
+      complexity_amount: resolved.breakdown.complexity,
+      urgency_amount: resolved.breakdown.urgency,
+      other_costs_amount: resolved.otherCosts,
+      margin_amount: resolved.breakdown.margin,
+      suggested_price: round2(resolved.breakdown.suggestedPrice + resolved.otherCosts),
+      valid_until: payload.valid_until || defaultValidUntil(),
+      notes: payload.notes || null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq("id", quoteId)
+    .eq("tenant_id", ctx.tenantId);
+  if (uErr) throw new Error(uErr.message);
+
+  await replaceDraftJobs(supabase, ctx, payload, resolved, quoteId);
+
+  revalidatePath("/quotes");
+  revalidatePath(`/quotes/${quoteId}`);
+  redirect((`/quotes/${quoteId}`) as never);
+}
+
+type ResolvedDraft = {
+  margin: number | undefined;
+  otherCosts: number;
+  breakdown: ReturnType<typeof calculateQuote>;
+  materialMap: Map<string, MaterialRow>;
+  serviceMap: Map<string, ServiceRow>;
+  setMap: Map<string, SetRow>;
+};
+
+type MaterialRow = {
+  id: string;
+  name: string;
+  unit: string;
+  material_prices: {
+    unit_price: number;
+    valid_from: string;
+    currency: string;
+  }[];
+};
+type ServiceRow = {
+  id: string;
+  name: string;
+  base_price: number | null;
+  estimated_minutes: number | null;
+  category: string | null;
+};
+type SetRow = {
+  id: string;
+  person_id: string;
+  recorded_at: string;
+  label: string | null;
+  measurement_values: { name: string; value: number; unit: string }[];
+};
+
+async function resolveDraftPricing(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  ctx: Awaited<ReturnType<typeof requireSessionContext>>,
+  payload: QuoteDraftPayload,
+): Promise<ResolvedDraft> {
   const config = pricingConfigFromCtx(ctx);
   const margin =
     payload.margin_percent !== undefined && payload.margin_percent !== null
       ? Number(payload.margin_percent)
       : undefined;
 
-  // Resolve materials + measurements snapshots server-side
   const materialIds = [
     ...new Set(payload.jobs.flatMap((j) => j.materials.map((m) => m.material_id))),
   ];
@@ -117,31 +246,6 @@ export async function saveQuoteDraftAction(payloadJson: string) {
       : Promise.resolve({ data: [] as never[] }),
   ]);
 
-  type MaterialRow = {
-    id: string;
-    name: string;
-    unit: string;
-    material_prices: {
-      unit_price: number;
-      valid_from: string;
-      currency: string;
-    }[];
-  };
-  type ServiceRow = {
-    id: string;
-    name: string;
-    base_price: number | null;
-    estimated_minutes: number | null;
-    category: string | null;
-  };
-  type SetRow = {
-    id: string;
-    person_id: string;
-    recorded_at: string;
-    label: string | null;
-    measurement_values: { name: string; value: number; unit: string }[];
-  };
-
   const materials = (matRes.data ?? []) as MaterialRow[];
   const services = (svcRes.data ?? []) as ServiceRow[];
   const sets = (setRes.data ?? []) as SetRow[];
@@ -149,14 +253,6 @@ export async function saveQuoteDraftAction(payloadJson: string) {
   const materialMap = new Map(materials.map((m) => [m.id, m]));
   const serviceMap = new Map(services.map((s) => [s.id, s]));
   const setMap = new Map(sets.map((s) => [s.id, s]));
-
-  function currentPrice(m: MaterialRow): number {
-    const today = new Date().toISOString().slice(0, 10);
-    const applicable = (m.material_prices ?? [])
-      .filter((p) => p.valid_from <= today)
-      .sort((a, b) => (a.valid_from < b.valid_from ? 1 : -1));
-    return Number(applicable[0]?.unit_price ?? 0);
-  }
 
   const engineJobs: QuoteJobInput[] = payload.jobs.map((job) => ({
     laborMethod: job.labor_method,
@@ -180,32 +276,25 @@ export async function saveQuoteDraftAction(payloadJson: string) {
     payload.jobs.reduce((a, j) => a + (j.other_costs ?? 0), 0),
   );
 
-  const quoteNumber = await nextQuoteNumber(supabase, ctx.tenantId);
+  return { margin, otherCosts, breakdown, materialMap, serviceMap, setMap };
+}
 
-  const { data: quote, error: qErr } = await supabase
-    .from("quotes")
-    .insert({
-      tenant_id: ctx.tenantId,
-      client_id: payload.client_id,
-      quote_number: quoteNumber,
-      status: "draft",
-      version_number: 0,
-      margin_percent: margin ?? null,
-      currency: ctx.currency,
-      subtotal_materials: breakdown.materials,
-      subtotal_labor: breakdown.labor,
-      complexity_amount: breakdown.complexity,
-      urgency_amount: breakdown.urgency,
-      other_costs_amount: otherCosts,
-      margin_amount: breakdown.margin,
-      suggested_price: round2(breakdown.suggestedPrice + otherCosts),
-      final_price: null,
-      valid_until: payload.valid_until || defaultValidUntil(),
-      notes: payload.notes || null,
-    })
-    .select("id")
-    .single();
-  if (qErr) throw new Error(qErr.message);
+function currentPrice(m: MaterialRow): number {
+  const today = new Date().toISOString().slice(0, 10);
+  const applicable = (m.material_prices ?? [])
+    .filter((p) => p.valid_from <= today)
+    .sort((a, b) => (a.valid_from < b.valid_from ? 1 : -1));
+  return Number(applicable[0]?.unit_price ?? 0);
+}
+
+async function replaceDraftJobs(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  ctx: Awaited<ReturnType<typeof requireSessionContext>>,
+  payload: QuoteDraftPayload,
+  resolved: ResolvedDraft,
+  quoteId: string,
+) {
+  const { materialMap, serviceMap, setMap } = resolved;
 
   for (let i = 0; i < payload.jobs.length; i++) {
     const job = payload.jobs[i];
@@ -225,7 +314,7 @@ export async function saveQuoteDraftAction(payloadJson: string) {
       .from("quote_jobs")
       .insert({
         tenant_id: ctx.tenantId,
-        quote_id: quote.id,
+        quote_id: quoteId,
         job_category_id: job.job_category_id || null,
         person_id: job.person_id || null,
         garment_type: job.garment_type || null,
@@ -244,13 +333,13 @@ export async function saveQuoteDraftAction(payloadJson: string) {
       .single();
     if (jErr) throw new Error(jErr.message);
 
-    const itemRows = job.services
-      .flatMap((s) => {
-        const svc = serviceMap.get(s.service_id);
-        if (!svc) return [];
-        const unitPrice = Number(svc.base_price ?? 0);
-        const qty = Number(s.quantity);
-        return [{
+    const itemRows = job.services.flatMap((s) => {
+      const svc = serviceMap.get(s.service_id);
+      if (!svc) return [];
+      const unitPrice = Number(svc.base_price ?? 0);
+      const qty = Number(s.quantity);
+      return [
+        {
           tenant_id: ctx.tenantId,
           quote_job_id: jobRow.id,
           service_id: svc.id,
@@ -259,8 +348,9 @@ export async function saveQuoteDraftAction(payloadJson: string) {
           estimated_minutes: svc.estimated_minutes,
           unit_price_snapshot: unitPrice,
           total: round2(unitPrice * qty),
-        }];
-      });
+        },
+      ];
+    });
     if (itemRows.length) {
       const { error } = await supabase.from("quote_items").insert(itemRows);
       if (error) throw new Error(error.message);
@@ -269,9 +359,7 @@ export async function saveQuoteDraftAction(payloadJson: string) {
     const matRows = job.materials.map((m) => {
       const mat = materialMap.get(m.material_id);
       if (!mat) throw new Error("material missing");
-      const waste = Number(
-        m.waste_percent ?? ctx.defaultWastePercent ?? 0,
-      );
+      const waste = Number(m.waste_percent ?? ctx.defaultWastePercent ?? 0);
       const unitPrice = currentPrice(mat);
       const qty = Number(m.quantity);
       const total = round2(qty * unitPrice * (1 + waste / 100));
@@ -292,9 +380,6 @@ export async function saveQuoteDraftAction(payloadJson: string) {
       if (error) throw new Error(error.message);
     }
   }
-
-  revalidatePath("/quotes");
-  redirect((`/quotes/${quote.id}`) as never);
 }
 
 function round2(n: number) {
