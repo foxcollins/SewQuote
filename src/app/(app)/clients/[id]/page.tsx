@@ -5,7 +5,13 @@ import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { ClientForm } from "@/modules/clients/client-form";
 import { archiveClientAction } from "@/modules/clients/actions";
-import { Card, EmptyState, PageHeader, SectionTitle } from "@/components/ui/primitives";
+import { PersonForm } from "@/modules/clients/person-form";
+import {
+  Card,
+  EmptyState,
+  PageHeader,
+  SectionTitle,
+} from "@/components/ui/primitives";
 
 export default async function ClientDetailPage({
   params,
@@ -87,6 +93,12 @@ export default async function ClientDetailPage({
             </li>
           )}
         </ul>
+        <Card className="mt-3 p-4">
+          <SectionTitle>
+            {persons?.length ? "Añadir persona" : "Crear primera persona"}
+          </SectionTitle>
+          <PersonForm clientId={id} />
+        </Card>
       </section>
 
       <section>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
@@ -297,6 +298,17 @@ className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--sur
               </select>
             </label>
           </div>
+          {clientId && clientPersons.length === 0 && (
+            <p className="mt-2 text-xs text-[var(--ink-muted)]">
+              Sin personas para este cliente.{" "}
+              <Link
+                href={`/clients/${clientId}` as Route}
+                className="font-semibold text-[var(--primary)]"
+              >
+                Añadir en la ficha del cliente
+              </Link>
+            </p>
+          )}
 
           <label className="mt-3 block text-sm font-semibold">
             Tipo de prenda
