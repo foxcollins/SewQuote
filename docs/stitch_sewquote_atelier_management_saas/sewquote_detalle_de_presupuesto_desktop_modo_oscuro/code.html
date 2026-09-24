@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SewQuote · Presupuesto #102 · Detalle y Cálculo Transparente</title>
+<!-- Material Symbols Outlined literal transcription link -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Fonts: Newsreader, Plus Jakarta Sans, JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary": "#f7ba87",
+            "on-surface": "#e4e2e4",
+            "on-primary": "#5c1a00",
+            "on-secondary-container": "#9bbdaa",
+            "secondary-fixed-dim": "#accebb",
+            "surface-container-low": "#1b1b1d",
+            "status-success-bg": "#1c2921",
+            "on-tertiary-container": "#422100",
+            "error-container": "#93000a",
+            "secondary-fixed": "#c7ebd6",
+            "surface-bright": "#39393b",
+            "on-secondary-fixed-variant": "#2e4d3e",
+            "surface-tint": "#ffb59c",
+            "tertiary-fixed": "#ffdcc1",
+            "status-success-text": "#8ec5a6",
+            "terracotta-bright": "#e07148",
+            "primary-container": "#e07148",
+            "on-primary-fixed": "#380c00",
+            "on-primary-fixed-variant": "#802a05",
+            "on-surface-variant": "#ddc0b7",
+            "primary": "#ffb59c",
+            "on-tertiary-fixed": "#2e1500",
+            "border-subtle": "#27262c",
+            "border-refined": "#333238",
+            "surface": "#131315",
+            "primary-fixed": "#ffdbcf",
+            "secondary-container": "#2e4d3e",
+            "inverse-surface": "#e4e2e4",
+            "status-warning-bg": "#2b2218",
+            "error": "#ffb4ab",
+            "on-secondary-fixed": "#012114",
+            "surface-elevated": "#26262b",
+            "status-error-bg": "#2e1a1b",
+            "surface-container-highest": "#353437",
+            "outline": "#a58b83",
+            "on-error": "#690005",
+            "on-background": "#e4e2e4",
+            "inverse-on-surface": "#303032",
+            "status-warning-text": "#e4a76c",
+            "on-error-container": "#ffdad6",
+            "text-muted": "#6e6a64",
+            "outline-variant": "#56423c",
+            "on-tertiary": "#4c2701",
+            "surface-card": "#1e1e22",
+            "surface-container": "#1f1f21",
+            "text-ecru": "#ede8e1",
+            "surface-base": "#161618",
+            "secondary": "#accebb",
+            "on-tertiary-fixed-variant": "#663d14",
+            "surface-container-high": "#2a2a2c",
+            "text-linen": "#a8a29a",
+            "surface-dim": "#131315",
+            "on-secondary": "#173628",
+            "terracotta-core": "#c85a32",
+            "inverse-primary": "#9f411c",
+            "surface-container-lowest": "#0e0e10",
+            "tertiary-container": "#bb8556",
+            "on-primary-container": "#501500",
+            "surface-variant": "#353437",
+            "status-error-text": "#e27878",
+            "primary-fixed-dim": "#ffb59c",
+            "tertiary-fixed-dim": "#f7ba87",
+            "background": "#131315"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Newsreader"],
+            "title-md": ["Plus Jakarta Sans"],
+            "metric-md": ["JetBrains Mono"],
+            "headline-md": ["Newsreader"],
+            "headline-lg": ["Newsreader"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-sm": ["Newsreader"],
+            "display-lg": ["Newsreader"],
+            "label-md": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Newsreader"],
+            "body-md": ["Plus Jakarta Sans"],
+            "metric-lg": ["JetBrains Mono"],
+            "body-lg": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "label-sm": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "title-md": ["1rem", { "lineHeight": "1.5rem", "fontWeight": "600" }],
+            "metric-md": ["0.9375rem", { "lineHeight": "1.25rem", "fontWeight": "500" }],
+            "headline-md": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-lg": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "body-sm": ["0.8125rem", { "lineHeight": "1.25rem", "fontWeight": "400" }],
+            "headline-sm": ["1.25rem", { "lineHeight": "1.75rem", "fontWeight": "600" }],
+            "display-lg": ["3rem", { "lineHeight": "3.5rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "label-md": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "display-lg-mobile": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "body-md": ["0.9375rem", { "lineHeight": "1.5rem", "fontWeight": "400" }],
+            "metric-lg": ["1.375rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-base text-text-ecru min-h-screen flex antialiased selection:bg-terracotta-core selection:text-text-ecru">
+<!-- ========================================================================= -->
+<!-- LEFT SIDE NAVIGATION BAR (SHARED COMPONENT: SideNavBar)                    -->
+<!-- Presupuestos is ACTIVE (Index 1)                                          -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between p-4 border-r border-border-refined shrink-0 bg-surface-base z-30">
+<!-- Atelier Header Branding -->
+<div>
+<div class="flex items-center gap-3 px-2 py-3 mb-4">
+<div class="w-9 h-9 rounded-lg bg-surface-elevated border border-border-refined flex items-center justify-center text-terracotta-bright shadow-sm">
+<span class="material-symbols-outlined text-[20px]" data-icon="content_cut">content_cut</span>
+</div>
+<div>
+<div class="text-headline-sm font-headline-sm font-semibold tracking-tight text-text-ecru">SewQuote</div>
+<div class="text-body-sm font-body-sm text-text-muted text-[11px] tracking-wide">Atelier Haute Couture</div>
+</div>
+</div>
+<!-- Quick CTA Button -->
+<button class="w-full mb-6 py-2.5 px-3 rounded-lg bg-terracotta-core hover:bg-terracotta-bright text-text-ecru font-label-md text-label-md transition-all duration-150 active:scale-[0.99] flex items-center justify-center gap-2 border border-terracotta-bright/20 shadow-sm">
+<span class="material-symbols-outlined text-[18px]" data-icon="add">add</span>
+<span>+ Nuevo Presupuesto</span>
+</button>
+<!-- Main Navigation Menu -->
+<nav class="space-y-1">
+<!-- 0: Dashboard (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- 1: Presupuestos (ACTIVE) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-elevated text-terracotta-bright font-label-md text-label-md border border-border-refined transition-all duration-150 active:scale-[0.99]" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="request_quote" data-weight="fill" style="font-variation-settings: 'FILL' 1;">request_quote</span>
+<span>Presupuestos</span>
+</a>
+<!-- 2: Trabajos (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="checkroom">checkroom</span>
+<span>Trabajos</span>
+</a>
+<!-- 3: Clientes & Personas (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="group">group</span>
+<span>Clientes &amp; Personas</span>
+</a>
+<!-- 4: Materiales (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="inventory_2">inventory_2</span>
+<span>Materiales</span>
+</a>
+<!-- 5: Calendario (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="calendar_today">calendar_today</span>
+<span>Calendario</span>
+</a>
+<!-- 6: Configuración (Inactive) -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card transition-colors duration-150 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]" data-icon="settings">settings</span>
+<span>Configuración</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Atelier Footer -->
+<div class="pt-4 border-t border-border-refined space-y-1">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card cursor-pointer transition-colors duration-150 font-label-md text-label-md">
+<span class="material-symbols-outlined text-[20px]" data-icon="account_circle">account_circle</span>
+<span class="truncate">Atelier Maria</span>
+</div>
+<div class="flex items-center justify-between px-3 py-2 rounded-lg text-text-muted hover:text-text-ecru hover:bg-surface-card cursor-pointer transition-colors duration-150 font-label-sm text-label-sm">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="language">language</span>
+<span>ES · Idioma</span>
+</span>
+<span class="flex items-center gap-1.5 text-text-linen">
+<span class="material-symbols-outlined text-[18px]" data-icon="dark_mode">dark_mode</span>
+<span>Modo Oscuro</span>
+</span>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN VIEWPORT CONTAINER (Margin 256px for Left Sidebar)                  -->
+<!-- ========================================================================= -->
+<div class="ml-64 flex-1 flex flex-col min-w-0 bg-surface-base">
+<!-- Top Utility Bar (Shared Component: TopNavBar adaptation) -->
+<header class="sticky top-0 z-20 w-full h-16 flex justify-between items-center px-8 border-b border-border-refined bg-surface-base/90 backdrop-blur-md">
+<!-- Breadcrumbs & Search -->
+<div class="flex items-center gap-4">
+<nav class="flex items-center gap-2 text-label-md font-label-md">
+<a class="text-text-linen hover:text-text-ecru transition-colors" href="#">Presupuestos</a>
+<span class="text-text-muted">/</span>
+<span class="text-terracotta-bright font-semibold">Presupuesto #102</span>
+</nav>
+<span class="h-4 w-px bg-border-refined"></span>
+<div class="relative w-64">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted text-[18px]" data-icon="search">search</span>
+<input class="w-full bg-surface-card border border-border-refined rounded-lg pl-8 pr-3 py-1.5 text-body-sm font-body-sm text-text-ecru placeholder-text-muted focus:outline-none focus:border-terracotta-bright focus:ring-1 focus:ring-terracotta-bright/20 transition-all" placeholder="Buscar insumo o medida..." type="text"/>
+</div>
+</div>
+<!-- Trailing Action Badges & Atelier Profile -->
+<div class="flex items-center gap-3">
+<div class="flex items-center gap-1 bg-surface-card border border-border-refined px-2.5 py-1.5 rounded-lg text-text-linen text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px] text-terracotta-bright" data-icon="palette">palette</span>
+<span>Atelier Principal</span>
+</div>
+<button class="p-2 text-text-linen hover:text-text-ecru hover:bg-surface-card rounded-lg transition-colors border border-transparent hover:border-border-refined" title="Notificaciones">
+<span class="material-symbols-outlined text-[20px]" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-text-linen hover:text-text-ecru hover:bg-surface-card rounded-lg transition-colors border border-transparent hover:border-border-refined" title="Ayuda">
+<span class="material-symbols-outlined text-[20px]" data-icon="help_outline">help_outline</span>
+</button>
+<span class="h-5 w-px bg-border-refined"></span>
+<!-- Profile Avatar Pill -->
+<div class="flex items-center gap-2 pl-1 cursor-pointer">
+<div class="w-8 h-8 rounded-full bg-surface-elevated border border-border-refined flex items-center justify-center text-text-ecru font-semibold text-xs tracking-wider ring-1 ring-border-refined">
+            MG
+          </div>
+<span class="text-label-md font-label-md text-text-ecru">M. González</span>
+</div>
+</div>
+</header>
+<!-- Main Workspace Content Container -->
+<main class="p-8 max-w-[1440px] mx-auto w-full space-y-6">
+<!-- ===================================================================== -->
+<!-- TOP ACTION HEADER BAR                                                 -->
+<!-- ===================================================================== -->
+<section class="bg-surface-card border border-border-refined rounded-xl p-5 shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+<!-- Left: Title, Badges & Version Selector -->
+<div class="flex flex-wrap items-center gap-3">
+<div class="flex items-center gap-3">
+<span class="text-headline-md font-headline-md text-text-ecru tracking-tight">Presupuesto #102</span>
+<!-- Status: Enviado -->
+<span class="px-2.5 py-0.5 rounded bg-surface-elevated border border-border-refined text-text-linen text-label-sm font-label-sm uppercase tracking-wider">
+                ENVIADO
+              </span>
+<!-- Status: Urgencia/Vencimiento -->
+<span class="px-2.5 py-0.5 rounded bg-status-warning-bg border border-terracotta-bright/30 text-status-warning-text text-label-sm font-label-sm flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px]" data-icon="schedule">schedule</span>
+                Vence en 24h (30/09/2026)
+              </span>
+</div>
+<span class="hidden md:inline-block h-4 w-px bg-border-refined"></span>
+<!-- Version Switcher Dropdown UI -->
+<div class="relative">
+<select class="appearance-none bg-surface-base border border-border-refined hover:border-terracotta-bright/50 text-text-ecru text-body-sm font-body-sm rounded-lg pl-3 pr-8 py-1.5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-terracotta-bright">
+<option selected="" value="v2">v2 — R$ 436.00 (Actual)</option>
+<option value="v1">v1 — R$ 410.00 - 15/09/2026</option>
+</select>
+<span class="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-text-muted text-[18px] pointer-events-none" data-icon="expand_more">expand_more</span>
+</div>
+</div>
+<!-- Right: Action Buttons Row -->
+<div class="flex flex-wrap items-center gap-2">
+<button class="px-3 py-2 rounded-lg bg-surface-card border border-border-refined hover:bg-surface-elevated hover:border-terracotta-bright text-text-ecru text-label-md font-label-md transition-all duration-150 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-text-linen" data-icon="edit">edit</span>
+<span>Editar</span>
+</button>
+<button class="px-3 py-2 rounded-lg bg-surface-card border border-border-refined hover:bg-surface-elevated hover:border-terracotta-bright text-text-ecru text-label-md font-label-md transition-all duration-150 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-text-linen" data-icon="content_copy">content_copy</span>
+<span>Duplicar</span>
+</button>
+<button class="px-3 py-2 rounded-lg bg-surface-card border border-border-refined hover:bg-surface-elevated hover:border-terracotta-bright text-text-ecru text-label-md font-label-md transition-all duration-150 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px] text-text-linen" data-icon="visibility">visibility</span>
+<span>Ver vista pública</span>
+</button>
+<button class="px-3 py-2 rounded-lg bg-[#1c2921] border border-[#769785]/40 hover:bg-[#23352b] text-[#8ec5a6] text-label-md font-label-md transition-all duration-150 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[18px]" data-icon="share">share</span>
+<span>Compartir WhatsApp</span>
+</button>
+<button class="px-4 py-2 rounded-lg bg-terracotta-core hover:bg-terracotta-bright text-text-ecru font-label-md text-label-md transition-all duration-150 shadow-sm active:scale-[0.98] flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+<span>Aprobar Presupuesto</span>
+</button>
+</div>
+</div>
+</section>
+<!-- ===================================================================== -->
+<!-- TWO-COLUMN WORKSPACE: 65% Main Canvas | 35% Sticky Calculation Tally   -->
+<!-- ===================================================================== -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+<!-- =================================================================== -->
+<!-- LEFT MAIN PANEL (65% width = 8 cols out of 12)                      -->
+<!-- =================================================================== -->
+<div class="lg:col-span-8 space-y-6">
+<!-- 1. Client & Persona Header Card -->
+<div class="bg-surface-card border border-border-refined rounded-xl p-5 relative overflow-hidden">
+<!-- Subtle architectural background accent -->
+<div class="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-surface-elevated/40 to-transparent pointer-events-none"></div>
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded-xl bg-surface-elevated border border-border-refined flex items-center justify-center text-text-ecru font-serif text-xl tracking-tight shadow-inner">
+                  MG
+                </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-label-sm font-label-sm text-text-muted uppercase tracking-wider">Cliente Contratante (Pagador)</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-elevated border border-border-refined text-terracotta-bright text-[11px] font-medium font-label-sm">
+                      Bespoke Client
+                    </span>
+</div>
+<h2 class="text-headline-sm font-headline-sm text-text-ecru mt-0.5">María González</h2>
+<div class="flex flex-wrap items-center gap-4 mt-1 text-body-sm font-body-sm text-text-linen">
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-text-muted" data-icon="phone">phone</span>
+                      +55 11 98765-4321
+                    </span>
+<span class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-text-muted" data-icon="mail">mail</span>
+                      maria.gonzalez@email.com
+                    </span>
+<span class="flex items-center gap-1 text-text-muted">
+<span class="material-symbols-outlined text-[16px]" data-icon="location_on">location_on</span>
+                      São Paulo, SP
+                    </span>
+</div>
+</div>
+</div>
+<button class="px-3 py-1.5 rounded-lg bg-surface-elevated hover:bg-surface-base border border-border-refined text-text-linen hover:text-text-ecru text-label-sm font-label-sm transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]" data-icon="history">history</span>
+<span>Ficha Técnica</span>
+</button>
+</div>
+</div>
+<!-- 2. Trabajos en este Presupuesto (Multi-item Cards) -->
+<div class="space-y-5">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-terracotta-bright text-[20px]" data-icon="checkroom">checkroom</span>
+<h3 class="text-headline-sm font-headline-sm text-text-ecru">Trabajos en este presupuesto (2)</h3>
+</div>
+<span class="text-label-sm font-label-sm text-text-muted">Desglose individual por prenda</span>
+</div>
+<!-- TRABAJO 1: Vestido de fiesta largo -->
+<div class="bg-surface-card border border-border-refined rounded-xl overflow-hidden shadow-sm">
+<!-- Item Header Bar -->
+<div class="p-5 border-b border-border-subtle bg-surface-elevated/40 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-elevated border border-border-refined flex items-center justify-center text-terracotta-bright font-metric-md text-metric-md">
+                    01
+                  </div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="text-title-md font-title-md text-text-ecru">Vestido de fiesta largo</h4>
+<span class="px-2 py-0.5 rounded bg-surface-elevated border border-border-refined text-text-linen text-label-sm font-label-sm">
+                        Confección a medida
+                      </span>
+</div>
+<div class="flex items-center gap-2 mt-0.5 text-body-sm font-body-sm text-text-linen">
+<span class="text-text-muted">Persona asignada:</span>
+<span class="text-text-ecru font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-terracotta-bright" data-icon="person">person</span>
+                        Ana González <span class="text-text-muted font-normal">(Hija)</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Subtotal Trabajo 1 -->
+<div class="text-right">
+<div class="text-label-sm font-label-sm text-text-muted uppercase">Subtotal Trabajo 1</div>
+<div class="text-metric-lg font-metric-lg text-text-ecru font-semibold">R$ 307.00</div>
+</div>
+</div>
+<!-- Measurement Freeze Snapshot -->
+<div class="p-5 border-b border-border-subtle space-y-3">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-text-linen text-[18px]" data-icon="straighten">straighten</span>
+<span class="text-label-md font-label-md text-text-ecru">Snapshot de medidas congeladas</span>
+<span class="text-label-sm font-label-sm text-text-muted">(Tomadas el 20/09/2026 · Unidad: CM)</span>
+</div>
+<!-- Visual Alert Warning -->
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-status-warning-bg border border-terracotta-bright/30 text-status-warning-text text-label-sm font-label-sm">
+<span class="material-symbols-outlined text-[16px]" data-icon="warning">warning</span>
+<span>Medidas registradas hace 8 meses · </span>
+<button class="underline hover:text-text-ecru font-semibold">Confirmar / Actualizar</button>
+</div>
+</div>
+<!-- Grid of measurements -->
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-1">
+<div class="bg-surface-base border border-border-refined rounded-lg p-2.5 flex justify-between items-center">
+<span class="text-body-sm font-body-sm text-text-linen">Busto</span>
+<span class="font-metric-md text-metric-md text-text-ecru">90 <span class="text-text-muted text-xs">cm</span></span>
+</div>
+<div class="bg-surface-base border border-border-refined rounded-lg p-2.5 flex justify-between items-center">
+<span class="text-body-sm font-body-sm text-text-linen">Cintura</span>
+<span class="font-metric-md text-metric-md text-text-ecru">74 <span class="text-text-muted text-xs">cm</span></span>
+</div>
+<div class="bg-surface-base border border-border-refined rounded-lg p-2.5 flex justify-between items-center">
+<span class="text-body-sm font-body-sm text-text-linen">Cadera</span>
+<span class="font-metric-md text-metric-md text-text-ecru">97 <span class="text-text-muted text-xs">cm</span></span>
+</div>
+<div class="bg-surface-base border border-border-refined rounded-lg p-2.5 flex justify-between items-center">
+<span class="text-body-sm font-body-sm text-text-linen">Largo Falda</span>
+<span class="font-metric-md text-metric-md text-text-ecru">102 <span class="text-text-muted text-xs">cm</span></span>
+</div>
+</div>
+</div>
+<!-- Materiales Congelados Table -->
+<div class="p-5 border-b border-border-subtle space-y-3">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-text-ecru flex items-center gap-2">
+<span class="material-symbols-outlined text-text-linen text-[18px]" data-icon="inventory_2">inventory_2</span>
+                    Materiales Congelados (Insumos Atelier)
+                  </span>
+<span class="text-label-sm font-label-sm text-text-linen font-metric-md">Subtotal: R$ 97.00</span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-border-subtle text-label-sm font-label-sm text-text-muted uppercase tracking-wider">
+<th class="py-2 pr-4 font-normal">Descripción del Material</th>
+<th class="py-2 px-4 font-normal text-right">Cantidad</th>
+<th class="py-2 px-4 font-normal text-right">Precio Unit.</th>
+<th class="py-2 pl-4 font-normal text-right">Total</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle text-body-sm font-body-sm">
+<tr>
+<td class="py-2.5 pr-4 text-text-ecru">Tela Oxford azul crepé seda</td>
+<td class="py-2.5 px-4 text-right font-metric-md text-text-linen">2.5 m</td>
+<td class="py-2.5 px-4 text-right font-metric-md text-text-linen">R$ 32.00</td>
+<td class="py-2.5 pl-4 text-right font-metric-md text-text-ecru font-medium">R$ 80.00</td>
+</tr>
+<tr>
+<td class="py-2.5 pr-4 text-text-ecru">Cremallera invisible reforzada 40cm</td>
+<td class="py-2.5 px-4 text-right font-metric-md text-text-linen">1 ud</td>
+<td class="py-2.5 px-4 text-right font-metric-md text-text-linen">R$ 8.00</td>
+<td class="py-2.5 pl-4 text-right font-metric-md text-text-ecru font-medium">R$ 8.00</td>
+</tr>
+<tr>
+<td class="py-2.5 pr-4 text-text-ecru">Botones forrados en tejido artesanal</td>
+<td class="py-2.5 px-4 text-right font-metric-md text-text-linen">6 ud</td>
+<td class="py-2.5 px-4 text-right font-metric-md text-text-linen">R$ 1.50</td>
+<td class="py-2.5 pl-4 text-right font-metric-md text-text-ecru font-medium">R$ 9.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Mano de Obra Especializada -->
+<div class="p-5 bg-surface-elevated/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+<div class="flex items-start gap-3">
+<div class="p-2 rounded-lg bg-surface-base border border-border-refined text-terracotta-bright mt-0.5">
+<span class="material-symbols-outlined text-[18px]" data-icon="precision_manufacturing">precision_manufacturing</span>
+</div>
+<div>
+<div class="text-label-md font-label-md text-text-ecru">Mano de Obra Especializada</div>
+<div class="text-body-sm font-body-sm text-text-linen">
+                      Patronaje base y confección atelier <span class="text-text-muted font-metric-md text-xs">(6 horas estimadas × R$ 35.00/h)</span>
+</div>
+</div>
+</div>
+<div class="text-right">
+<span class="font-metric-md text-metric-md text-text-ecru font-semibold">R$ 210.00</span>
+</div>
+</div>
+</div>
+<!-- TRABAJO 2: Ajuste fino de pantalón lino -->
+<div class="bg-surface-card border border-border-refined rounded-xl overflow-hidden shadow-sm">
+<!-- Item Header Bar -->
+<div class="p-5 border-b border-border-subtle bg-surface-elevated/40 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-surface-elevated border border-border-refined flex items-center justify-center text-terracotta-bright font-metric-md text-metric-md">
+                    02
+                  </div>
+<div>
+<div class="flex items-center gap-2">
+<h4 class="text-title-md font-title-md text-text-ecru">Ajuste fino de pantalón lino</h4>
+<span class="px-2 py-0.5 rounded bg-surface-elevated border border-border-refined text-text-linen text-label-sm font-label-sm">
+                        Ajuste / Entrega express
+                      </span>
+</div>
+<div class="flex items-center gap-2 mt-0.5 text-body-sm font-body-sm text-text-linen">
+<span class="text-text-muted">Persona asignada:</span>
+<span class="text-text-ecru font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-terracotta-bright" data-icon="person">person</span>
+                        Carlos Silva <span class="text-text-muted font-normal">(Esposo)</span>
+</span>
+</div>
+</div>
+</div>
+<!-- Subtotal Trabajo 2 -->
+<div class="text-right">
+<div class="text-label-sm font-label-sm text-text-muted uppercase">Subtotal Trabajo 2</div>
+<div class="text-metric-lg font-metric-lg text-text-ecru font-semibold">R$ 55.00</div>
+</div>
+</div>
+<!-- Insumos & Mano de Obra Fija Detail -->
+<div class="p-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div class="bg-surface-base border border-border-refined rounded-lg p-3.5 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-text-muted text-[20px]" data-icon="category">category</span>
+<div>
+<div class="text-label-sm font-label-sm text-text-ecru">Insumos básicos</div>
+<div class="text-body-sm font-body-sm text-text-muted text-xs">Entretela termo adhesiva + Hilo torzal</div>
+</div>
+</div>
+<span class="font-metric-md text-metric-md text-text-ecru">R$ 15.00</span>
+</div>
+<div class="bg-surface-base border border-border-refined rounded-lg p-3.5 flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<span class="material-symbols-outlined text-text-muted text-[20px]" data-icon="handyman">handyman</span>
+<div>
+<div class="text-label-sm font-label-sm text-text-ecru">Mano de obra fija</div>
+<div class="text-body-sm font-body-sm text-text-muted text-xs">Bajo invisible a mano con cinta de refuerzo</div>
+</div>
+</div>
+<span class="font-metric-md text-metric-md text-text-ecru">R$ 40.00</span>
+</div>
+</div>
+</div>
+<!-- Botón Agregar otro trabajo -->
+<button class="w-full py-3.5 border-2 border-dashed border-border-refined hover:border-terracotta-bright/60 rounded-xl text-text-linen hover:text-text-ecru bg-surface-card/40 hover:bg-surface-elevated/30 transition-all duration-150 flex items-center justify-center gap-2 font-label-md text-label-md group">
+<span class="material-symbols-outlined text-[20px] text-terracotta-bright group-hover:rotate-90 transition-transform duration-200" data-icon="add_circle">add_circle</span>
+<span>+ Agregar otro trabajo a este presupuesto</span>
+</button>
+</div>
+</div>
+<!-- =================================================================== -->
+<!-- RIGHT SIDE STICKY PANEL (35% width = 4 cols out of 12)             -->
+<!-- Cálculo Transparente de Precios (Fórmula Atelier)                   -->
+<!-- =================================================================== -->
+<div class="lg:col-span-4 sticky top-24 space-y-6">
+<!-- Calculation Master Box -->
+<div class="bg-surface-card border border-border-refined rounded-xl p-5 shadow-lg relative overflow-hidden">
+<!-- Header -->
+<div class="flex items-center justify-between pb-4 border-b border-border-refined">
+<div>
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-terracotta-bright">Cálculo Transparente</span>
+<h3 class="text-headline-sm font-headline-sm text-text-ecru mt-0.5">Fórmula Atelier</h3>
+</div>
+<div class="p-2 rounded-lg bg-surface-elevated border border-border-refined text-terracotta-bright">
+<span class="material-symbols-outlined text-[20px]" data-icon="calculate">calculate</span>
+</div>
+</div>
+<!-- Line Item Breakdown -->
+<div class="py-4 space-y-3.5 border-b border-border-subtle">
+<!-- Materiales -->
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-text-linen flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-text-muted" data-icon="inventory_2">inventory_2</span>
+                  Suma Materiales (T1 + T2)
+                </span>
+<span class="font-metric-md text-metric-md text-text-ecru">R$ 112.00</span>
+</div>
+<!-- Mano de Obra -->
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-text-linen flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-text-muted" data-icon="timer">timer</span>
+                  Mano de Obra (Horas + Fijo)
+                </span>
+<span class="font-metric-md text-metric-md text-text-ecru">R$ 250.00</span>
+</div>
+<!-- Hairline separator -->
+<div class="h-px bg-border-subtle"></div>
+<!-- Subtotal Coste Base -->
+<div class="flex justify-between items-center font-medium">
+<span class="text-text-ecru font-label-md text-label-md">Subtotal Coste Base</span>
+<span class="font-metric-md text-metric-md text-text-ecru font-semibold">R$ 362.00</span>
+</div>
+<!-- Atelier Margin Adjustment row -->
+<div class="bg-surface-elevated border border-border-refined rounded-lg p-3 space-y-2">
+<div class="flex justify-between items-center text-body-sm font-body-sm">
+<span class="text-text-linen flex items-center gap-1 text-xs">
+<span class="material-symbols-outlined text-[15px] text-terracotta-bright" data-icon="trending_up">trending_up</span>
+                    Margen taller (+30% configurable)
+                  </span>
+<span class="font-metric-md text-metric-md text-terracotta-bright font-medium">+ R$ 108.60</span>
+</div>
+<div class="w-full bg-surface-base h-1.5 rounded-full overflow-hidden">
+<div class="bg-terracotta-core h-full w-[30%]"></div>
+</div>
+</div>
+</div>
+<!-- Grand Total Module -->
+<div class="pt-4 pb-2">
+<div class="flex items-baseline justify-between">
+<div>
+<div class="text-label-sm font-label-sm uppercase tracking-wider text-text-muted">Total Presupuesto</div>
+<div class="text-body-sm font-body-sm text-text-linen text-xs">Impuestos e insumos incluidos</div>
+</div>
+<div class="text-right">
+<span class="text-headline-md font-headline-md text-terracotta-bright font-semibold">R$ 470.60</span>
+</div>
+</div>
+</div>
+<!-- Primary Action inside Sticky -->
+<div class="pt-4">
+<button class="w-full py-3 rounded-lg bg-terracotta-core hover:bg-terracotta-bright text-text-ecru font-label-md text-label-md transition-all duration-150 shadow-sm active:scale-[0.98] flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[18px]" data-icon="check_circle">check_circle</span>
+<span>Aprobar Presupuesto</span>
+</button>
+</div>
+</div>
+<!-- Condiciones & Fechas Pactadas -->
+<div class="bg-surface-card border border-border-refined rounded-xl p-5 space-y-4">
+<h4 class="text-label-md font-label-md text-text-ecru flex items-center gap-2">
+<span class="material-symbols-outlined text-text-linen text-[18px]" data-icon="event_note">event_note</span>
+              Condiciones y Fechas Pactadas
+            </h4>
+<div class="space-y-2.5 text-body-sm font-body-sm">
+<div class="flex items-start gap-2.5 text-text-linen">
+<span class="material-symbols-outlined text-terracotta-bright text-[18px] shrink-0 mt-0.5" data-icon="check">check</span>
+<span><strong class="text-text-ecru font-medium">2 pruebas programadas</strong> en atelier (primera prueba de hilván: 08/10).</span>
+</div>
+<div class="flex items-start gap-2.5 text-text-linen">
+<span class="material-symbols-outlined text-terracotta-bright text-[18px] shrink-0 mt-0.5" data-icon="check">check</span>
+<span>Requiere <strong class="text-text-ecru font-medium">50% de seña (R$ 235.30)</strong> para corte inicial.</span>
+</div>
+<div class="flex items-start gap-2.5 text-text-linen">
+<span class="material-symbols-outlined text-terracotta-bright text-[18px] shrink-0 mt-0.5" data-icon="lock_clock">lock_clock</span>
+<span>Validez de precios congelada por <strong class="text-text-ecru font-medium">10 días</strong> corridos.</span>
+</div>
+</div>
+</div>
+<!-- Quick WhatsApp Share Preview Box -->
+<div class="bg-surface-card border border-border-refined rounded-xl p-5 space-y-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2 text-label-md font-label-md text-text-ecru">
+<span class="material-symbols-outlined text-[#8ec5a6] text-[18px]" data-icon="chat">chat</span>
+<span>Compartir con Cliente</span>
+</div>
+<span class="text-[11px] font-label-sm text-[#8ec5a6] bg-[#1c2921] px-2 py-0.5 rounded border border-[#769785]/30">WhatsApp Listo</span>
+</div>
+<!-- Preview Snippet -->
+<div class="bg-surface-base border border-border-refined rounded-lg p-3 text-body-sm font-body-sm text-text-linen space-y-1.5 text-xs font-mono">
+<p class="text-text-ecru">Hola María! ✨ Te comparto el detalle de tu presupuesto #102 en SewQuote Atelier:</p>
+<p class="text-text-muted">Total: R$ 470.60 (Vestido largo fiesta + Ajuste pantalón)</p>
+<p class="text-terracotta-bright underline cursor-pointer truncate">sewquote.atelier/p/102-mg-v2</p>
+</div>
+<div class="flex gap-2 pt-1">
+<button class="flex-1 py-2 rounded-lg bg-surface-elevated hover:bg-surface-base border border-border-refined text-text-ecru font-label-sm text-label-sm transition-all flex items-center justify-center gap-1.5 active:scale-[0.99]">
+<span class="material-symbols-outlined text-[16px]" data-icon="content_copy">content_copy</span>
+<span>Copiar Enlace</span>
+</button>
+<button class="px-3 py-2 rounded-lg bg-[#1c2921] hover:bg-[#23352b] border border-[#769785]/40 text-[#8ec5a6] font-label-sm text-label-sm transition-all flex items-center justify-center gap-1 active:scale-[0.99]" title="Enviar mensaje">
+<span class="material-symbols-outlined text-[16px]" data-icon="send">send</span>
+<span>Enviar</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -5,6 +5,7 @@ Base visual: prototipo Stitch en `docs/stitch_sewquote_atelier_management_saas/`
 Fuentes del prototipo:
 - Design system: `atelier_craft_tech/DESIGN.md` (claro) y `atelier_craft_tech_dark_mode_adaptation/DESIGN.md` (oscuro)
 - Pantallas: login, dashboard, detalle de presupuesto, clientes/medidas, vista pública (+ variantes dark)
+- **Desktop (nuevas):** `sewquote_dashboard_operativo_desktop_modo_oscuro`, `sewquote_detalle_de_presupuesto_desktop_modo_oscuro`, `sewquote_clientes_y_medidas_desktop_modo_oscuro`, `sewquote_vista_p_blica_del_cliente_desktop`
 
 ## Principio de adaptación
 El prototipo es **base**, no especificación literal. Prioridad de verdad: `requirements.md` + `specs/*`. Si el mock muestra algo fuera de alcance, **no se construye**.
@@ -64,6 +65,20 @@ Escala clave: `display-lg`, `headline-lg/md/sm`, `title-md`, `body-lg/md/sm`, `l
 | Detalle dark | `sewquote_detalle_de_presupuesto_modo_oscuro` | Sí (dark) | — |
 | Clientes + personas + medidas | `sewquote_clientes_personas_y_medidas` | **Sí** | persona ≠ cliente (SPEC-005/007) |
 | Vista pública cliente | `sewquote_vista_p_blica_del_cliente` | **Sí** | alinear a SPEC-004 (aprobar/rechazar/sugerir) |
+| Dashboard desktop dark | `sewquote_dashboard_operativo_desktop_modo_oscuro` | **Sí** | sidebar + KPIs + 2 col |
+| Detalle presupuesto desktop | `sewquote_detalle_de_presupuesto_desktop_modo_oscuro` | **Sí** | 2 col: trabajos + cálculo sticky |
+| Clientes desktop | `sewquote_clientes_y_medidas_desktop_modo_oscuro` | **Sí** | lista + panel detalle |
+| Vista pública desktop | `sewquote_vista_p_blica_del_cliente_desktop` | **Sí** | 2 col: trabajos + resumen/CTA |
+
+## Layout desktop (>= lg)
+
+- **Sidebar fija** (~240px): logo, CTA “+ Nuevo presupuesto”, nav (Dashboard, Presupuestos, Trabajos, Clientes, Catálogo, Configuración), salir al pie.
+- **Topbar** sticky: búsqueda, chip tenant, ajustes, CTA “+ Nuevo encargo”.
+- **Contenido** `max-w-6xl` centrado (sin topbar/sidebar en mobile: header compacto + bottom nav).
+- **Detalle presupuesto / vista pública:** grid `1fr + 340–380px`; columna derecha sticky con cálculo, total y acciones.
+- **Listados** (quotes, works, clients): cards en grid 1/2/3 columnas según breakpoint.
+- **Dashboard:** KPIs en 4 col (`xl`), accesos + panel lateral.
+- **Sin inventar features del mock** (IA, calendario, alertas operativas fake) — solo layout y jerarquía visual.
 
 No hay mock de: listado de trabajos/work orders, catálogo servicios/materiales, config tenant, historial de precios → **se diseñan con mismos tokens** siguiendo specs (no inventar otro estilo).
 
@@ -110,7 +125,7 @@ No hay mock de: listado de trabajos/work orders, catálogo servicios/materiales,
 5. Clientes  
 *(Catálogo y Configuración en “Más” o secondary drawer — si solo caben 4, Má s agrupa catálogo/config.)*
 
-**Desktop:** sidebar con Dashboard, Presupuestos, Trabajos, Clientes, Catálogo, Configuración.
+**Desktop:** sidebar con Dashboard, Presupuestos, Trabajos, Clientes, Catálogo, Configuración (implementado en `app-shell.tsx`, `lg:` breakpoints).
 
 ## Pantillas clave a implementar (orden sugerido)
 

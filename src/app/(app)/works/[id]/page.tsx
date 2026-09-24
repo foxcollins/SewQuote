@@ -70,7 +70,7 @@ export default async function WorkDetailPage({
   const money = (n: number) => formatMoney(n, quote?.currency ?? ctx.currency, locale);
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="mx-auto max-w-3xl pb-8">
       <PageHeader
         title="Orden de trabajo"
         subtitle={`${(quote?.clients as { name?: string } | null)?.name ?? ""} · ${money(Number(work.actual_price ?? 0))} · v${work.quote_version_number}`}

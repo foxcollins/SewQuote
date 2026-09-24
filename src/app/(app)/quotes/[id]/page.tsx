@@ -107,10 +107,10 @@ export default async function QuoteDetailPage({
   );
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="pb-8">
       <PageHeader
         title={`#${String(quote.quote_number).padStart(3, "0")}`}
-        subtitle={`${(quote.clients as { name?: string } | null)?.name ?? ""} · v${quote.version_number} · ${tLabel(quote.status)}${quote.valid_until ? ` · ${formatDate(quote.valid_until, locale)}` : ""}`}
+        subtitle={`${client.name ?? ""} · v${quote.version_number} · ${tLabel(quote.status)}${quote.valid_until ? ` · ${formatDate(quote.valid_until, locale)}` : ""}`}
         action={
           <StatusBadge
             status={quote.status}
@@ -125,182 +125,188 @@ export default async function QuoteDetailPage({
         </p>
       )}
 
-      <Card className="mb-4 p-4">
-        <dl className="space-y-1 text-sm">
-          <div className="flex justify-between">
-            <dt>Materiales</dt>
-            <dd className="metric">{money(Number(quote.subtotal_materials))}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Mano de obra</dt>
-            <dd className="metric">{money(Number(quote.subtotal_labor))}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Complejidad</dt>
-            <dd className="metric">{money(Number(quote.complexity_amount))}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Urgencia</dt>
-            <dd className="metric">{money(Number(quote.urgency_amount))}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Otros</dt>
-            <dd className="metric">{money(Number(quote.other_costs_amount))}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Margen</dt>
-            <dd className="metric">{money(Number(quote.margin_amount))}</dd>
-          </div>
-          <div className="mt-2 flex justify-between border-t border-[var(--border)] pt-2 font-semibold">
-            <dt>Sugerido</dt>
-            <dd className="metric">{money(Number(quote.suggested_price))}</dd>
-          </div>
-          <div className="flex justify-between text-[var(--primary)]">
-            <dt>Final</dt>
-            <dd className="metric font-semibold">
-              {money(
-                quote.final_price != null ? Number(quote.final_price) : price,
-              )}
-            </dd>
-          </div>
-        </dl>
-        {quote.override_reason && (
-          <p className="mt-2 text-xs text-[var(--ink-muted)]">
-            Override: {quote.override_reason}
-          </p>
-        )}
-        {(quote.status === "draft" || quote.status === "sent") && (
-          <form
-            action={overrideFinalPriceAction.bind(null, quote.id)}
-            className="mt-3 grid grid-cols-[1fr_1fr_auto] gap-2"
-          >
-            <input
-              name="final_price"
-              type="number"
-              step="0.01"
-              placeholder="Precio final"
-              className={`${inputClass} h-10`}
-            />
-            <input
-              name="override_reason"
-              placeholder="Motivo"
-              className={`${inputClass} h-10`}
-            />
-            <Button type="submit" variant="secondary" size="sm">
-              OK
-            </Button>
-          </form>
-        )}
-      </Card>
+      <div className="grid gap-6 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px]">
+        <div className="min-w-0 space-y-4">
+          <section className="space-y-3">
+            <SectionTitle>Trabajos / piezas ({jobs.length})</SectionTitle>
+            {jobs.map((job, i) => (
+              <article
+                key={job.id}
+                className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_1px_2px_rgba(28,29,31,0.04)]"
+              >
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-sm font-semibold">
+                      {job.garment_type || `Pieza ${i + 1}`}
+                    </p>
+                    <p className="text-xs text-[var(--ink-muted)]">
+                      {job.job_categories?.name ?? ""}
+                      {job.persons?.name ? ` · ${job.persons.name}` : ""}
+                    </p>
+                  </div>
+                  <span className="text-[11px] uppercase text-[var(--ink-muted)]">
+                    {job.complexity} / {job.urgency}
+                  </span>
+                </div>
 
-      <section className="mb-4 space-y-3">
-        <SectionTitle>Trabajos / piezas</SectionTitle>
-        {jobs.map((job, i) => (
-          <article
-            key={job.id}
-            className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0_1px_2px_rgba(28,29,31,0.04)]"
-          >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-semibold">
-                  {job.garment_type || `Pieza ${i + 1}`}
-                </p>
-                <p className="text-xs text-[var(--ink-muted)]">
-                  {job.job_categories?.name ?? ""}
-                  {job.persons?.name ? ` · ${job.persons.name}` : ""}
-                </p>
+                {job.quote_items.length > 0 && (
+                  <ul className="mt-3 space-y-1 text-xs">
+                    {job.quote_items.map((it) => (
+                      <li key={it.id} className="flex justify-between gap-2">
+                        <span>
+                          {it.description_snapshot} × {it.quantity}
+                        </span>
+                        <span className="metric">{money(Number(it.total))}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {job.quote_materials.length > 0 && (
+                  <ul className="mt-2 space-y-1 text-xs">
+                    {job.quote_materials.map((m) => (
+                      <li key={m.id} className="flex justify-between gap-2">
+                        <span>
+                          {m.material_name_snapshot} {m.quantity} {m.unit_snapshot}{" "}
+                          <span className="text-[var(--ink-muted)]">
+                            (merma {m.waste_percent}%)
+                          </span>
+                        </span>
+                        <span className="metric">{money(Number(m.total))}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {job.measurements_snapshot?.values?.length ? (
+                  <details className="mt-3" open>
+                    <summary className="cursor-pointer text-xs font-semibold text-[var(--primary)]">
+                      Medidas congeladas
+                    </summary>
+                    <dl className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      {job.measurements_snapshot.values.map((v, idx) => (
+                        <div key={idx} className="rounded-[4px] bg-[var(--surface-2)] px-2 py-1">
+                          <dt className="text-[10px] uppercase text-[var(--ink-muted)]">
+                            {v.name}
+                          </dt>
+                          <dd className="metric text-sm font-semibold">
+                            {v.value} {v.unit}
+                          </dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </details>
+                ) : null}
+
+                {job.notes && (
+                  <p className="mt-2 text-xs text-[var(--ink-muted)]">{job.notes}</p>
+                )}
+              </article>
+            ))}
+          </section>
+
+          {quote.notes && (
+            <p className="text-xs text-[var(--ink-muted)]">Notas: {quote.notes}</p>
+          )}
+        </div>
+
+        <aside className="space-y-4 lg:sticky lg:top-20 lg:self-start">
+          <Card className="p-4">
+            <SectionTitle>Cálculo transparente</SectionTitle>
+            <dl className="space-y-1 text-sm">
+              <div className="flex justify-between">
+                <dt>Materiales</dt>
+                <dd className="metric">{money(Number(quote.subtotal_materials))}</dd>
               </div>
-              <span className="text-[11px] uppercase text-[var(--ink-muted)]">
-                {job.complexity} / {job.urgency}
-              </span>
-            </div>
-
-            {job.quote_items.length > 0 && (
-              <ul className="mt-3 space-y-1 text-xs">
-                {job.quote_items.map((it) => (
-                  <li key={it.id} className="flex justify-between gap-2">
-                    <span>
-                      {it.description_snapshot} × {it.quantity}
-                    </span>
-                    <span className="metric">{money(Number(it.total))}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="flex justify-between">
+                <dt>Mano de obra</dt>
+                <dd className="metric">{money(Number(quote.subtotal_labor))}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Complejidad</dt>
+                <dd className="metric">{money(Number(quote.complexity_amount))}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Urgencia</dt>
+                <dd className="metric">{money(Number(quote.urgency_amount))}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Otros</dt>
+                <dd className="metric">{money(Number(quote.other_costs_amount))}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Margen</dt>
+                <dd className="metric">{money(Number(quote.margin_amount))}</dd>
+              </div>
+              <div className="mt-2 flex justify-between border-t border-[var(--border)] pt-2 font-semibold">
+                <dt>Sugerido</dt>
+                <dd className="metric">{money(Number(quote.suggested_price))}</dd>
+              </div>
+              <div className="flex justify-between text-[var(--primary)]">
+                <dt>Final</dt>
+                <dd className="metric text-lg font-semibold">
+                  {money(
+                    quote.final_price != null ? Number(quote.final_price) : price,
+                  )}
+                </dd>
+              </div>
+            </dl>
+            {quote.override_reason && (
+              <p className="mt-2 text-xs text-[var(--ink-muted)]">
+                Override: {quote.override_reason}
+              </p>
             )}
-
-            {job.quote_materials.length > 0 && (
-              <ul className="mt-2 space-y-1 text-xs">
-                {job.quote_materials.map((m) => (
-                  <li key={m.id} className="flex justify-between gap-2">
-                    <span>
-                      {m.material_name_snapshot} {m.quantity} {m.unit_snapshot}{" "}
-                      <span className="text-[var(--ink-muted)]">
-                        (merma {m.waste_percent}%)
-                      </span>
-                    </span>
-                    <span className="metric">{money(Number(m.total))}</span>
-                  </li>
-                ))}
-              </ul>
+            {(quote.status === "draft" || quote.status === "sent") && (
+              <form
+                action={overrideFinalPriceAction.bind(null, quote.id)}
+                className="mt-3 grid grid-cols-[1fr_1fr_auto] gap-2"
+              >
+                <input
+                  name="final_price"
+                  type="number"
+                  step="0.01"
+                  placeholder="Precio final"
+                  className={`${inputClass} h-10`}
+                />
+                <input
+                  name="override_reason"
+                  placeholder="Motivo"
+                  className={`${inputClass} h-10`}
+                />
+                <Button type="submit" variant="secondary" size="sm">
+                  OK
+                </Button>
+              </form>
             )}
+          </Card>
 
-            {job.measurements_snapshot?.values?.length ? (
-              <details className="mt-3">
-                <summary className="cursor-pointer text-xs font-semibold text-[var(--primary)]">
-                  Medidas congeladas
-                </summary>
-                <dl className="mt-2 grid grid-cols-3 gap-2">
-                  {job.measurements_snapshot.values.map((v, idx) => (
-                    <div key={idx} className="rounded-[4px] bg-[var(--surface-2)] px-2 py-1">
-                      <dt className="text-[10px] uppercase text-[var(--ink-muted)]">
-                        {v.name}
-                      </dt>
-                      <dd className="metric text-sm font-semibold">
-                        {v.value} {v.unit}
-                      </dd>
-                    </div>
-                  ))}
-                </dl>
-              </details>
-            ) : null}
-
-            {job.notes && (
-              <p className="mt-2 text-xs text-[var(--ink-muted)]">{job.notes}</p>
+          <Card className="p-4">
+            <SectionTitle>Acciones</SectionTitle>
+            <QuoteLifecycleActions
+              quoteId={quote.id}
+              status={quote.status}
+              quoteNumber={quote.quote_number}
+              clientName={client.name ?? null}
+              totalLabel={totalLabel}
+              whatsapp={client.whatsapp ?? null}
+              phone={client.phone ?? null}
+              publicHref={
+                publicHref && quote.public_token
+                  ? `/orcamento/${quote.public_token}`
+                  : null
+              }
+            />
+            {workOrder && (
+              <Link
+                href={`/works/${workOrder.id}` as Route}
+                className="mt-2 flex h-12 items-center justify-center rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
+              >
+                Ver orden de trabajo
+              </Link>
             )}
-          </article>
-        ))}
-      </section>
-
-      <section className="mb-6 space-y-2">
-        <SectionTitle>Acciones</SectionTitle>
-        <QuoteLifecycleActions
-          quoteId={quote.id}
-          status={quote.status}
-          quoteNumber={quote.quote_number}
-          clientName={client.name ?? null}
-          totalLabel={totalLabel}
-          whatsapp={client.whatsapp ?? null}
-          phone={client.phone ?? null}
-          publicHref={
-            publicHref && quote.public_token
-              ? `/orcamento/${quote.public_token}`
-              : null
-          }
-        />
-
-        {workOrder && (
-          <Link
-            href={`/works/${workOrder.id}` as Route}
-            className="flex h-12 items-center justify-center rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
-          >
-            Ver orden de trabajo
-          </Link>
-        )}
-      </section>
-
-      {quote.notes && (
-        <p className="text-xs text-[var(--ink-muted)]">Notas: {quote.notes}</p>
-      )}
+          </Card>
+        </aside>
+      </div>
     </main>
   );
 }

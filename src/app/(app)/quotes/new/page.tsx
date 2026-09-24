@@ -74,7 +74,7 @@ export default async function NewQuotePage({
   };
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="mx-auto max-w-3xl pb-8">
       <PageHeader
         title="Nuevo presupuesto"
         subtitle="Cliente → trabajos (N) → servicios/materiales → cálculo → borrador"

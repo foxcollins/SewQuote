@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SewQuote · Atelier Haute Couture Dashboard</title>
+<!-- Google Fonts: Newsreader (Editorial), Plus Jakarta Sans (Labels/UI), JetBrains Mono (Metrics) -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&amp;family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary": "#f7ba87",
+            "on-surface": "#e4e2e4",
+            "on-primary": "#5c1a00",
+            "on-secondary-container": "#9bbdaa",
+            "secondary-fixed-dim": "#accebb",
+            "surface-container-low": "#1b1b1d",
+            "status-success-bg": "#1c2921",
+            "on-tertiary-container": "#422100",
+            "error-container": "#93000a",
+            "secondary-fixed": "#c7ebd6",
+            "surface-bright": "#39393b",
+            "on-secondary-fixed-variant": "#2e4d3e",
+            "surface-tint": "#ffb59c",
+            "tertiary-fixed": "#ffdcc1",
+            "status-success-text": "#8ec5a6",
+            "terracotta-bright": "#e07148",
+            "primary-container": "#e07148",
+            "on-primary-fixed": "#380c00",
+            "on-primary-fixed-variant": "#802a05",
+            "on-surface-variant": "#ddc0b7",
+            "primary": "#ffb59c",
+            "on-tertiary-fixed": "#2e1500",
+            "border-subtle": "#27262c",
+            "border-refined": "#333238",
+            "surface": "#131315",
+            "primary-fixed": "#ffdbcf",
+            "secondary-container": "#2e4d3e",
+            "inverse-surface": "#e4e2e4",
+            "status-warning-bg": "#2b2218",
+            "error": "#ffb4ab",
+            "on-secondary-fixed": "#012114",
+            "surface-elevated": "#26262b",
+            "status-error-bg": "#2e1a1b",
+            "surface-container-highest": "#353437",
+            "outline": "#a58b83",
+            "on-error": "#690005",
+            "on-background": "#e4e2e4",
+            "inverse-on-surface": "#303032",
+            "status-warning-text": "#e4a76c",
+            "on-error-container": "#ffdad6",
+            "text-muted": "#6e6a64",
+            "outline-variant": "#56423c",
+            "on-tertiary": "#4c2701",
+            "surface-card": "#1e1e22",
+            "surface-container": "#1f1f21",
+            "text-ecru": "#ede8e1",
+            "surface-base": "#161618",
+            "secondary": "#accebb",
+            "on-tertiary-fixed-variant": "#663d14",
+            "surface-container-high": "#2a2a2c",
+            "text-linen": "#a8a29a",
+            "surface-dim": "#131315",
+            "on-secondary": "#173628",
+            "terracotta-core": "#c85a32",
+            "inverse-primary": "#9f411c",
+            "surface-container-lowest": "#0e0e10",
+            "tertiary-container": "#bb8556",
+            "on-primary-container": "#501500",
+            "surface-variant": "#353437",
+            "status-error-text": "#e27878",
+            "primary-fixed-dim": "#ffb59c",
+            "tertiary-fixed-dim": "#f7ba87",
+            "background": "#131315"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-md": "1rem",
+            "space-lg": "1.5rem",
+            "space-xl": "2.5rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "margin-lg": "2.5rem",
+            "gutter-lg": "2rem",
+            "gutter-md": "1.5rem",
+            "margin-md": "1.5rem",
+            "space-sm": "0.5rem",
+            "gutter": "1rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Newsreader"],
+            "title-md": ["Plus Jakarta Sans"],
+            "metric-md": ["JetBrains Mono"],
+            "headline-md": ["Newsreader"],
+            "headline-lg": ["Newsreader"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-sm": ["Newsreader"],
+            "display-lg": ["Newsreader"],
+            "label-md": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Newsreader"],
+            "body-md": ["Plus Jakarta Sans"],
+            "metric-lg": ["JetBrains Mono"],
+            "body-lg": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "label-sm": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "title-md": ["1rem", { "lineHeight": "1.5rem", "fontWeight": "600" }],
+            "metric-md": ["0.9375rem", { "lineHeight": "1.25rem", "fontWeight": "500" }],
+            "headline-md": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-lg": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "body-sm": ["0.8125rem", { "lineHeight": "1.25rem", "fontWeight": "400" }],
+            "headline-sm": ["1.25rem", { "lineHeight": "1.75rem", "fontWeight": "600" }],
+            "display-lg": ["3rem", { "lineHeight": "3.5rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "label-md": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "display-lg-mobile": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "body-md": ["0.9375rem", { "lineHeight": "1.5rem", "fontWeight": "400" }],
+            "metric-lg": ["1.375rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "fontWeight": "400" }]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Atelier stitch simulation */
+    .basting-border-bottom {
+      border-bottom: 1px dashed #333238;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #161618;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #27262c;
+      border-radius: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #333238;
+    }
+  </style>
+</head>
+<body class="bg-surface text-text-ecru font-body-md antialiased selection:bg-terracotta-core selection:text-text-ecru overflow-x-hidden">
+<!-- Desktop Main Shell Layout -->
+<div class="flex min-h-screen w-full bg-surface">
+<!-- 1. LEFT SIDEBAR (Shared Component: SideNavBar) -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between bg-surface-base border-r border-border-refined shrink-0 z-50">
+<!-- Top Atelier Brand & CTA -->
+<div class="p-4 space-y-5">
+<!-- Brand Header -->
+<div class="flex items-center gap-3 px-1 py-1">
+<div class="w-10 h-10 rounded-lg bg-surface-elevated border border-border-refined flex items-center justify-center text-terracotta-bright shadow-inner">
+<span class="material-symbols-outlined text-2xl" data-icon="content_cut">content_cut</span>
+</div>
+<div>
+<span class="text-headline-sm font-headline-sm font-semibold tracking-tight text-text-ecru block leading-none">SewQuote</span>
+<span class="text-label-sm font-label-sm text-text-muted mt-0.5 tracking-wider block">Atelier Haute Couture</span>
+</div>
+</div>
+<!-- Shared Component Primary CTA: + Nuevo Presupuesto -->
+<button class="w-full bg-terracotta-core hover:bg-terracotta-bright text-text-ecru font-label-md text-label-md py-2.5 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-150 active:scale-[0.98] shadow-sm">
+<span class="material-symbols-outlined text-lg leading-none" data-icon="add">add</span>
+<span>+ Nuevo Presupuesto</span>
+</button>
+<!-- Navigation Tabs (7 tabs, active: Dashboard) -->
+<nav class="space-y-1">
+<!-- Active Tab: Dashboard -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-elevated text-terracotta-bright font-label-md text-label-md border border-border-refined transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- Inactive Tab: Presupuestos -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="request_quote">request_quote</span>
+<span>Presupuestos</span>
+<span class="ml-auto px-1.5 py-0.5 text-xs rounded bg-surface-elevated text-text-muted font-metric-md border border-border-refined">4</span>
+</a>
+<!-- Inactive Tab: Trabajos -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="checkroom">checkroom</span>
+<span>Trabajos</span>
+</a>
+<!-- Inactive Tab: Clientes & Personas -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="group">group</span>
+<span>Clientes &amp; Personas</span>
+</a>
+<!-- Inactive Tab: Materiales -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="inventory_2">inventory_2</span>
+<span>Materiales</span>
+</a>
+<!-- Inactive Tab: Calendario -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="calendar_today">calendar_today</span>
+<span>Calendario</span>
+</a>
+<!-- Inactive Tab: Configuración -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span>Configuración</span>
+</a>
+</nav>
+</div>
+<!-- Bottom Profile & Studio Controls -->
+<div class="p-4 border-t border-border-refined space-y-2 bg-surface-base">
+<!-- Language & Theme Utility Switches -->
+<div class="flex items-center justify-between px-2 py-1 text-text-linen text-label-sm font-label-sm">
+<div class="flex items-center gap-1.5 cursor-pointer hover:text-text-ecru transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="language">language</span>
+<span>ES · Idioma</span>
+</div>
+<div class="flex items-center gap-1.5 cursor-pointer hover:text-text-ecru transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="dark_mode">dark_mode</span>
+<span>Modo Oscuro</span>
+</div>
+</div>
+<!-- User Card (Atelier Maria) -->
+<div class="flex items-center justify-between p-2 rounded-lg bg-surface-card border border-border-refined">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full bg-secondary-container border border-secondary flex items-center justify-center text-status-success-text font-metric-md text-label-sm">
+              AM
+            </div>
+<div>
+<p class="text-text-ecru font-label-md text-label-md leading-none">Atelier Maria</p>
+<p class="text-text-muted font-body-sm text-body-sm leading-tight mt-0.5">Master Tailor</p>
+</div>
+</div>
+<button class="text-text-muted hover:text-text-ecru" title="Cambiar cuenta">
+<span class="material-symbols-outlined text-lg" data-icon="unfold_more">unfold_more</span>
+</button>
+</div>
+</div>
+</aside>
+<!-- 2. MAIN CONTENT AREA -->
+<div class="pl-64 flex-1 flex flex-col min-w-0">
+<!-- TOP NAV BAR (Shared Component: TopNavBar) -->
+<header class="sticky top-0 z-40 w-full h-16 bg-surface-base/95 backdrop-blur-md border-b border-border-refined flex justify-between items-center px-8">
+<!-- Search Bar with Left Alignment -->
+<div class="flex items-center gap-4 w-96">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-lg pointer-events-none" data-icon="search">search</span>
+<input class="w-full h-10 pl-9 pr-12 rounded-lg bg-surface border border-border-refined text-text-ecru placeholder-text-muted text-body-sm font-body-sm focus:outline-none focus:border-terracotta-bright focus:ring-1 focus:ring-terracotta-bright transition-all" placeholder="Buscar cliente, trabajo o #presupuesto..." type="text"/>
+<div class="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 text-text-muted font-metric-md text-xs border border-border-refined px-1.5 py-0.5 rounded bg-surface-card">
+<span>⌘</span><span>K</span>
+</div>
+</div>
+</div>
+<!-- Center Date Indicator -->
+<div class="hidden xl:flex items-center gap-2 text-text-linen font-label-md text-label-md">
+<span class="material-symbols-outlined text-terracotta-bright text-sm" data-icon="event_note">event_note</span>
+<span>Lunes, 24 Octubre 2026</span>
+<span class="w-1.5 h-1.5 rounded-full bg-status-success-text ml-1 inline-block"></span>
+<span class="text-xs text-text-muted font-metric-md">09:42 CET</span>
+</div>
+<!-- Trailing Actions & Atelier Switcher -->
+<div class="flex items-center gap-3">
+<!-- Atelier Dropdown Selector -->
+<div class="relative">
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-card border border-border-refined hover:border-terracotta-bright text-text-ecru text-label-sm font-label-sm transition-colors">
+<span class="w-2 h-2 rounded-full bg-terracotta-bright"></span>
+<span>Atelier Principal</span>
+<span class="material-symbols-outlined text-text-muted text-sm" data-icon="expand_more">expand_more</span>
+</button>
+</div>
+<!-- Secondary Action: Notifications -->
+<button class="relative p-2 rounded-lg bg-surface-card border border-border-refined hover:text-text-ecru text-text-linen transition-colors" title="Notificaciones">
+<span class="material-symbols-outlined text-xl" data-icon="notifications">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-4 h-4 bg-terracotta-core text-text-ecru text-[10px] font-metric-md font-bold rounded-full flex items-center justify-center border-2 border-surface-card">3</span>
+</button>
+<!-- Help Icon Action -->
+<button class="p-2 rounded-lg bg-surface-card border border-border-refined hover:text-text-ecru text-text-linen transition-colors" title="Soporte y Guías">
+<span class="material-symbols-outlined text-xl" data-icon="help_outline">help_outline</span>
+</button>
+<!-- Trailing Primary Action -->
+<button class="bg-surface-elevated hover:bg-surface-card border border-border-refined text-terracotta-bright hover:text-text-ecru px-3.5 py-2 rounded-lg font-label-md text-label-md flex items-center gap-2 transition-all">
+<span class="material-symbols-outlined text-base" data-icon="tune">tune</span>
+<span>Nuevo Encargo</span>
+</button>
+</div>
+</header>
+<!-- DASHBOARD CANVAS -->
+<main class="flex-1 p-8 space-y-6 max-w-[1440px] w-full mx-auto">
+<!-- 3. WELCOME & ATELIER IA ASSISTANT HERO -->
+<div class="flex flex-col gap-4">
+<!-- Editorial Headline -->
+<div class="flex flex-wrap items-end justify-between gap-4">
+<div>
+<h1 class="text-headline-lg font-headline-lg text-text-ecru tracking-tight">Buenos días, María</h1>
+<p class="text-text-linen font-body-md text-body-md mt-1">Aquí tienes el pulso operativo de tu atelier hoy.</p>
+</div>
+<!-- Live Workshop Status Badge -->
+<div class="flex items-center gap-2.5 px-3 py-1.5 rounded-lg bg-surface-card border border-border-refined">
+<span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-status-success-text opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-status-success-text"></span>
+</span>
+<span class="text-label-sm font-label-sm text-text-linen">Taller en corte activo · Mesa 1 &amp; 2 ocupadas</span>
+</div>
+</div>
+<!-- Atelier IA Banner Card -->
+<div class="bg-gradient-to-r from-surface-card via-surface-elevated to-surface-card rounded-xl border border-border-refined p-5 relative overflow-hidden shadow-sm">
+<!-- Subtle architectural background accent -->
+<div class="absolute -right-8 -top-8 w-44 h-44 rounded-full bg-terracotta-bright/5 blur-2xl pointer-events-none"></div>
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 relative z-10">
+<div class="space-y-2 max-w-3xl">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-terracotta-bright text-xl" data-icon="auto_awesome">auto_awesome</span>
+<span class="text-label-sm font-label-sm uppercase tracking-wider text-terracotta-bright font-semibold">Atelier IA · Asistente de Producción</span>
+</div>
+<p class="text-text-ecru font-headline-sm font-headline-sm font-medium leading-snug">
+                  Hoy tienes <span class="text-terracotta-bright font-semibold">2 entregas programadas</span> y <span class="text-status-error-text underline decoration-status-error-text/40 underline-offset-4 font-semibold">1 trabajo con retraso de 2 días</span> (Vestido de fiesta Ana).
+                </p>
+</div>
+<!-- Action Chips for Prompting -->
+<div class="flex flex-wrap items-center gap-2 shrink-0">
+<button class="px-3 py-1.5 rounded-lg bg-surface-base border border-border-refined hover:border-terracotta-bright text-text-linen hover:text-text-ecru text-label-sm font-label-sm transition-all flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-terracotta-bright" data-icon="schedule">schedule</span>
+<span>¿Qué trabajos entrego esta semana?</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-base border border-border-refined hover:border-terracotta-bright text-text-linen hover:text-text-ecru text-label-sm font-label-sm transition-all flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-status-warning-text" data-icon="timer">timer</span>
+<span>Presupuestos por vencer</span>
+</button>
+<button class="px-3 py-1.5 rounded-lg bg-surface-base border border-border-refined hover:border-terracotta-bright text-text-linen hover:text-text-ecru text-label-sm font-label-sm transition-all flex items-center gap-1.5">
+<span class="material-symbols-outlined text-sm text-secondary" data-icon="summarize">summarize</span>
+<span>Resumir entregas hoy</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 4. TOP KPI METRIC CARDS (4 COLUMNS) -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Metric 1: Entregas hoy -->
+<div class="bg-surface-card rounded-lg p-4 border border-border-refined flex flex-col justify-between hover:border-text-muted transition-colors">
+<div class="flex items-center justify-between text-text-muted">
+<span class="text-label-sm font-label-sm uppercase tracking-wider">Entregas hoy</span>
+<div class="p-1.5 rounded bg-surface-base border border-border-refined text-text-linen">
+<span class="material-symbols-outlined text-lg" data-icon="calendar_today">calendar_today</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-text-ecru font-medium leading-none">2</span>
+<span class="text-xs font-label-sm text-status-success-text flex items-center gap-0.5">
+<span class="material-symbols-outlined text-xs" data-icon="check_circle">check_circle</span> En plazo
+                </span>
+</div>
+<p class="text-body-sm font-body-sm text-text-linen mt-2 truncate">Vestido fiesta Ana, Ajuste Carlos</p>
+</div>
+</div>
+<!-- Metric 2: Atrasados (Crimson Alert) -->
+<div class="bg-status-error-bg/60 rounded-lg p-4 border border-status-error-text/40 flex flex-col justify-between relative overflow-hidden">
+<div class="flex items-center justify-between text-status-error-text">
+<span class="text-label-sm font-label-sm uppercase tracking-wider font-semibold">Atrasados</span>
+<div class="p-1.5 rounded bg-surface-base/80 border border-status-error-text/30 text-status-error-text animate-pulse">
+<span class="material-symbols-outlined text-lg" data-icon="warning">warning</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-status-error-text font-medium leading-none">1</span>
+<span class="text-xs font-label-sm text-status-error-text uppercase tracking-wider border border-status-error-text/40 px-1 rounded">
+                  Alerta Crítica
+                </span>
+</div>
+<p class="text-body-sm font-body-sm text-text-ecru mt-2 font-medium truncate">Vestido fiesta Ana (+2 días demora)</p>
+</div>
+</div>
+<!-- Metric 3: Por aprobar -->
+<div class="bg-surface-card rounded-lg p-4 border border-border-refined flex flex-col justify-between hover:border-text-muted transition-colors">
+<div class="flex items-center justify-between text-text-muted">
+<span class="text-label-sm font-label-sm uppercase tracking-wider">Por aprobar</span>
+<div class="p-1.5 rounded bg-surface-base border border-border-refined text-terracotta-bright">
+<span class="material-symbols-outlined text-lg" data-icon="pending_actions">pending_actions</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-text-ecru font-medium leading-none">3</span>
+<span class="text-xs font-metric-md text-terracotta-bright">cotizaciones</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-linen mt-2 flex items-center justify-between">
+<span>Volumen pendiente:</span>
+<span class="font-metric-md text-text-ecru font-semibold">R$ 1.250</span>
+</p>
+</div>
+</div>
+<!-- Metric 4: Vence hoy -->
+<div class="bg-surface-card rounded-lg p-4 border border-border-refined flex flex-col justify-between hover:border-text-muted transition-colors">
+<div class="flex items-center justify-between text-status-warning-text">
+<span class="text-label-sm font-label-sm uppercase tracking-wider">Vence hoy</span>
+<div class="p-1.5 rounded bg-surface-base border border-border-refined text-status-warning-text">
+<span class="material-symbols-outlined text-lg" data-icon="hourglass_bottom">hourglass_bottom</span>
+</div>
+</div>
+<div class="mt-3">
+<div class="flex items-baseline gap-2">
+<span class="text-display-lg font-display-lg text-status-warning-text font-medium leading-none">1</span>
+<span class="text-xs font-label-sm text-status-warning-text bg-status-warning-bg px-1.5 py-0.5 rounded border border-status-warning-text/30">Cierra 20:00h</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-linen mt-2 truncate">#102 María González (R$ 840)</p>
+</div>
+</div>
+</div>
+<!-- 5. MAIN ASYMMETRIC SPLIT LAYOUT (60% / 40%) -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- ================= LEFT COLUMN: 60% (7 cols of 12) ================= -->
+<div class="lg:col-span-7 space-y-6">
+<!-- SECTION A: PRÓXIMAS ENTREGAS DE LA SEMANA -->
+<div class="bg-surface-card rounded-xl border border-border-refined overflow-hidden">
+<div class="p-5 border-b border-border-refined flex items-center justify-between">
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-ecru flex items-center gap-2">
+<span>Próximas Entregas de la Semana</span>
+<span class="text-xs font-metric-md bg-surface-elevated text-text-linen px-2 py-0.5 rounded-full border border-border-refined">4 encargos</span>
+</h2>
+<p class="text-body-sm font-body-sm text-text-linen mt-0.5">Control de percheros, pruebas en salón y fechas límite de costura</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-1.5 rounded bg-surface-base border border-border-refined text-text-linen hover:text-text-ecru" title="Filtrar">
+<span class="material-symbols-outlined text-base" data-icon="filter_list">filter_list</span>
+</button>
+<button class="text-label-sm font-label-sm text-terracotta-bright hover:underline px-2">Ver todas</button>
+</div>
+</div>
+<!-- Interactive Rich Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-border-refined text-text-muted text-label-sm font-label-sm bg-surface-base/50">
+<th class="py-3 px-4 font-semibold">Cliente &amp; Portadora</th>
+<th class="py-3 px-4 font-semibold">Prenda / Trabajo</th>
+<th class="py-3 px-4 font-semibold">Fecha / Hora</th>
+<th class="py-3 px-4 font-semibold">Estado</th>
+<th class="py-3 px-4 font-semibold">Ubicación</th>
+<th class="py-3 px-4 font-semibold text-right">Acción</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle text-body-sm font-body-sm">
+<!-- Row 1: Delayed item (Vestido fiesta Ana) -->
+<tr class="hover:bg-surface-elevated/40 transition-colors bg-status-error-bg/10">
+<td class="py-3.5 px-4">
+<div class="font-medium text-text-ecru">Ana Silva</div>
+<div class="text-xs text-text-muted">Portadora: Hija (Clara)</div>
+</td>
+<td class="py-3.5 px-4 text-text-linen">
+<div class="text-text-ecru">Vestido de Fiesta Crepé</div>
+<div class="text-xs text-text-muted">Bordado pedrería escote</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="font-metric-md text-status-error-text font-semibold block">Hoy · 17:00</span>
+<span class="text-[11px] text-status-error-text uppercase tracking-wider">+2d retraso</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-label-sm font-label-sm bg-status-error-bg text-status-error-text border border-status-error-text/30">
+<span class="w-1.5 h-1.5 rounded-full bg-status-error-text"></span>
+                          Atrasado 🔴
+                        </span>
+</td>
+<td class="py-3.5 px-4 text-text-linen whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-surface-base border border-border-refined text-xs font-metric-md">Mesa 2</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1 rounded hover:bg-surface-elevated text-text-linen hover:text-status-success-text" title="Contactar WhatsApp">
+<span class="material-symbols-outlined text-base" data-icon="chat">chat</span>
+</button>
+<button class="px-2 py-1 rounded bg-surface-elevated hover:bg-surface-base border border-border-refined text-xs font-label-md text-text-ecru">
+                            Ficha
+                          </button>
+</div>
+</td>
+</tr>
+<!-- Row 2: Ready for Fitting (Ajuste Carlos) -->
+<tr class="hover:bg-surface-elevated/40 transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-medium text-text-ecru">Carlos Mendes</div>
+<div class="text-xs text-text-muted">Cliente directo</div>
+</td>
+<td class="py-3.5 px-4 text-text-linen">
+<div class="text-text-ecru">Traje Sastre 2 Piezas</div>
+<div class="text-xs text-text-muted">Ajuste de mangas y tiro</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="font-metric-md text-text-ecru block">Hoy · 19:30</span>
+<span class="text-[11px] text-text-muted">Prueba final</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-label-sm font-label-sm bg-status-warning-bg text-status-warning-text border border-status-warning-text/30">
+<span class="w-1.5 h-1.5 rounded-full bg-status-warning-text"></span>
+                          Listo para prueba
+                        </span>
+</td>
+<td class="py-3.5 px-4 text-text-linen whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-surface-base border border-border-refined text-xs font-metric-md">Perchero A-03</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1 rounded hover:bg-surface-elevated text-text-linen hover:text-status-success-text" title="Contactar WhatsApp">
+<span class="material-symbols-outlined text-base" data-icon="chat">chat</span>
+</button>
+<button class="px-2 py-1 rounded bg-surface-elevated hover:bg-surface-base border border-border-refined text-xs font-label-md text-text-ecru">
+                            Ficha
+                          </button>
+</div>
+</td>
+</tr>
+<!-- Row 3: In Production (Boceto Novia Elena) -->
+<tr class="hover:bg-surface-elevated/40 transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-medium text-text-ecru">Elena Rostova</div>
+<div class="text-xs text-text-muted">Portadora: Elena Rostova</div>
+</td>
+<td class="py-3.5 px-4 text-text-linen">
+<div class="text-text-ecru">Vestido Novia Seda Mikado</div>
+<div class="text-xs text-text-muted">Hilvanado estructural</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="font-metric-md text-text-ecru block">Jue 27 · 11:00</span>
+<span class="text-[11px] text-text-muted">1ª Prueba tela</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-elevated text-text-linen border border-border-refined">
+<span class="w-1.5 h-1.5 rounded-full bg-terracotta-bright"></span>
+                          En Producción
+                        </span>
+</td>
+<td class="py-3.5 px-4 text-text-linen whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-surface-base border border-border-refined text-xs font-metric-md">Mesa 1 (Corte)</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1 rounded hover:bg-surface-elevated text-text-linen hover:text-status-success-text" title="Contactar WhatsApp">
+<span class="material-symbols-outlined text-base" data-icon="chat">chat</span>
+</button>
+<button class="px-2 py-1 rounded bg-surface-elevated hover:bg-surface-base border border-border-refined text-xs font-label-md text-text-ecru">
+                            Ficha
+                          </button>
+</div>
+</td>
+</tr>
+<!-- Row 4: Approved/Ready (Blusa Lino Beatriz) -->
+<tr class="hover:bg-surface-elevated/40 transition-colors">
+<td class="py-3.5 px-4">
+<div class="font-medium text-text-ecru">Beatriz Fontes</div>
+<div class="text-xs text-text-muted">Portadora: Beatriz Fontes</div>
+</td>
+<td class="py-3.5 px-4 text-text-linen">
+<div class="text-text-ecru">Blusa Envolvente de Lino</div>
+<div class="text-xs text-text-muted">Planchado artesanal</div>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="font-metric-md text-text-ecru block">Vie 28 · 16:30</span>
+<span class="text-[11px] text-status-success-text">Retiro final</span>
+</td>
+<td class="py-3.5 px-4 whitespace-nowrap">
+<span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-label-sm font-label-sm bg-status-success-bg text-status-success-text border border-status-success-text/30">
+<span class="w-1.5 h-1.5 rounded-full bg-status-success-text"></span>
+                          Terminado
+                        </span>
+</td>
+<td class="py-3.5 px-4 text-text-linen whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-surface-base border border-border-refined text-xs font-metric-md">Perchero B-01</span>
+</td>
+<td class="py-3.5 px-4 text-right whitespace-nowrap">
+<div class="flex items-center justify-end gap-1.5">
+<button class="p-1 rounded hover:bg-surface-elevated text-text-linen hover:text-status-success-text" title="Contactar WhatsApp">
+<span class="material-symbols-outlined text-base" data-icon="chat">chat</span>
+</button>
+<button class="px-2 py-1 rounded bg-surface-elevated hover:bg-surface-base border border-border-refined text-xs font-label-md text-text-ecru">
+                            Ficha
+                          </button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- SECTION B: PRESUPUESTOS RECIENTES -->
+<div class="bg-surface-card rounded-xl border border-border-refined overflow-hidden">
+<div class="p-5 border-b border-border-refined flex items-center justify-between">
+<div>
+<h2 class="text-headline-sm font-headline-sm text-text-ecru">Presupuestos Recientes</h2>
+<p class="text-body-sm font-body-sm text-text-linen mt-0.5">Control de cotizaciones, tarifas y plazos de validez</p>
+</div>
+<button class="text-label-sm font-label-sm text-terracotta-bright hover:underline px-2">Ver libro contable</button>
+</div>
+<!-- Budgets Table -->
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-border-refined text-text-muted text-label-sm font-label-sm bg-surface-base/50">
+<th class="py-3 px-4 font-semibold"># Presupuesto</th>
+<th class="py-3 px-4 font-semibold">Cliente Contratante</th>
+<th class="py-3 px-4 font-semibold">Prendas / Trabajos</th>
+<th class="py-3 px-4 font-semibold">Total</th>
+<th class="py-3 px-4 font-semibold">Vencimiento</th>
+<th class="py-3 px-4 font-semibold">Estado</th>
+<th class="py-3 px-4 font-semibold text-right">Acciones</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-border-subtle text-body-sm font-body-sm">
+<!-- Presupuesto 102 (Vence hoy) -->
+<tr class="hover:bg-surface-elevated/40 transition-colors">
+<td class="py-3 px-4 font-metric-md text-terracotta-bright font-semibold">#102</td>
+<td class="py-3 px-4 font-medium text-text-ecru">María González</td>
+<td class="py-3 px-4 text-text-linen">Vestido gala gasa + forro</td>
+<td class="py-3 px-4 font-metric-md text-text-ecru font-medium">R$ 840,00</td>
+<td class="py-3 px-4">
+<span class="text-status-warning-text font-metric-md text-xs font-semibold">Hoy · 20:00</span>
+</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-status-warning-bg text-status-warning-text border border-status-warning-text/30">
+                          Enviado
+                        </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="text-text-muted hover:text-text-ecru p-1" title="Ver opciones">
+<span class="material-symbols-outlined text-lg" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Presupuesto 101 -->
+<tr class="hover:bg-surface-elevated/40 transition-colors">
+<td class="py-3 px-4 font-metric-md text-text-linen">#101</td>
+<td class="py-3 px-4 font-medium text-text-ecru">Lucía Valdés</td>
+<td class="py-3 px-4 text-text-linen">Traje lino natural (2 pzs)</td>
+<td class="py-3 px-4 font-metric-md text-text-ecru font-medium">R$ 1.450,00</td>
+<td class="py-3 px-4 text-text-muted font-metric-md text-xs">30 Octubre</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-status-success-bg text-status-success-text border border-status-success-text/30">
+                          Aprobado
+                        </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="text-text-muted hover:text-text-ecru p-1" title="Ver opciones">
+<span class="material-symbols-outlined text-lg" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Presupuesto 100 -->
+<tr class="hover:bg-surface-elevated/40 transition-colors">
+<td class="py-3 px-4 font-metric-md text-text-linen">#100</td>
+<td class="py-3 px-4 font-medium text-text-ecru">Camila Duarte</td>
+<td class="py-3 px-4 text-text-linen">Transformación abrigo vintage</td>
+<td class="py-3 px-4 font-metric-md text-text-ecru font-medium">R$ 410,00</td>
+<td class="py-3 px-4 text-text-muted font-metric-md text-xs">02 Noviembre</td>
+<td class="py-3 px-4">
+<span class="px-2 py-0.5 rounded text-label-sm font-label-sm bg-surface-elevated text-text-linen border border-border-refined">
+                          Borrador
+                        </span>
+</td>
+<td class="py-3 px-4 text-right">
+<button class="text-text-muted hover:text-text-ecru p-1" title="Ver opciones">
+<span class="material-symbols-outlined text-lg" data-icon="more_vert">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- ================= RIGHT COLUMN: 40% (5 cols of 12) ================= -->
+<div class="lg:col-span-5 space-y-6">
+<!-- SECTION C: ALERTAS OPERATIVAS PRIORITARIAS -->
+<div class="bg-surface-card rounded-xl border border-border-refined p-5 space-y-4">
+<div class="flex items-center justify-between pb-3 basting-border-bottom">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-terracotta-bright text-xl" data-icon="notifications_active">notifications_active</span>
+<h2 class="text-headline-sm font-headline-sm text-text-ecru">Alertas Operativas</h2>
+</div>
+<span class="text-xs font-metric-md bg-status-error-bg text-status-error-text border border-status-error-text/30 px-2 py-0.5 rounded">3 URGENTES</span>
+</div>
+<!-- Priority Alert List -->
+<div class="space-y-3">
+<!-- Alerta 1: Medidas antiguas de Ana Silva -->
+<div class="p-3.5 rounded-lg bg-surface-base border border-border-refined hover:border-status-warning-text/40 transition-colors space-y-2.5">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-status-warning-text text-lg shrink-0 mt-0.5" data-icon="straighten">straighten</span>
+<div>
+<p class="text-text-ecru font-label-md text-label-md leading-snug">Medidas desactualizadas</p>
+<p class="text-text-linen font-body-sm text-body-sm mt-0.5">
+                        Medidas de <strong class="text-text-ecru">Ana Silva</strong> registradas hace <span class="text-status-warning-text font-metric-md">8 meses</span>. Confirmar antes del corte de tela.
+                      </p>
+</div>
+</div>
+<div class="flex items-center justify-end gap-2 pt-1 border-t border-border-subtle">
+<button class="px-2.5 py-1 rounded bg-surface-elevated hover:bg-surface-card border border-border-refined text-xs font-label-md text-text-linen transition-colors">
+                      Confirmar
+                    </button>
+<button class="px-2.5 py-1 rounded bg-terracotta-core hover:bg-terracotta-bright text-xs font-label-md text-text-ecru transition-colors flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="edit">edit</span>
+                      Actualizar medidas
+                    </button>
+</div>
+</div>
+<!-- Alerta 2: Vestido fiesta Ana retrasado -->
+<div class="p-3.5 rounded-lg bg-status-error-bg/30 border border-status-error-text/40 space-y-2.5">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-status-error-text text-lg shrink-0 mt-0.5" data-icon="error">error</span>
+<div>
+<div class="flex items-center gap-2">
+<p class="text-text-ecru font-label-md text-label-md leading-snug font-semibold">Entrega en riesgo inminente</p>
+<span class="text-[10px] bg-status-error-bg text-status-error-text border border-status-error-text/40 px-1 rounded uppercase font-metric-md">Crítico</span>
+</div>
+<p class="text-text-linen font-body-sm text-body-sm mt-0.5">
+                        Vestido fiesta Ana debe entregarse hoy y sigue en hilvanado en <span class="text-text-ecru font-semibold">Mesa 2</span>.
+                      </p>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1 border-t border-status-error-text/20">
+<span class="text-xs text-text-muted font-metric-md">Responsable: Lucía M.</span>
+<button class="px-3 py-1 rounded bg-status-error-bg hover:bg-status-error-bg/80 border border-status-error-text/50 text-xs font-label-md text-status-error-text transition-colors">
+                      Inspeccionar
+                    </button>
+</div>
+</div>
+<!-- Alerta 3: Presupuesto vence hoy -->
+<div class="p-3.5 rounded-lg bg-surface-base border border-border-refined space-y-2">
+<div class="flex items-start gap-2.5">
+<span class="material-symbols-outlined text-status-warning-text text-lg shrink-0 mt-0.5" data-icon="timer">timer</span>
+<div>
+<p class="text-text-ecru font-label-md text-label-md leading-snug">Vencimiento de cotización</p>
+<p class="text-text-linen font-body-sm text-body-sm mt-0.5">
+                        Presupuesto <strong class="text-text-ecru font-metric-md">#102</strong> (María González) vence hoy a las <span class="text-status-warning-text font-metric-md font-semibold">20:00h</span>.
+                      </p>
+</div>
+</div>
+<div class="flex items-center justify-end gap-2 pt-1 border-t border-border-subtle">
+<button class="px-2.5 py-1 rounded bg-surface-elevated hover:bg-surface-card border border-border-refined text-xs font-label-md text-text-linen transition-colors">
+                      Reenviar WhatsApp
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION D: HISTORIAL DE ACTIVIDAD RECIENTE DEL TALLER -->
+<div class="bg-surface-card rounded-xl border border-border-refined p-5 space-y-4">
+<div class="flex items-center justify-between pb-3 basting-border-bottom">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-text-linen text-xl" data-icon="history">history</span>
+<h2 class="text-headline-sm font-headline-sm text-text-ecru">Actividad del Taller</h2>
+</div>
+<span class="text-xs text-text-muted">Tiempo real</span>
+</div>
+<!-- Vertical Basting Timeline -->
+<div class="relative pl-6 space-y-4 before:content-[''] before:absolute before:left-2 before:top-2 before:bottom-2 before:w-[1.5px] before:border-l before:border-dashed before:border-border-refined">
+<!-- Event 1: Budget approved -->
+<div class="relative">
+<!-- Stepper Node -->
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-status-success-text ring-4 ring-surface-card"></div>
+<div>
+<div class="flex items-center justify-between">
+<p class="text-label-md font-label-md text-text-ecru">Presupuesto #101 aprobado</p>
+<span class="text-[11px] font-metric-md text-text-muted">Hace 22 min</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-linen mt-0.5">
+                      Lucía Valdés aceptó la propuesta de <span class="font-metric-md text-text-ecru">R$ 1.450</span> con seña del 50%.
+                    </p>
+</div>
+</div>
+<!-- Event 2: Status change -->
+<div class="relative">
+<!-- Stepper Node -->
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-terracotta-bright ring-4 ring-surface-card"></div>
+<div>
+<div class="flex items-center justify-between">
+<p class="text-label-md font-label-md text-text-ecru">Prenda asignada a perchero</p>
+<span class="text-[11px] font-metric-md text-text-muted">Hace 1h 10m</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-linen mt-0.5">
+                      Traje Carlos Mendes trasladado a <strong class="text-text-ecru">Perchero A-03</strong> listo para fitting.
+                    </p>
+</div>
+</div>
+<!-- Event 3: Price / Fabric update -->
+<div class="relative">
+<!-- Stepper Node -->
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-secondary ring-4 ring-surface-card"></div>
+<div>
+<div class="flex items-center justify-between">
+<p class="text-label-md font-label-md text-text-ecru">Actualización de tela e insumos</p>
+<span class="text-[11px] font-metric-md text-text-muted">Hace 3h</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-linen mt-0.5">
+                      Ingreso de 4.2 metros de <span class="text-text-ecru">Seda Mikado Marfil</span> en inventario.
+                    </p>
+</div>
+</div>
+<!-- Event 4: Note from Master Tailor -->
+<div class="relative">
+<!-- Stepper Node -->
+<div class="absolute -left-6 top-1 w-2.5 h-2.5 rounded-full bg-border-refined ring-4 ring-surface-card"></div>
+<div>
+<div class="flex items-center justify-between">
+<p class="text-label-md font-label-md text-text-ecru">Nota técnica agregada</p>
+<span class="text-[11px] font-metric-md text-text-muted">Ayer 18:40</span>
+</div>
+<p class="text-body-sm font-body-sm text-text-linen mt-0.5">
+                      María añadió observación al patrón base de <span class="text-text-ecru">Elena Rostova</span> (hombro derecho caído 1.2cm).
+                    </p>
+</div>
+</div>
+</div>
+<!-- Quick action footer for studio log -->
+<div class="pt-2 border-t border-border-subtle flex justify-end">
+<button class="text-label-sm font-label-sm text-text-muted hover:text-text-ecru flex items-center gap-1">
+<span>Ver registro completo de taller</span>
+<span class="material-symbols-outlined text-sm" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- 6. FOOTER STATS & ATELIER HARMONY BAR -->
+<footer class="pt-4 pb-8 border-t border-border-refined flex flex-col sm:flex-row items-center justify-between gap-4 text-text-muted text-body-sm font-body-sm">
+<div class="flex items-center gap-3">
+<span class="w-2 h-2 rounded-full bg-status-success-text"></span>
+<span>Sistema sincronizado con la nube del taller · SewQuote v2.4 Atelier Edition</span>
+</div>
+<div class="flex items-center gap-4 text-xs font-metric-md">
+<span>RAM: 34%</span>
+<span>·</span>
+<span>Mesa 1: Activa</span>
+<span>·</span>
+<span>Mesa 2: Alerta Demora</span>
+</div>
+</footer>
+</main>
+</div>
+</div>
+</body></html>

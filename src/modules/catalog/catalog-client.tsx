@@ -181,7 +181,7 @@ export function CatalogClient({
   ];
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="pb-8">
       <PageHeader
         title="Catálogo"
         subtitle="Servicios, materiales y tipos de trabajo"

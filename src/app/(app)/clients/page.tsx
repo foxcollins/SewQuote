@@ -28,9 +28,10 @@ export default async function ClientsPage({
   const { data: clients } = await query;
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="pb-8">
       <PageHeader
         title="Clientes"
+        subtitle="Ficha, personas destinatarias y medidas"
         action={
           <PrimaryLink href={"/clients/new" as Route} size="sm">
             + Nuevo
@@ -38,7 +39,7 @@ export default async function ClientsPage({
         }
       />
 
-      <form className="mb-4" role="search">
+      <form className="mb-4 max-w-md" role="search">
         <input
           name="q"
           defaultValue={q}
@@ -47,7 +48,7 @@ export default async function ClientsPage({
         />
       </form>
 
-      <ul className="space-y-2">
+      <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
         {(clients ?? []).map((c) => (
           <li key={c.id}>
             <Link

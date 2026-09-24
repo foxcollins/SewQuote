@@ -37,7 +37,7 @@ export default async function PersonDetailPage({
   const now = Date.now();
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="mx-auto max-w-3xl pb-8">
       <PageHeader
         title={person.name}
         subtitle={

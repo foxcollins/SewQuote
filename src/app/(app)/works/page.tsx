@@ -35,13 +35,13 @@ export default async function WorksPage() {
     .limit(50);
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="pb-8">
       <PageHeader
         title="Trabajos"
         subtitle="Desde presupuesto aprobado hasta entrega"
       />
 
-      <ul className="space-y-2">
+      <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
         {(works ?? []).map((w) => {
           const quote = Array.isArray(w.quotes) ? w.quotes[0] : w.quotes;
           const client = quote

@@ -69,8 +69,8 @@ export function PublicQuoteActions({
   }
 
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--border)] bg-[var(--canvas)]/95 p-4 backdrop-blur">
-      <div className="mx-auto max-w-lg space-y-2">
+    <div className="fixed inset-x-0 bottom-0 z-40 border-t border-[var(--border)] bg-[var(--canvas)]/95 p-4 backdrop-blur lg:static lg:border-0 lg:bg-transparent lg:p-0 lg:backdrop-blur-none">
+      <div className="mx-auto max-w-lg space-y-2 lg:mx-0 lg:max-w-none">
         {message && (
           <p className="rounded-[6px] bg-[var(--surface-2)] px-3 py-2 text-center text-xs">
             {message}

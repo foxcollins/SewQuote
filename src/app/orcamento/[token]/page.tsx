@@ -92,42 +92,49 @@ export default async function PublicQuotePage({
   const price = Number(quote.final_price ?? quote.suggested_price ?? 0);
 
   return (
-    <main className="mx-auto min-h-screen max-w-lg bg-[var(--canvas)] p-4 pb-32">
+    <main className="mx-auto min-h-screen max-w-6xl bg-[var(--canvas)] p-4 pb-32 lg:p-8">
       <header className="mb-6 border-b border-[var(--border)] pb-4">
-        <p className="font-display text-lg font-semibold text-[var(--primary)]">
-          {tenant?.name ?? "SewQuote"}
-        </p>
-        <h1 className="display mt-2 text-3xl">
-          Presupuesto #{String(quote.quote_number).padStart(3, "0")}
-        </h1>
-        <p className="mt-1 text-sm text-[var(--ink-muted)]">
-          {client?.name ?? ""}
-          {quote.valid_until
-            ? ` · Válido hasta ${formatDate(quote.valid_until, locale)}`
-            : ""}
-        </p>
-        <p className="mt-1 text-xs uppercase tracking-wide text-[var(--ink-muted)]">
-          Estado:{" "}
-          <strong
-            className={
-              displayStatus === "accepted"
-                ? "text-[var(--success)]"
-                : displayStatus === "rejected" || displayStatus === "expired"
-                  ? "text-[var(--error)]"
-                  : ""
-            }
-          >
-            {displayStatus === "sent"
-              ? "Enviado"
-              : displayStatus === "accepted"
-                ? "Aprobado"
-                : displayStatus === "rejected"
-                  ? "Rechazado"
-                  : displayStatus === "expired"
-                    ? "Vencido"
-                    : displayStatus}
-          </strong>
-        </p>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <p className="font-display text-lg font-semibold text-[var(--primary)]">
+              {tenant?.name ?? "SewQuote"}
+            </p>
+            <h1 className="display mt-2 text-3xl">
+              Presupuesto #{String(quote.quote_number).padStart(3, "0")}
+            </h1>
+            <p className="mt-1 text-sm text-[var(--ink-muted)]">
+              {client?.name ?? ""}
+              {quote.valid_until
+                ? ` · Válido hasta ${formatDate(quote.valid_until, locale)}`
+                : ""}
+            </p>
+            <p className="mt-1 text-xs uppercase tracking-wide text-[var(--ink-muted)]">
+              Estado:{" "}
+              <strong
+                className={
+                  displayStatus === "accepted"
+                    ? "text-[var(--success)]"
+                    : displayStatus === "rejected" || displayStatus === "expired"
+                      ? "text-[var(--error)]"
+                      : ""
+                }
+              >
+                {displayStatus === "sent"
+                  ? "Enviado"
+                  : displayStatus === "accepted"
+                    ? "Aprobado"
+                    : displayStatus === "rejected"
+                      ? "Rechazado"
+                      : displayStatus === "expired"
+                        ? "Vencido"
+                        : displayStatus}
+              </strong>
+            </p>
+          </div>
+          <p className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink-muted)]">
+            Portal de aprobación · solo lectura
+          </p>
+        </div>
       </header>
 
       {displayStatus === "expired" && quote.status === "sent" && (
@@ -136,8 +143,12 @@ export default async function PublicQuotePage({
         </p>
       )}
 
-      <section className="mb-6 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4">
-        <h2 className="mb-3 text-sm font-semibold">Trabajos</h2>
+      <div className="grid gap-6 lg:grid-cols-[1fr_340px] xl:grid-cols-[1fr_380px]">
+        <div className="min-w-0 space-y-6">
+          <section className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4">
+            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-[var(--ink-muted)]">
+              Trabajos incluidos
+            </h2>
         <div className="space-y-4">
           {jobs.map((job, i) => (
             <article
@@ -186,26 +197,21 @@ export default async function PublicQuotePage({
               )}
 
               {job.measurements_snapshot?.values?.length ? (
-                <details className="mt-2">
-                  <summary className="cursor-pointer text-xs font-semibold text-[var(--primary)]">
-                    Medidas
-                  </summary>
-                  <dl className="mt-2 grid grid-cols-3 gap-2">
-                    {job.measurements_snapshot.values.map((v, idx) => (
-                      <div
-                        key={idx}
-                        className="rounded-[4px] bg-[var(--surface-2)] px-2 py-1"
-                      >
-                        <dt className="text-[10px] uppercase text-[var(--ink-muted)]">
-                          {v.name}
-                        </dt>
-                        <dd className="metric text-sm font-semibold">
-                          {v.value} {v.unit}
-                        </dd>
-                      </div>
-                    ))}
-                  </dl>
-                </details>
+                <dl className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                  {job.measurements_snapshot.values.map((v, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-[4px] bg-[var(--surface-2)] px-2 py-1"
+                    >
+                      <dt className="text-[10px] uppercase text-[var(--ink-muted)]">
+                        {v.name}
+                      </dt>
+                      <dd className="metric text-sm font-semibold">
+                        {v.value} {v.unit}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
               ) : null}
             </article>
           ))}
@@ -213,40 +219,8 @@ export default async function PublicQuotePage({
       </section>
 
       <section className="mb-6 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-4">
-        <dl className="space-y-1 text-sm">
-          <div className="flex justify-between">
-            <dt>Materiales</dt>
-            <dd className="metric">{money(Number(quote.subtotal_materials))}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Mano de obra</dt>
-            <dd className="metric">{money(Number(quote.subtotal_labor))}</dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Complejidad + urgencia</dt>
-            <dd className="metric">
-              {money(
-                Number(quote.complexity_amount) + Number(quote.urgency_amount),
-              )}
-            </dd>
-          </div>
-          <div className="flex justify-between">
-            <dt>Otros</dt>
-            <dd className="metric">{money(Number(quote.other_costs_amount))}</dd>
-          </div>
-          <div className="mt-2 flex justify-between border-t border-[var(--border)] pt-2 text-lg font-semibold">
-            <dt>Total</dt>
-            <dd className="metric text-[var(--primary)]">{money(price)}</dd>
-          </div>
-        </dl>
-        <p className="mt-2 text-[11px] text-[var(--ink-muted)]">
-          Los materiales están congelados en este presupuesto.
-        </p>
-      </section>
-
-      {versions.length > 0 && (
-        <section className="mb-6">
-          <h2 className="mb-2 text-sm font-semibold">Historial de versiones</h2>
+        <h2 className="mb-3 text-sm font-semibold">Historial de versiones</h2>
+        {versions.length > 0 ? (
           <ul className="space-y-1 text-xs text-[var(--ink-muted)]">
             {versions.map((v) => (
               <li key={v.version_number} className="flex justify-between">
@@ -259,8 +233,10 @@ export default async function PublicQuotePage({
               </li>
             ))}
           </ul>
-        </section>
-      )}
+        ) : (
+          <p className="text-xs text-[var(--ink-muted)]">Sin versiones previas.</p>
+        )}
+      </section>
 
       {comments.length > 0 && (
         <section className="mb-6">
@@ -280,8 +256,54 @@ export default async function PublicQuotePage({
           </ul>
         </section>
       )}
+        </div>
 
-      <PublicQuoteActions token={token} canAct={canAct} status={quote.status} />
+        <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+          <section className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4">
+            <h2 className="mb-1 text-sm font-semibold">Resumen económico</h2>
+            <p className="mb-3 text-xs text-[var(--ink-muted)]">
+              Sin cargos ocultos ni tarifas imprevistas.
+            </p>
+            <dl className="space-y-1 text-sm">
+              <div className="flex justify-between">
+                <dt>Materiales</dt>
+                <dd className="metric">{money(Number(quote.subtotal_materials))}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Mano de obra</dt>
+                <dd className="metric">{money(Number(quote.subtotal_labor))}</dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Complejidad + urgencia</dt>
+                <dd className="metric">
+                  {money(
+                    Number(quote.complexity_amount) + Number(quote.urgency_amount),
+                  )}
+                </dd>
+              </div>
+              <div className="flex justify-between">
+                <dt>Otros</dt>
+                <dd className="metric">{money(Number(quote.other_costs_amount))}</dd>
+              </div>
+              <div className="mt-3 rounded-[6px] bg-[var(--surface-2)] px-3 py-3">
+                <div className="flex items-end justify-between gap-2">
+                  <dt className="text-xs font-semibold uppercase tracking-wide text-[var(--ink-muted)]">
+                    Total
+                  </dt>
+                  <dd className="metric text-2xl font-semibold text-[var(--primary)]">
+                    {money(price)}
+                  </dd>
+                </div>
+              </div>
+            </dl>
+            <p className="mt-2 text-[11px] text-[var(--ink-muted)]">
+              Los materiales están congelados en este presupuesto.
+            </p>
+          </section>
+
+          <PublicQuoteActions token={token} canAct={canAct} status={quote.status} />
+        </aside>
+      </div>
 
       <footer className="mt-8 text-center text-[11px] text-[var(--ink-muted)]">
         SewQuote · Presupuesto #{String(quote.quote_number).padStart(3, "0")}

@@ -8,7 +8,7 @@ export default async function NewClientPage() {
   if (!ctx) redirect("/");
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="mx-auto max-w-xl pb-8">
       <PageHeader title="Nuevo cliente" subtitle="Datos de contacto y notas" />
       <ClientForm mode="create" />
     </main>

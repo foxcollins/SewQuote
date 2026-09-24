@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>SewQuote - Clientes, Personas & Medidas Atelier</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:wght@100..900&family=Plus+Jakarta+Sans:wght@100..900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary": "#f7ba87",
+            "on-surface": "#e4e2e4",
+            "on-primary": "#5c1a00",
+            "on-secondary-container": "#9bbdaa",
+            "secondary-fixed-dim": "#accebb",
+            "surface-container-low": "#1b1b1d",
+            "status-success-bg": "#1c2921",
+            "on-tertiary-container": "#422100",
+            "error-container": "#93000a",
+            "secondary-fixed": "#c7ebd6",
+            "surface-bright": "#39393b",
+            "on-secondary-fixed-variant": "#2e4d3e",
+            "surface-tint": "#ffb59c",
+            "tertiary-fixed": "#ffdcc1",
+            "status-success-text": "#8ec5a6",
+            "terracotta-bright": "#e07148",
+            "primary-container": "#e07148",
+            "on-primary-fixed": "#380c00",
+            "on-primary-fixed-variant": "#802a05",
+            "on-surface-variant": "#ddc0b7",
+            "primary": "#ffb59c",
+            "on-tertiary-fixed": "#2e1500",
+            "border-subtle": "#27262c",
+            "border-refined": "#333238",
+            "surface": "#131315",
+            "primary-fixed": "#ffdbcf",
+            "secondary-container": "#2e4d3e",
+            "inverse-surface": "#e4e2e4",
+            "status-warning-bg": "#2b2218",
+            "error": "#ffb4ab",
+            "on-secondary-fixed": "#012114",
+            "surface-elevated": "#26262b",
+            "status-error-bg": "#2e1a1b",
+            "surface-container-highest": "#353437",
+            "outline": "#a58b83",
+            "on-error": "#690005",
+            "on-background": "#e4e2e4",
+            "inverse-on-surface": "#303032",
+            "status-warning-text": "#e4a76c",
+            "on-error-container": "#ffdad6",
+            "text-muted": "#6e6a64",
+            "outline-variant": "#56423c",
+            "on-tertiary": "#4c2701",
+            "surface-card": "#1e1e22",
+            "text-ecru": "#ede8e1",
+            "surface-base": "#161618",
+            "secondary": "#accebb",
+            "on-tertiary-fixed-variant": "#663d14",
+            "surface-container-high": "#2a2a2c",
+            "text-linen": "#a8a29a",
+            "surface-dim": "#131315",
+            "on-secondary": "#173628",
+            "terracotta-core": "#c85a32",
+            "inverse-primary": "#9f411c",
+            "surface-container-lowest": "#0e0e10",
+            "tertiary-container": "#bb8556",
+            "on-primary-container": "#501500",
+            "surface-variant": "#353437",
+            "status-error-text": "#e27878",
+            "primary-fixed-dim": "#ffb59c",
+            "tertiary-fixed-dim": "#f7ba87",
+            "background": "#131315"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "fontFamily": {
+            "label-sm": ["Plus Jakarta Sans"],
+            "headline-lg-mobile": ["Newsreader"],
+            "title-md": ["Plus Jakarta Sans"],
+            "metric-md": ["JetBrains Mono"],
+            "headline-md": ["Newsreader"],
+            "headline-lg": ["Newsreader"],
+            "body-sm": ["Plus Jakarta Sans"],
+            "headline-sm": ["Newsreader"],
+            "display-lg": ["Newsreader"],
+            "label-md": ["Plus Jakarta Sans"],
+            "display-lg-mobile": ["Newsreader"],
+            "body-md": ["Plus Jakarta Sans"],
+            "metric-lg": ["JetBrains Mono"],
+            "body-lg": ["Plus Jakarta Sans"]
+          },
+          "fontSize": {
+            "label-sm": ["0.75rem", { "lineHeight": "1rem", "letterSpacing": "0.04em", "fontWeight": "600" }],
+            "headline-lg-mobile": ["1.75rem", { "lineHeight": "2.25rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "title-md": ["1rem", { "lineHeight": "1.5rem", "fontWeight": "600" }],
+            "metric-md": ["0.9375rem", { "lineHeight": "1.25rem", "fontWeight": "500" }],
+            "headline-md": ["1.5rem", { "lineHeight": "2rem", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "headline-lg": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.015em", "fontWeight": "500" }],
+            "body-sm": ["0.8125rem", { "lineHeight": "1.25rem", "fontWeight": "400" }],
+            "headline-sm": ["1.25rem", { "lineHeight": "1.75rem", "fontWeight": "600" }],
+            "display-lg": ["3rem", { "lineHeight": "3.5rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "label-md": ["0.875rem", { "lineHeight": "1.25rem", "letterSpacing": "0.01em", "fontWeight": "600" }],
+            "display-lg-mobile": ["2.25rem", { "lineHeight": "2.75rem", "letterSpacing": "-0.02em", "fontWeight": "400" }],
+            "body-md": ["0.9375rem", { "lineHeight": "1.5rem", "fontWeight": "400" }],
+            "metric-lg": ["1.375rem", { "lineHeight": "1.75rem", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-lg": ["1.125rem", { "lineHeight": "1.75rem", "fontWeight": "400" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .basting-border-dashed {
+      border-style: dashed;
+      border-width: 1px;
+    }
+    /* Custom subtle scrollbar for atelier feel */
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #161618;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333238;
+      border-radius: 2px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #e07148;
+    }
+  </style>
+</head>
+<body class="bg-surface-base text-text-ecru min-h-screen flex antialiased selection:bg-terracotta-core selection:text-text-ecru font-body-md overflow-x-hidden">
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT: SideNavBar (Strict implementation from JSON Blueprint) -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-64 flex flex-col justify-between p-4 border-r border-border-refined bg-surface-base shrink-0 z-30">
+<div class="flex flex-col gap-6">
+<!-- Header / Logo -->
+<div class="flex items-center gap-3 px-2 pt-1">
+<div class="w-10 h-10 rounded-lg bg-surface-card border border-border-refined flex items-center justify-center text-terracotta-bright shrink-0 shadow-inner">
+<span class="material-symbols-outlined" data-icon="content_cut">content_cut</span>
+</div>
+<div class="overflow-hidden">
+<div class="text-headline-sm font-headline-sm font-semibold tracking-tight text-text-ecru">SewQuote</div>
+<div class="text-label-sm font-label-sm text-text-muted truncate">Atelier Haute Couture</div>
+</div>
+</div>
+<!-- Primary CTA -->
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-3 rounded-lg bg-terracotta-core hover:bg-terracotta-bright text-text-ecru font-label-md text-label-md transition-all duration-150 shadow-sm active:scale-[0.98]">
+<span class="material-symbols-outlined text-lg" data-icon="add">add</span>
+<span>+ Nuevo Presupuesto</span>
+</button>
+<!-- Navigation Tabs (Active determined semantically: 'Clientes & Personas') -->
+<nav class="flex flex-col gap-1.5">
+<!-- 0: Dashboard -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="dashboard">dashboard</span>
+<span>Dashboard</span>
+</a>
+<!-- 1: Presupuestos -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="request_quote">request_quote</span>
+<span>Presupuestos</span>
+</a>
+<!-- 2: Trabajos -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="checkroom">checkroom</span>
+<span>Trabajos</span>
+</a>
+<!-- 3: Clientes & Personas [ACTIVE MATCH] -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-surface-elevated text-terracotta-bright font-label-md text-label-md border border-border-refined transition-all duration-150" href="#">
+<span class="material-symbols-outlined text-xl text-terracotta-bright" data-icon="group">group</span>
+<span>Clientes & Personas</span>
+</a>
+<!-- 4: Materiales -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="inventory_2">inventory_2</span>
+<span>Materiales</span>
+</a>
+<!-- 5: Calendario -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="calendar_today">calendar_today</span>
+<span>Calendario</span>
+</a>
+<!-- 6: Configuración -->
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-text-linen hover:text-text-ecru hover:bg-surface-card font-label-md text-label-md transition-colors duration-150" href="#">
+<span class="material-symbols-outlined text-xl" data-icon="settings">settings</span>
+<span>Configuración</span>
+</a>
+</nav>
+</div>
+<!-- Sidebar Footer -->
+<div class="pt-4 border-t border-border-refined flex flex-col gap-1">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-text-ecru font-label-md text-label-md hover:bg-surface-card transition-colors duration-150 cursor-pointer">
+<span class="material-symbols-outlined text-xl text-terracotta-bright" data-icon="account_circle">account_circle</span>
+<div class="truncate">Atelier Maria</div>
+</div>
+<div class="flex items-center justify-between px-3 py-1.5 text-text-linen text-label-sm font-label-sm">
+<span class="flex items-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="language">language</span>
+          ES · Idioma
+        </span>
+<span class="flex items-center gap-1.5 text-text-muted">
+<span class="material-symbols-outlined text-sm" data-icon="dark_mode">dark_mode</span>
+          Modo Oscuro
+        </span>
+</div>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE WRAPPER (Offset by sidebar 256px / 64)                      -->
+<!-- ========================================================================= -->
+<div class="pl-64 flex-1 flex flex-col min-h-screen bg-surface-base w-full max-w-[1440px]">
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT: TopNavBar (Exact blueprint execution)                   -->
+<!-- ========================================================================= -->
+<header class="sticky top-0 z-40 w-full h-16 flex justify-between items-center px-6 border-b border-border-refined backdrop-blur-md bg-surface-base/95">
+<!-- Search on left -->
+<div class="flex items-center gap-3 w-96">
+<div class="relative w-full">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-lg pointer-events-none" data-icon="search">search</span>
+<input class="w-full h-9 pl-9 pr-4 text-body-sm font-body-sm bg-surface-card border border-border-refined rounded-lg text-text-ecru placeholder-text-muted focus:outline-none focus:border-terracotta-bright focus:ring-1 focus:ring-terracotta-bright/20 transition-all" placeholder="Buscar por cliente, portador, medida o tejido..." type="text"/>
+</div>
+</div>
+<!-- Trailing Atelier Utilities -->
+<div class="flex items-center gap-3">
+<!-- Atelier indicator -->
+<div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-card border border-border-refined text-text-linen text-label-sm font-label-sm">
+<span class="w-2 h-2 rounded-full bg-status-success-text"></span>
+<span>Atelier Principal</span>
+</div>
+<button class="flex items-center justify-center w-9 h-9 rounded-lg bg-surface-card hover:bg-surface-elevated border border-border-refined text-text-linen hover:text-text-ecru transition-colors duration-150" title="Notificaciones">
+<span class="material-symbols-outlined text-lg" data-icon="notifications">notifications</span>
+</button>
+<button class="flex items-center justify-center w-9 h-9 rounded-lg bg-surface-card hover:bg-surface-elevated border border-border-refined text-text-linen hover:text-text-ecru transition-colors duration-150" title="Ayuda y Documentación">
+<span class="material-symbols-outlined text-lg" data-icon="help_outline">help_outline</span>
+</button>
+<div class="h-6 w-px bg-border-refined mx-1"></div>
+<!-- Trailing Primary Action -->
+<button class="flex items-center gap-2 h-9 px-3.5 rounded-lg bg-terracotta-core hover:bg-terracotta-bright text-text-ecru font-label-md text-label-md transition-all duration-150 shadow-sm active:scale-[0.98]">
+<span class="material-symbols-outlined text-base" data-icon="design_services">design_services</span>
+<span>Nuevo Encargo</span>
+</button>
+<!-- Tailor Profile Avatar -->
+<div class="flex items-center gap-2 pl-2">
+<div class="w-8 h-8 rounded-full bg-tertiary-container text-on-tertiary-container flex items-center justify-center font-semibold text-xs border border-border-refined">
+            M
+          </div>
+</div>
+</div>
+</header>
+<!-- ========================================================================= -->
+<!-- WORKSPACE HEADER & 3-TAB SWITCHER                                         -->
+<!-- ========================================================================= -->
+<div class="px-8 pt-6 pb-4 border-b border-border-subtle bg-surface-base">
+<div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+<div>
+<div class="flex items-center gap-2.5 text-text-muted text-label-sm font-label-sm mb-1">
+<span>Atelier Haute Couture</span>
+<span>/</span>
+<span class="text-terracotta-bright">Directorio Anatómico & Comercial</span>
+</div>
+<h1 class="text-headline-md font-headline-md text-text-ecru tracking-tight">
+            Gestión de Clientes, Anatomías y Costes
+          </h1>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-2 px-3 py-2 bg-surface-card hover:bg-surface-elevated text-text-ecru border border-border-refined rounded-lg text-label-sm font-label-sm transition-colors">
+<span class="material-symbols-outlined text-base" data-icon="file_download">file_download</span>
+<span>Exportar Dossier</span>
+</button>
+<button class="flex items-center gap-2 px-3.5 py-2 bg-terracotta-core hover:bg-terracotta-bright text-text-ecru rounded-lg text-label-sm font-label-sm transition-all shadow-sm">
+<span class="material-symbols-outlined text-base" data-icon="person_add">person_add</span>
+<span>+ Alta de Cliente Titular</span>
+</button>
+</div>
+</div>
+<!-- Segmented Spec Selector (3-Tab Switcher) -->
+<div class="mt-6 flex items-center gap-1 p-1 bg-surface-card border border-border-refined rounded-lg w-fit">
+<button class="flex items-center gap-2 px-4 py-2 rounded-md bg-surface-elevated text-text-ecru border border-border-refined text-label-md font-label-md shadow-sm">
+<span class="material-symbols-outlined text-base text-terracotta-bright" data-icon="person">person</span>
+<span>Clientes (24)</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-md text-text-linen hover:text-text-ecru hover:bg-surface-elevated/40 text-label-md font-label-md transition-colors">
+<span class="material-symbols-outlined text-base text-text-muted" data-icon="accessibility_new">accessibility_new</span>
+<span>Personas portadoras (38)</span>
+</button>
+<button class="flex items-center gap-2 px-4 py-2 rounded-md text-text-linen hover:text-text-ecru hover:bg-surface-elevated/40 text-label-md font-label-md transition-colors">
+<span class="material-symbols-outlined text-base text-text-muted" data-icon="texture">texture</span>
+<span>Catálogo e Historial de Materiales (42)</span>
+</button>
+</div>
+</div>
+<!-- ========================================================================= -->
+<!-- MASTER-DETAIL SPLIT CANVAS (35% Left Directory / 65% Right Detail)         -->
+<!-- ========================================================================= -->
+<main class="flex-1 flex w-full overflow-hidden">
+<!-- ======================================================================= -->
+<!-- LEFT PANEL (35% Width): Directory List of Clients                       -->
+<!-- ======================================================================= -->
+<section class="w-[35%] min-w-[360px] border-r border-border-refined flex flex-col bg-surface-base overflow-y-auto">
+<!-- Directory Filters & Quick Search -->
+<div class="p-4 border-b border-border-refined flex flex-col gap-3 sticky top-0 bg-surface-base/95 backdrop-blur-sm z-10">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-muted text-base" data-icon="filter_list">filter_list</span>
+<input class="w-full h-8 pl-9 pr-3 text-body-sm font-body-sm bg-surface-card border border-border-refined rounded-md text-text-ecru placeholder-text-muted focus:outline-none focus:border-terracotta-bright transition-all" placeholder="Filtrar por nombre, ciudad o ID..." type="text"/>
+</div>
+<!-- Quick Filter Badges -->
+<div class="flex items-center gap-2 overflow-x-auto pb-1 text-label-sm font-label-sm">
+<span class="px-2.5 py-1 rounded-md bg-surface-elevated border border-terracotta-bright/40 text-terracotta-bright cursor-pointer shrink-0">
+              Todos (24)
+            </span>
+<span class="px-2.5 py-1 rounded-md bg-surface-card hover:bg-surface-elevated border border-border-refined text-text-linen cursor-pointer shrink-0 transition-colors">
+              Con trabajos activos (7)
+            </span>
+<span class="px-2.5 py-1 rounded-md bg-surface-card hover:bg-surface-elevated border border-border-refined text-text-linen cursor-pointer shrink-0 transition-colors">
+              Con presupuestos pendientes (5)
+            </span>
+</div>
+</div>
+<!-- Directory Client Cards List -->
+<div class="p-3 flex flex-col gap-2.5">
+<!-- SELECTED ITEM: María González -->
+<div class="p-3.5 rounded-lg bg-surface-card border-2 border-terracotta-bright/80 relative shadow-md transition-all cursor-pointer">
+<div class="absolute top-3.5 right-3.5 flex items-center gap-1">
+<span class="px-2 py-0.5 rounded bg-status-success-bg border border-status-success-text/30 text-status-success-text text-label-sm font-label-sm tracking-wide">
+                ACTIVA
+              </span>
+</div>
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-full bg-terracotta-core/20 border border-terracotta-bright text-terracotta-bright flex items-center justify-center font-semibold text-sm shrink-0">
+                MG
+              </div>
+<div class="flex-1 min-w-0 pr-14">
+<div class="text-title-md font-title-md text-text-ecru truncate font-medium">María González</div>
+<div class="text-body-sm font-body-sm text-text-muted truncate">Cliente Principal / Pagadora titular</div>
+</div>
+</div>
+<!-- Metrics bar for María -->
+<div class="mt-3 pt-3 border-t border-border-refined grid grid-cols-3 gap-2 text-center">
+<div class="bg-surface-base/60 p-1.5 rounded border border-border-subtle">
+<div class="text-label-sm font-label-sm text-text-muted">Histórico</div>
+<div class="text-metric-md font-metric-md text-terracotta-bright font-semibold">R$ 1.840</div>
+</div>
+<div class="bg-surface-base/60 p-1.5 rounded border border-border-subtle">
+<div class="text-label-sm font-label-sm text-text-muted">Presupuestos</div>
+<div class="text-metric-md font-metric-md text-text-ecru">4 docs</div>
+</div>
+<div class="bg-surface-base/60 p-1.5 rounded border border-border-subtle">
+<div class="text-label-sm font-label-sm text-text-muted">En taller</div>
+<div class="text-metric-md font-metric-md text-status-success-text">2 prendas</div>
+</div>
+</div>
+<div class="mt-2.5 flex items-center justify-between text-label-sm font-label-sm text-text-muted">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-xs" data-icon="accessibility_new">accessibility_new</span>
+                2 personas portadoras asociadas
+              </span>
+<span class="text-terracotta-bright">En visualización →</span>
+</div>
+</div>
+<!-- SECONDARY ITEM 1: Carlos Silva -->
+<div class="p-3.5 rounded-lg bg-surface-card/60 hover:bg-surface-card border border-border-refined transition-all cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-elevated border border-border-refined text-text-linen flex items-center justify-center font-medium text-xs">
+                  CS
+                </div>
+<div>
+<div class="text-title-md font-title-md text-text-ecru">Carlos Silva</div>
+<div class="text-label-sm font-label-sm text-text-muted">Trajes Sartorial Bespoke</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-status-warning-bg border border-status-warning-text/30 text-status-warning-text text-label-sm font-label-sm">
+                FITTING PENDIENTE
+              </span>
+</div>
+<div class="mt-2.5 pt-2 flex items-center justify-between text-body-sm font-body-sm text-text-linen">
+<span class="font-metric-md text-metric-md">R$ 3.450 histórico</span>
+<span class="text-text-muted text-label-sm font-label-sm">1 trabajo activo · 1 portador</span>
+</div>
+</div>
+<!-- SECONDARY ITEM 2: Laura Santos -->
+<div class="p-3.5 rounded-lg bg-surface-card/60 hover:bg-surface-card border border-border-refined transition-all cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-elevated border border-border-refined text-text-linen flex items-center justify-center font-medium text-xs">
+                  LS
+                </div>
+<div>
+<div class="text-title-md font-title-md text-text-ecru">Laura Santos</div>
+<div class="text-label-sm font-label-sm text-text-muted">Vestidos de Gala & Madrina</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-surface-elevated border border-border-refined text-text-linen text-label-sm font-label-sm">
+                PRESUPUESTO #108
+              </span>
+</div>
+<div class="mt-2.5 pt-2 flex items-center justify-between text-body-sm font-body-sm text-text-linen">
+<span class="font-metric-md text-metric-md">R$ 920 histórico</span>
+<span class="text-text-muted text-label-sm font-label-sm">0 activos · 3 portadores</span>
+</div>
+</div>
+<!-- SECONDARY ITEM 3: Ana Oliveira -->
+<div class="p-3.5 rounded-lg bg-surface-card/60 hover:bg-surface-card border border-border-refined transition-all cursor-pointer">
+<div class="flex items-start justify-between">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-elevated border border-border-refined text-text-linen flex items-center justify-center font-medium text-xs">
+                  AO
+                </div>
+<div>
+<div class="text-title-md font-title-md text-text-ecru">Ana Oliveira</div>
+<div class="text-label-sm font-label-sm text-text-muted">Confección Novia & Velos</div>
+</div>
+</div>
+<span class="px-2 py-0.5 rounded bg-status-success-bg border border-status-success-text/30 text-status-success-text text-label-sm font-label-sm">
+                EN CORTE
+              </span>
+</div>
+<div class="mt-2.5 pt-2 flex items-center justify-between text-body-sm font-body-sm text-text-linen">
+<span class="font-metric-md text-metric-md">R$ 4.800 histórico</span>
+<span class="text-text-muted text-label-sm font-label-sm">1 trabajo activo · 1 portadora</span>
+</div>
+</div>
+<!-- Bottom micro-counter -->
+<div class="text-center py-3 text-label-sm font-label-sm text-text-muted">
+            Mostrando 4 de 24 clientes registrados en SewQuote
+          </div>
+</div>
+</section>
+<!-- ======================================================================= -->
+<!-- RIGHT PANEL (65% Width): Full Profile View for María González           -->
+<!-- ======================================================================= -->
+<section class="flex-1 overflow-y-auto p-6 flex flex-col gap-6 bg-surface-dim">
+<!-- CLIENT METADATA BANNER & SUMMARY -->
+<div class="p-5 rounded-lg bg-surface-card border border-border-refined relative shadow-sm">
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-4 border-b border-border-refined">
+<div class="flex items-start gap-4">
+<div class="w-14 h-14 rounded-lg bg-surface-elevated border-2 border-terracotta-bright flex items-center justify-center text-headline-sm font-headline-sm text-terracotta-bright font-semibold">
+                MG
+              </div>
+<div>
+<div class="flex items-center gap-3">
+<h2 class="text-headline-sm font-headline-sm text-text-ecru font-semibold">María González</h2>
+<span class="px-2.5 py-0.5 rounded bg-status-success-bg border border-status-success-text/30 text-status-success-text text-label-sm font-label-sm">
+                    Cliente Principal / Pagadora titular
+                  </span>
+</div>
+<p class="text-body-sm font-body-sm text-text-linen mt-0.5">
+                  ID Titular: <span class="font-metric-md text-metric-md text-text-ecru">CLI-2024-0089</span> · Alta de cliente: Mayo 2024
+                </p>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-elevated hover:bg-surface-container border border-border-refined text-text-ecru text-label-sm font-label-sm transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="edit">edit</span>
+<span>Editar Ficha</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-terracotta-core hover:bg-terracotta-bright text-text-ecru text-label-sm font-label-sm transition-all shadow-sm">
+<span class="material-symbols-outlined text-sm" data-icon="post_add">post_add</span>
+<span>Nuevo Presupuesto para María</span>
+</button>
+</div>
+</div>
+<!-- Contact Details Grid & Atelier Internal Notes -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 text-body-sm font-body-sm">
+<div class="flex items-center gap-2.5 text-text-linen">
+<span class="material-symbols-outlined text-terracotta-bright text-lg" data-icon="chat">chat</span>
+<div>
+<div class="text-label-sm font-label-sm text-text-muted">WhatsApp / Contacto</div>
+<div class="text-text-ecru font-metric-md text-metric-md">+55 11 98765-4321</div>
+</div>
+</div>
+<div class="flex items-center gap-2.5 text-text-linen">
+<span class="material-symbols-outlined text-terracotta-bright text-lg" data-icon="mail">mail</span>
+<div>
+<div class="text-label-sm font-label-sm text-text-muted">Email de Facturación</div>
+<div class="text-text-ecru">maria.gonzalez@estudio.br</div>
+</div>
+</div>
+<div class="flex items-center gap-2.5 text-text-linen">
+<span class="material-symbols-outlined text-terracotta-bright text-lg" data-icon="location_on">location_on</span>
+<div>
+<div class="text-label-sm font-label-sm text-text-muted">Dirección de Entrega / Atelier</div>
+<div class="text-text-ecru truncate">Rua Oscar Freire 1420, Jardins, São Paulo</div>
+</div>
+</div>
+</div>
+<!-- Atelier Notes callout -->
+<div class="mt-4 p-3 rounded-md bg-surface-base border border-border-subtle flex items-start gap-2.5">
+<span class="material-symbols-outlined text-terracotta-bright text-base mt-0.5" data-icon="sticky_note_2">sticky_note_2</span>
+<div class="text-body-sm font-body-sm text-text-linen">
+<strong class="text-text-ecru font-medium">Notas del Atelier:</strong> Contrata y abona confecciones familiares. Rara vez solicita prendas para sí misma; encarga habitualmente el vestuario de gala y graduación para sus dos hijos (Ana y Pedro). Exigente en terminaciones a mano y orillos sesgados.
+            </div>
+</div>
+<!-- Key Metrics Summary Row -->
+<div class="mt-4 grid grid-cols-3 gap-3">
+<div class="p-3 rounded-lg bg-surface-base border border-border-refined flex items-center justify-between">
+<div>
+<div class="text-label-sm font-label-sm text-text-muted">Presupuestos Emitidos</div>
+<div class="text-metric-lg font-metric-lg text-text-ecru font-semibold">4 Presupuestos</div>
+</div>
+<span class="material-symbols-outlined text-text-muted text-2xl" data-icon="receipt_long">receipt_long</span>
+</div>
+<div class="p-3 rounded-lg bg-surface-base border border-border-refined flex items-center justify-between">
+<div>
+<div class="text-label-sm font-label-sm text-text-muted">Trabajos Activos en Taller</div>
+<div class="text-metric-lg font-metric-lg text-status-success-text font-semibold">2 Trabajos</div>
+</div>
+<span class="material-symbols-outlined text-status-success-text text-2xl" data-icon="checkroom">checkroom</span>
+</div>
+<div class="p-3 rounded-lg bg-surface-base border border-border-refined flex items-center justify-between">
+<div>
+<div class="text-label-sm font-label-sm text-text-muted">Facturado Histórico Total</div>
+<div class="text-metric-lg font-metric-lg text-terracotta-bright font-semibold">R$ 1.840,00</div>
+</div>
+<span class="material-symbols-outlined text-terracotta-bright text-2xl" data-icon="payments">payments</span>
+</div>
+</div>
+</div>
+<!-- ===================================================================== -->
+<!-- SECTION: PERSONAS ASOCIADAS A MARÍA                                   -->
+<!-- (Distingue contratante de la anatomía real de quien portará la prenda) -->
+<!-- ===================================================================== -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-terracotta-bright text-xl" data-icon="family_restroom">family_restroom</span>
+<h3 class="text-headline-sm font-headline-sm text-text-ecru font-semibold">
+                  Personas asociadas a María
+                </h3>
+</div>
+<p class="text-body-sm font-body-sm text-text-muted mt-0.5">
+                Separación arquitectónica entre pagador comercial y silueta anatómica real para confección
+              </p>
+</div>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-card hover:bg-surface-elevated border border-border-refined text-text-ecru text-label-sm font-label-sm transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="person_add">person_add</span>
+<span>+ Asociar Nueva Persona Portadora</span>
+</button>
+</div>
+<!-- PERSONA 1 CARD: Ana González (Hija - Portadora frecuente) -->
+<div class="p-5 rounded-lg bg-surface-card border border-border-refined relative shadow-sm flex flex-col gap-4">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-border-refined">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-status-warning-bg border border-status-warning-text/40 text-status-warning-text flex items-center justify-center font-semibold text-sm">
+                  AG
+                </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-title-md font-title-md text-text-ecru">Ana González</span>
+<span class="px-2 py-0.5 rounded bg-surface-elevated border border-border-refined text-text-linen text-label-sm font-label-sm">
+                      Hija · Portadora frecuente
+                    </span>
+</div>
+<span class="text-label-sm font-label-sm text-text-muted">Expediente de Patrón: #MOD-ANA-01</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-surface-elevated hover:bg-surface-container border border-border-refined text-text-ecru text-label-sm font-label-sm transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="history">history</span>
+<span>Ver Historial Completo de Medidas</span>
+</button>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-terracotta-core hover:bg-terracotta-bright text-text-ecru text-label-sm font-label-sm transition-all">
+<span class="material-symbols-outlined text-sm" data-icon="straighten">straighten</span>
+<span>+ Nueva Medición</span>
+</button>
+</div>
+</div>
+<!-- Panel de Medidas Anatómicas Atelier (CM) -->
+<div>
+<div class="flex items-center justify-between mb-2.5">
+<span class="text-label-sm font-label-sm text-text-linen uppercase tracking-wider">
+                  Panel de Medidas Anatómicas Atelier (CM)
+                </span>
+<span class="text-label-sm font-label-sm text-text-muted">
+                  Unidad: Centímetros (cm) · Calibración sastre
+                </span>
+</div>
+<div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+<!-- Busto -->
+<div class="p-3 rounded-lg bg-surface-base border border-border-refined">
+<div class="text-label-sm font-label-sm text-text-muted">Busto</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-metric-lg font-metric-lg text-text-ecru font-semibold">90</span>
+<span class="text-label-sm font-label-sm text-text-muted">cm</span>
+</div>
+</div>
+<!-- Cintura -->
+<div class="p-3 rounded-lg bg-surface-base border border-border-refined">
+<div class="text-label-sm font-label-sm text-text-muted">Cintura</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-metric-lg font-metric-lg text-text-ecru font-semibold">74</span>
+<span class="text-label-sm font-label-sm text-text-muted">cm</span>
+</div>
+</div>
+<!-- Cadera -->
+<div class="p-3 rounded-lg bg-surface-base border border-border-refined">
+<div class="text-label-sm font-label-sm text-text-muted">Cadera</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-metric-lg font-metric-lg text-text-ecru font-semibold">97</span>
+<span class="text-label-sm font-label-sm text-text-muted">cm</span>
+</div>
+</div>
+<!-- Largo talle -->
+<div class="p-3 rounded-lg bg-surface-base border border-border-refined">
+<div class="text-label-sm font-label-sm text-text-muted">Largo talle</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-metric-lg font-metric-lg text-text-ecru font-semibold">42</span>
+<span class="text-label-sm font-label-sm text-text-muted">cm</span>
+</div>
+</div>
+<!-- Largo falda -->
+<div class="p-3 rounded-lg bg-surface-base border border-border-refined">
+<div class="text-label-sm font-label-sm text-text-muted">Largo falda</div>
+<div class="flex items-baseline justify-between mt-1">
+<span class="text-metric-lg font-metric-lg text-text-ecru font-semibold">102</span>
+<span class="text-label-sm font-label-sm text-text-muted">cm</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ALERTA VISUAL EN CAJA DESTACADA (Warning / Reconfirmación) -->
+<div class="p-3.5 rounded-lg bg-status-warning-bg border border-status-warning-text/40 flex items-start gap-3">
+<span class="material-symbols-outlined text-status-warning-text text-xl shrink-0 mt-0.5" data-icon="warning">warning</span>
+<div class="text-body-sm font-body-sm text-text-ecru">
+<span class="text-status-warning-text font-semibold">Última medición hace 8 meses (Enero 2026 registraba Busto 88, Cintura 70, Cadera 94).</span>
+<p class="text-text-linen mt-0.5">
+                  Se sugiere reconfirmación previa al corte de tela. Existen variaciones significativas (+2cm a +4cm) respecto a patrones base de la temporada anterior.
+                </p>
+</div>
+</div>
+</div>
+<!-- PERSONA 2 CARD: Pedro González (Hijo) -->
+<div class="p-4 rounded-lg bg-surface-card border border-border-refined relative shadow-sm flex flex-col gap-3">
+<div class="flex items-center justify-between pb-2 border-b border-border-refined">
+<div class="flex items-center gap-3">
+<div class="w-9 h-9 rounded-full bg-surface-elevated border border-border-refined text-text-linen flex items-center justify-center font-semibold text-xs">
+                  PG
+                </div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-title-md font-title-md text-text-ecru">Pedro González</span>
+<span class="px-2 py-0.5 rounded bg-surface-elevated border border-border-refined text-text-muted text-label-sm font-label-sm">
+                      Hijo · Portador ocasional
+                    </span>
+</div>
+</div>
+</div>
+<span class="text-label-sm font-label-sm text-status-success-text flex items-center gap-1">
+<span class="material-symbols-outlined text-sm" data-icon="check_circle">check_circle</span>
+                Medidas recientes y calibradas (10/08/2026)
+              </span>
+</div>
+<!-- Medidas Pedro -->
+<div class="grid grid-cols-3 gap-3">
+<div class="p-2.5 rounded bg-surface-base border border-border-subtle flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-text-muted">Cuello</span>
+<span class="font-metric-md text-metric-md text-text-ecru font-semibold">38 cm</span>
+</div>
+<div class="p-2.5 rounded bg-surface-base border border-border-subtle flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-text-muted">Pecho</span>
+<span class="font-metric-md text-metric-md text-text-ecru font-semibold">94 cm</span>
+</div>
+<div class="p-2.5 rounded bg-surface-base border border-border-subtle flex items-center justify-between">
+<span class="text-label-sm font-label-sm text-text-muted">Cintura</span>
+<span class="font-metric-md text-metric-md text-text-ecru font-semibold">82 cm</span>
+</div>
+</div>
+</div>
+</div>
+<!-- ===================================================================== -->
+<!-- BOTTOM SECTION: Historial de Precios de Materiales Frecuentes         -->
+<!-- ===================================================================== -->
+<div class="p-5 rounded-lg bg-surface-card border border-border-refined flex flex-col gap-4 shadow-sm">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border-refined">
+<div>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-terracotta-bright text-xl" data-icon="inventory_2">inventory_2</span>
+<h3 class="text-headline-sm font-headline-sm text-text-ecru font-semibold">
+                  Historial de Precios de Materiales Frecuentes
+                </h3>
+</div>
+<p class="text-body-sm font-body-sm text-text-muted mt-0.5">
+                Seguimiento de costes de aprovisionamiento aplicados a encargos de este perfil
+              </p>
+</div>
+<button class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-terracotta-core hover:bg-terracotta-bright text-text-ecru text-label-sm font-label-sm transition-all shadow-sm shrink-0">
+<span class="material-symbols-outlined text-sm" data-icon="price_change">price_change</span>
+<span>+ Actualizar Precio / Nuevo Material</span>
+</button>
+</div>
+<!-- Material Spec Tile: Tela Oxford azul -->
+<div class="p-4 rounded-lg bg-surface-base border border-border-refined flex flex-col gap-4">
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-elevated border border-border-refined flex items-center justify-center text-text-ecru">
+<span class="material-symbols-outlined" data-icon="texture">texture</span>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="text-title-md font-title-md text-text-ecru font-medium">Tela Oxford azul</span>
+<span class="px-2 py-0.5 rounded bg-surface-elevated border border-border-refined text-text-linen text-label-sm font-label-sm">
+                      Algodón 100% Peinado
+                    </span>
+</div>
+<span class="text-label-sm font-label-sm text-text-muted">Proveedor: Textil Paulista S.A. · Ancho: 1.50 m</span>
+</div>
+</div>
+<!-- Precio Actual Destacado -->
+<div class="flex items-center gap-3 bg-surface-card px-4 py-2 rounded-lg border border-border-refined">
+<div class="text-right">
+<div class="text-label-sm font-label-sm text-text-muted">Precio actual de taller</div>
+<div class="text-metric-lg font-metric-lg text-terracotta-bright font-bold">R$ 32,00 <span class="text-xs text-text-linen font-normal">/ metro</span></div>
+</div>
+<span class="material-symbols-outlined text-status-warning-text" data-icon="trending_up">trending_up</span>
+</div>
+</div>
+<!-- Timeline de Evolución de Coste (Horizontal Stepper / Trend) -->
+<div class="pt-2">
+<div class="text-label-sm font-label-sm text-text-linen mb-3">Evolución de coste en los últimos 4 meses:</div>
+<div class="relative flex items-center justify-between w-full max-w-xl mx-auto px-6">
+<!-- Hairline connecting line -->
+<div class="absolute left-10 right-10 top-1/2 -translate-y-1/2 h-0.5 bg-border-refined -z-0"></div>
+<!-- Node 1: 15/05 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-7 h-7 rounded-full bg-surface-card border-2 border-border-refined flex items-center justify-center text-xs text-text-muted">
+                    1
+                  </div>
+<div class="text-metric-md font-metric-md text-text-linen mt-1 font-medium">R$ 27,00</div>
+<div class="text-label-sm font-label-sm text-text-muted">15/05/2026</div>
+</div>
+<!-- Arrow indicator -->
+<span class="material-symbols-outlined text-text-muted text-sm z-10" data-icon="arrow_forward">arrow_forward</span>
+<!-- Node 2: 02/08 -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-7 h-7 rounded-full bg-surface-card border-2 border-border-refined flex items-center justify-center text-xs text-text-linen">
+                    2
+                  </div>
+<div class="text-metric-md font-metric-md text-text-ecru mt-1 font-medium">R$ 29,00</div>
+<div class="text-label-sm font-label-sm text-text-muted">02/08/2026</div>
+</div>
+<!-- Arrow indicator -->
+<span class="material-symbols-outlined text-text-muted text-sm z-10" data-icon="arrow_forward">arrow_forward</span>
+<!-- Node 3: 20/09 Actual -->
+<div class="relative z-10 flex flex-col items-center">
+<div class="w-7 h-7 rounded-full bg-terracotta-core border-2 border-terracotta-bright flex items-center justify-center text-xs text-text-ecru font-bold shadow-md">
+                    ★
+                  </div>
+<div class="text-metric-md font-metric-md text-terracotta-bright mt-1 font-bold">R$ 32,00</div>
+<div class="text-label-sm font-label-sm text-terracotta-bright font-semibold">20/09 (Actual)</div>
+</div>
+</div>
+</div>
+<!-- Nota de auditoría obligatoria -->
+<div class="mt-2 p-3 rounded bg-surface-card border border-border-refined flex items-center gap-2.5 text-body-sm font-body-sm text-text-muted">
+<span class="material-symbols-outlined text-terracotta-bright text-base shrink-0" data-icon="info">info</span>
+<span>
+<strong class="text-text-linen font-medium">Nota de auditoría:</strong> Cambiar el precio actual no modifica presupuestos históricos cerrados. Los cálculos futuros aplicarán automáticamente R$ 32.00/m respetando los márgenes de patronaje.
+              </span>
+</div>
+</div>
+</div>
+</section>
+</main>
+</div>
+</body></html>

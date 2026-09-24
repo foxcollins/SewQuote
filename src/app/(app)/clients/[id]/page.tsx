@@ -40,7 +40,7 @@ export default async function ClientDetailPage({
   ]);
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="mx-auto max-w-3xl pb-8">
       <PageHeader title={client.name} subtitle="Cliente" />
 
       <Card className="mb-6 p-4">

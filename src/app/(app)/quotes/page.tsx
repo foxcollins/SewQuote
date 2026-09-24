@@ -35,9 +35,10 @@ export default async function QuotesPage() {
     .limit(50);
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="pb-8">
       <PageHeader
         title="Presupuestos"
+        subtitle="Borradores, enviados y aprobados"
         action={
           <PrimaryLink href={"/quotes/new" as Route} size="sm">
             + Nuevo
@@ -45,7 +46,7 @@ export default async function QuotesPage() {
         }
       />
 
-      <ul className="space-y-2">
+      <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
         {(quotes ?? []).map((q) => {
           const client = q.clients as { name?: string } | null;
           const price = q.final_price ?? q.suggested_price;

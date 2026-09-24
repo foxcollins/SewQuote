@@ -24,7 +24,7 @@ export default async function SettingsPage() {
   const ur = (tenant?.urgency_factors ?? {}) as Record<string, number>;
 
   return (
-    <main className="mx-auto max-w-lg p-4 pb-28">
+    <main className="mx-auto max-w-2xl pb-8">
       <PageHeader title="Configuración" subtitle="Atelier, precios y factores" />
 
       <SettingsForm>
