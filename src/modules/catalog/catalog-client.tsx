@@ -13,6 +13,7 @@ import {
   inputClass,
 } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { formatMoney, type Locale } from "@/lib/i18n";
 import {
   createJobCategoryAction,
   createMaterialAction,
@@ -56,17 +57,18 @@ export function CatalogClient({
   materials,
   categories,
   currency,
-  money,
+  locale,
   today,
 }: {
   services: Service[];
   materials: Material[];
   categories: JobCategory[];
   currency: string;
-  money: (n: number) => string;
+  locale: Locale;
   today: string;
 }) {
   const router = useRouter();
+  const money = (n: number) => formatMoney(n, currency, locale);
   const { toast } = useToast();
   const [tab, setTab] = useState<Tab>("services");
   const [modal, setModal] = useState<null | "service" | "material" | "category" | "price">(null);

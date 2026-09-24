@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
-import { formatMoney, type Locale } from "@/lib/i18n";
+import type { Locale } from "@/lib/i18n";
 import { CatalogClient } from "@/modules/catalog/catalog-client";
 
 export default async function CatalogPage() {
@@ -33,8 +33,6 @@ export default async function CatalogPage() {
     }
   }
 
-  const money = (n: number) => formatMoney(n, ctx.currency, locale);
-
   return (
     <CatalogClient
       services={(servicesRes.data ?? []).map((s) => ({
@@ -60,7 +58,7 @@ export default async function CatalogPage() {
         active: c.active,
       }))}
       currency={ctx.currency}
-      money={money}
+      locale={locale}
       today={today}
     />
   );
