@@ -67,11 +67,36 @@ export async function archiveClientAction(clientId: string) {
 }
 
 export async function createPersonAction(formData: FormData) {
+  const data = await insertPersonFromForm(formData);
+  revalidatePath("/clients");
+  const clientId = String(formData.get("client_id") ?? "").trim();
+  if (clientId) redirect((`/clients/${clientId}`) as never);
+  redirect((`/persons/${data.id}`) as never);
+}
+
+export type PersonJson = {
+  id: string;
+  name: string;
+  client_id: string | null;
+  notes: string | null;
+};
+
+export async function createPersonJsonAction(
+  formData: FormData,
+): Promise<PersonJson> {
+  const data = await insertPersonFromForm(formData);
+  revalidatePath("/clients");
+  revalidatePath("/quotes/new");
+  return data;
+}
+
+async function insertPersonFromForm(formData: FormData): Promise<PersonJson> {
   const ctx = await requireSessionContext();
   const supabase = await createClient();
   const name = String(formData.get("name") ?? "").trim();
   if (!name) throw new Error("Name required");
   const clientId = String(formData.get("client_id") ?? "").trim() || null;
+  const notes = String(formData.get("notes") ?? "").trim() || null;
 
   const { data, error } = await supabase
     .from("persons")
@@ -79,18 +104,47 @@ export async function createPersonAction(formData: FormData) {
       tenant_id: ctx.tenantId,
       client_id: clientId,
       name,
-      notes: String(formData.get("notes") ?? "").trim() || null,
+      notes,
     })
-    .select("id")
+    .select("id, name, client_id, notes")
     .single();
   if (error) throw new Error(error.message);
-
-  revalidatePath("/clients");
-  if (clientId) redirect((`/clients/${clientId}`) as never);
-  redirect((`/persons/${data.id}`) as never);
+  return data as PersonJson;
 }
 
+export type MeasurementValueDto = {
+  name: string;
+  value: number;
+  unit: string;
+};
+
+export type MeasurementSetJson = {
+  id: string;
+  person_id: string;
+  label: string | null;
+  recorded_at: string;
+  notes: string | null;
+  values: MeasurementValueDto[];
+};
+
 export async function createMeasurementSetAction(formData: FormData) {
+  const set = await insertMeasurementSetFromForm(formData);
+  revalidatePath(`/persons/${set.person_id}`);
+  redirect((`/persons/${set.person_id}`) as never);
+}
+
+export async function createMeasurementSetJsonAction(
+  formData: FormData,
+): Promise<MeasurementSetJson> {
+  const set = await insertMeasurementSetFromForm(formData);
+  revalidatePath(`/persons/${set.person_id}`);
+  revalidatePath("/quotes/new");
+  return set;
+}
+
+async function insertMeasurementSetFromForm(
+  formData: FormData,
+): Promise<MeasurementSetJson> {
   const ctx = await requireSessionContext();
   const supabase = await createClient();
 
@@ -98,7 +152,8 @@ export async function createMeasurementSetAction(formData: FormData) {
   if (!personId) throw new Error("Person required");
 
   const label = String(formData.get("label") ?? "").trim() || null;
-  const recordedAt = String(formData.get("recorded_at") ?? "") ||
+  const recordedAt =
+    String(formData.get("recorded_at") ?? "") ||
     new Date().toISOString().slice(0, 10);
   const notes = String(formData.get("notes") ?? "").trim() || null;
 
@@ -115,7 +170,7 @@ export async function createMeasurementSetAction(formData: FormData) {
       recorded_at: recordedAt,
       notes,
     })
-    .select("id")
+    .select("id, person_id, label, recorded_at, notes")
     .single();
   if (error) throw new Error(error.message);
 
@@ -135,6 +190,16 @@ export async function createMeasurementSetAction(formData: FormData) {
     if (vErr) throw new Error(vErr.message);
   }
 
-  revalidatePath(`/persons/${personId}`);
-  redirect((`/persons/${personId}`) as never);
+  return {
+    id: set.id,
+    person_id: set.person_id,
+    label: set.label,
+    recorded_at: set.recorded_at,
+    notes: set.notes,
+    values: valueRows.map((r) => ({
+      name: r.name,
+      value: r.value,
+      unit: r.unit,
+    })),
+  };
 }

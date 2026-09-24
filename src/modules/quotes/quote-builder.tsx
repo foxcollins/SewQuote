@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { Route } from "next";
 import { useRouter } from "next/navigation";
@@ -12,8 +11,16 @@ import {
   type TenantPricingConfig,
   type Urgency,
 } from "@/modules/pricing/engine";
-import { formatMoney, type Locale } from "@/lib/i18n";
+import { formatDate, formatMoney, type Locale } from "@/lib/i18n";
 import { saveQuoteDraftAction } from "@/modules/quotes/actions";
+import type {
+  MeasurementSetJson,
+  PersonJson,
+} from "@/modules/clients/actions";
+import {
+  MeasurementQuickAddModal,
+  PersonQuickAddModal,
+} from "@/modules/quotes/quick-add-modals";
 import { Button, Card, SectionTitle, inputClass } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 
@@ -22,6 +29,7 @@ type PersonOpt = { id: string; name: string; client_id: string | null };
 type ServiceOpt = { id: string; name: string; base_price: number | null; estimated_minutes: number | null; active?: boolean };
 type MaterialOpt = { id: string; name: string; unit: string; unit_price: number };
 type CategoryOpt = { id: string; name: string };
+type MeasurementSetOpt = MeasurementSetJson;
 
 type JobLine = {
   job_category_id: string;
@@ -59,9 +67,26 @@ function emptyJob(): JobLine {
   };
 }
 
+function setsForPerson(
+  sets: MeasurementSetOpt[],
+  personId: string,
+): MeasurementSetOpt[] {
+  if (!personId) return [];
+  return sets
+    .filter((s) => s.person_id === personId)
+    .sort((a, b) => (a.recorded_at < b.recorded_at ? 1 : -1));
+}
+
+function setAgeDays(recordedAt: string): number {
+  const t = new Date(recordedAt).getTime();
+  if (Number.isNaN(t)) return 0;
+  return Math.max(0, Math.floor((Date.now() - t) / 86_400_000));
+}
+
 export function QuoteBuilder({
   clients,
-  persons,
+  persons: personsInitial,
+  measurementSets: setsInitial,
   services,
   materials,
   categories,
@@ -69,9 +94,12 @@ export function QuoteBuilder({
   currency,
   locale,
   presetClientId,
+  presetClientName,
+  staleDays = 30,
 }: {
   clients: ClientOpt[];
   persons: PersonOpt[];
+  measurementSets?: MeasurementSetOpt[];
   services: ServiceOpt[];
   materials: MaterialOpt[];
   categories: CategoryOpt[];
@@ -79,10 +107,16 @@ export function QuoteBuilder({
   currency: string;
   locale: Locale;
   presetClientId?: string;
+  presetClientName?: string;
+  staleDays?: number;
 }) {
   const router = useRouter();
   const { toast } = useToast();
   const [clientId, setClientId] = useState(presetClientId ?? "");
+  const [persons, setPersons] = useState<PersonOpt[]>(personsInitial);
+  const [measurementSets, setMeasurementSets] = useState<MeasurementSetOpt[]>(
+    setsInitial ?? [],
+  );
   const [margin, setMargin] = useState(String(config.defaultMarginPercent));
   const [validUntil, setValidUntil] = useState(() => {
     const d = new Date();
@@ -93,14 +127,52 @@ export function QuoteBuilder({
   const [jobs, setJobs] = useState<JobLine[]>([emptyJob()]);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [personModalJob, setPersonModalJob] = useState<number | null>(null);
+  const [measureModal, setMeasureModal] = useState<{
+    jobIndex: number;
+    personId: string;
+    personName: string;
+  } | null>(null);
 
   const clientPersons = useMemo(
     () => persons.filter((p) => !clientId || !p.client_id || p.client_id === clientId),
     [persons, clientId],
   );
 
+  const activeClientName =
+    clients.find((c) => c.id === clientId)?.name ?? presetClientName;
+
   function updateJob(i: number, patch: Partial<JobLine>) {
     setJobs((prev) => prev.map((j, idx) => (idx === i ? { ...j, ...patch } : j)));
+  }
+
+  function onSelectPerson(i: number, personId: string) {
+    const available = setsForPerson(measurementSets, personId);
+    const latest = available[0];
+    updateJob(i, {
+      person_id: personId,
+      measurement_set_id: personId && latest ? latest.id : "",
+    });
+  }
+
+  function onPersonCreated(person: PersonJson) {
+    setPersons((prev) =>
+      prev.some((p) => p.id === person.id)
+        ? prev
+        : [...prev, { id: person.id, name: person.name, client_id: person.client_id }],
+    );
+    if (personModalJob != null) {
+      onSelectPerson(personModalJob, person.id);
+    }
+    setPersonModalJob(null);
+  }
+
+  function onMeasurementCreated(set: MeasurementSetJson) {
+    setMeasurementSets((prev) => [set, ...prev]);
+    if (measureModal) {
+      updateJob(measureModal.jobIndex, { measurement_set_id: set.id });
+    }
+    setMeasureModal(null);
   }
 
   const engineJobs: QuoteJobInput[] = jobs.map((job) => ({
@@ -199,13 +271,35 @@ export function QuoteBuilder({
         </p>
       )}
 
+      <PersonQuickAddModal
+        open={personModalJob != null}
+        onClose={() => setPersonModalJob(null)}
+        clientId={clientId}
+        clientName={activeClientName}
+        onCreated={onPersonCreated}
+      />
+      {measureModal && (
+        <MeasurementQuickAddModal
+          open
+          onClose={() => setMeasureModal(null)}
+          personId={measureModal.personId}
+          personName={measureModal.personName}
+          onCreated={onMeasurementCreated}
+        />
+      )}
+
       <Card className="p-4">
         <SectionTitle>Cliente</SectionTitle>
         <label className="block text-sm font-semibold">
           Cliente *
           <select
             value={clientId}
-            onChange={(e) => setClientId(e.target.value)}
+            onChange={(e) => {
+              setClientId(e.target.value);
+              setJobs((prev) =>
+                prev.map((j) => ({ ...j, person_id: "", measurement_set_id: "" })),
+              );
+            }}
             className={inputClass}
             required
           >
@@ -248,7 +342,16 @@ className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--sur
         </label>
       </Card>
 
-      {jobs.map((job, i) => (
+      {jobs.map((job, i) => {
+        const personSets = setsForPerson(measurementSets, job.person_id);
+        const selectedSet = personSets.find((s) => s.id === job.measurement_set_id);
+        const personName =
+          persons.find((p) => p.id === job.person_id)?.name ?? undefined;
+        const ageDays = selectedSet ? setAgeDays(selectedSet.recorded_at) : 0;
+        const isStale = ageDays > staleDays;
+        const months = Math.floor(ageDays / 30);
+
+        return (
         <Card
           key={i}
           className="p-4"
@@ -282,40 +385,147 @@ className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--sur
                 ))}
               </select>
             </label>
-            <label className="block text-sm font-semibold">
-              Persona destinataria
+            <div className="block text-sm font-semibold">
+              <div className="mb-1 flex items-center justify-between gap-2">
+                <span>Persona destinataria</span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!clientId) {
+                      toast("Selecciona primero el cliente", "error");
+                      return;
+                    }
+                    setPersonModalJob(i);
+                  }}
+                  className="text-xs font-semibold text-[var(--primary)]"
+                >
+                  + Añadir
+                </button>
+              </div>
               <select
                 value={job.person_id}
-                onChange={(e) => updateJob(i, { person_id: e.target.value })}
+                onChange={(e) => onSelectPerson(i, e.target.value)}
                 className={inputClass}
               >
-                <option value="">—</option>
+                <option value="">
+                  — {job.garment_type ? "sin persona" : "opcional"}
+                </option>
                 {clientPersons.map((p) => (
                   <option key={p.id} value={p.id}>
                     {p.name}
                   </option>
                 ))}
               </select>
-            </label>
+            </div>
           </div>
-          {clientId && clientPersons.length === 0 && (
-            <p className="mt-2 text-xs text-[var(--ink-muted)]">
-              Sin personas para este cliente.{" "}
-              <Link
-                href={`/clients/${clientId}` as Route}
-                className="font-semibold text-[var(--primary)]"
-              >
-                Añadir en la ficha del cliente
-              </Link>
-            </p>
-          )}
+
+          <div className="mt-4 rounded-[6px] border border-[var(--border)] bg-[var(--surface-2)] p-3">
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <p className="text-xs font-semibold uppercase text-[var(--ink-muted)]">
+                Medidas{" "}
+                <span className="font-normal normal-case">
+                  (opcional · no aplica a reparaciones simples)
+                </span>
+              </p>
+              {job.person_id && (
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMeasureModal({
+                      jobIndex: i,
+                      personId: job.person_id,
+                      personName: personName ?? "",
+                    })
+                  }
+                  className="text-xs font-semibold text-[var(--primary)]"
+                >
+                  + Registrar medidas
+                </button>
+              )}
+            </div>
+
+            {!job.person_id ? (
+              <p className="text-xs text-[var(--ink-muted)]">
+                Elige una persona si el trabajo usa medidas corporales (confección,
+                ajuste a medida). Para cambiar un cierre o un dobladillo puedes
+                dejarlo vacío.
+              </p>
+            ) : personSets.length === 0 ? (
+              <div className="space-y-1">
+                <p className="text-xs text-[var(--ink-muted)]">
+                  Sin medidas para {personName ?? "esta persona"}. Puedes omitirlas
+                  o registrarlas ahora.
+                </p>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setMeasureModal({
+                      jobIndex: i,
+                      personId: job.person_id,
+                      personName: personName ?? "",
+                    })
+                  }
+                  className="text-xs font-semibold text-[var(--primary)]"
+                >
+                  Registrar primer set
+                </button>
+              </div>
+            ) : (
+              <>
+                <select
+                  value={job.measurement_set_id}
+                  onChange={(e) => updateJob(i, { measurement_set_id: e.target.value })}
+                  className={`${inputClass} h-10`}
+                >
+                  <option value="">
+                    No usar medidas (reparación / sin toma)
+                  </option>
+                  {personSets.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {(s.label || formatDate(s.recorded_at, locale)) +
+                        " · " +
+                        formatDate(s.recorded_at, locale)}
+                    </option>
+                  ))}
+                </select>
+
+                {selectedSet && (
+                  <div className="mt-2">
+                    {isStale && (
+                      <p className="mb-2 rounded-[4px] bg-[var(--warning-bg)] px-2 py-1 text-[11px] text-[var(--warning)]">
+                        Estas medidas fueron registradas hace{" "}
+                        {months || 1} mes{months === 1 ? "" : "es"}. Se recomienda
+                        confirmar antes de usarlas.
+                      </p>
+                    )}
+                    <dl className="flex flex-wrap gap-1.5">
+                      {selectedSet.values.map((v, vi) => (
+                        <div
+                          key={vi}
+                          className="rounded-[4px] bg-[var(--surface)] px-2 py-1 text-[11px]"
+                        >
+                          <span className="text-[var(--ink-muted)]">{v.name} </span>
+                          <span className="metric font-semibold">
+                            {v.value} {v.unit}
+                          </span>
+                        </div>
+                      ))}
+                    </dl>
+                    <p className="mt-1.5 text-[11px] text-[var(--ink-muted)]">
+                      Se congelará como snapshot al guardar el borrador.
+                    </p>
+                  </div>
+                )}
+              </>
+            )}
+          </div>
 
           <label className="mt-3 block text-sm font-semibold">
             Tipo de prenda
             <input
               value={job.garment_type}
               onChange={(e) => updateJob(i, { garment_type: e.target.value })}
-              placeholder="ej: vestido de fiesta"
+              placeholder="ej: vestido de fiesta · o: cambiar cierre"
               className={inputClass}
             />
           </label>
@@ -535,7 +745,8 @@ className="mt-1 w-full rounded-[6px] border border-[var(--border)] bg-[var(--sur
             />
           </label>
         </Card>
-      ))}
+        );
+      })}
 
       <button
         type="button"

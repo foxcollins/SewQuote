@@ -16,7 +16,7 @@ export default async function NewQuotePage({
   const { client_id } = await searchParams;
   const supabase = await createClient();
 
-  const [clientsRes, personsRes, servicesRes, materialsRes, catsRes] =
+  const [clientsRes, personsRes, servicesRes, materialsRes, catsRes, setsRes] =
     await Promise.all([
       supabase
         .from("clients")
@@ -35,6 +35,12 @@ export default async function NewQuotePage({
         .select("id, name")
         .eq("active", true)
         .order("name"),
+      supabase
+        .from("measurement_sets")
+        .select(
+          "id, person_id, label, recorded_at, notes, measurement_values(name, value, unit)",
+        )
+        .order("recorded_at", { ascending: false }),
     ]);
 
   type MatRow = { id: string; name: string; unit: string };
@@ -73,6 +79,21 @@ export default async function NewQuotePage({
     urgencyFactors: ctx.urgencyFactors as TenantPricingConfig["urgencyFactors"],
   };
 
+  const measurementSets = (setsRes.data ?? []).map((s) => ({
+    id: s.id,
+    person_id: s.person_id,
+    label: s.label,
+    recorded_at: s.recorded_at,
+    notes: s.notes,
+    values: (s.measurement_values ?? []).map((v) => ({
+      name: v.name,
+      value: Number(v.value),
+      unit: v.unit,
+    })),
+  }));
+
+  const clientName = clientsRes.data?.find((c) => c.id === client_id)?.name;
+
   return (
     <main className="mx-auto max-w-3xl pb-8">
       <PageHeader
@@ -82,6 +103,7 @@ export default async function NewQuotePage({
       <QuoteBuilder
         clients={clientsRes.data ?? []}
         persons={personsRes.data ?? []}
+        measurementSets={measurementSets}
         services={servicesRes.data ?? []}
         materials={materials}
         categories={catsRes.data ?? []}
@@ -89,6 +111,8 @@ export default async function NewQuotePage({
         currency={ctx.currency}
         locale={(ctx.locale as Locale) || "es"}
         presetClientId={client_id}
+        presetClientName={clientName}
+        staleDays={ctx.measurementStaleDays}
       />
     </main>
   );

@@ -18,6 +18,9 @@ Guardar medidas corporales con historial por **persona destinataria** (no por cl
 6. Al crear trabajo nuevo: sugerir el set más reciente de la persona.
 7. Si el set tiene antigüedad elevada: advertir ("registradas hace N meses… confirmar antes de usar"). **Umbral aprobado: 1 mes.**
 8. Campos libres de medida: catálogo abierto por tenant o lista base configurable; valores en unidades consistentes por set (cm por defecto, no hardcodear formato de locale en el dato).
+9. **Medidas opcionales por job**: trabajos sin medida corporal (p. ej. cambiar cierre, dobladillo, reparación simple) pueden guardarse con `person_id` y/o `measurement_set_id` en null; el builder no exige set para guardar borrador.
+10. **Alta inline en el presupuesto**: desde el builder se puede crear persona (y set de medidas) sin salir de `/quotes/new`; la persona nueva se auto-selecciona en el job y el set nuevo se asocia al job.
+11. Selector de set en el job incluye opción explícita **"No usar medidas"**; al cambiar de persona se limpia el set y se preselecciona el más reciente si existe.
 
 ## DECISIÓN PENDIENTE
 No aplica. Umbral de medidas antiguas = **1 mes** (configurable en tenant con este default).
@@ -44,3 +47,12 @@ Dado un set con antigüedad **mayor a 1 mes**, Cuando se selecciona para un trab
 
 ### AC-007
 Dado un presupuesto con job que tiene medidas, Cuando se convierte en work_order, Entonces el work_order recibe el mismo snapshot de medidas.
+
+### AC-008
+Dado el builder de presupuesto con cliente seleccionado, Cuando se usa "Añadir" persona y se guarda el nombre, Entonces la persona se crea, se auto-selecciona en el job y no se pierde el resto del borrador en edición.
+
+### AC-009
+Dado un job de reparación (p. ej. cambiar cierre) sin persona o sin set de medidas, Cuando se guarda el borrador, Entonces se permite y el snapshot de medidas queda null.
+
+### AC-010
+Dado un job con persona y sets disponibles, Cuando se cambia de persona en el select, Entonces el set de la persona anterior se limpia y se sugiere el set más reciente de la nueva.
