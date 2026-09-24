@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   Button,
@@ -74,7 +74,8 @@ export function CatalogClient({
   const [modal, setModal] = useState<null | "service" | "material" | "category" | "price">(null);
   const [priceMaterialId, setPriceMaterialId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [, startTransition] = useTransition();
+  const [toggleId, setToggleId] = useState<string | null>(null);
+  const [activeOverrides, setActiveOverrides] = useState<Record<string, boolean>>({});
   const forms = {
     service: useRef<HTMLFormElement>(null),
     material: useRef<HTMLFormElement>(null),
@@ -82,21 +83,28 @@ export function CatalogClient({
     price: useRef<HTMLFormElement>(null),
   };
 
-  function refresh() {
-    router.refresh();
+  function isActive(id: string, fallback: boolean) {
+    return activeOverrides[id] ?? fallback;
   }
 
-  async function run(fn: () => Promise<ActionResult>) {
-    if (busy) return;
-    setBusy(true);
-    try {
-      const res = await fn();
-      toast(res.message, res.ok ? "success" : "error");
-      if (res.ok) refresh();
-      return res;
-    } finally {
-      setBusy(false);
-    }
+  useEffect(() => {
+    const server = new Map<string, boolean>();
+    for (const s of services) server.set(s.id, s.active);
+    for (const m of materials) server.set(m.id, m.active);
+    for (const c of categories) server.set(c.id, c.active);
+    setActiveOverrides((prev) => {
+      const next: Record<string, boolean> = {};
+      let changed = false;
+      for (const [id, val] of Object.entries(prev)) {
+        if (server.get(id) !== val) next[id] = val;
+        else changed = true;
+      }
+      return changed ? next : prev;
+    });
+  }, [services, materials, categories]);
+
+  function refresh() {
+    router.refresh();
   }
 
   async function submitForm(
@@ -107,7 +115,7 @@ export function CatalogClient({
     ) => Promise<ActionResult>,
   ) {
     const form = forms[kind].current;
-    if (!form || busy) return;
+    if (!form || busy || toggleId) return;
     if (!form.reportValidity()) return;
     setBusy(true);
     try {
@@ -122,6 +130,29 @@ export function CatalogClient({
       }
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function toggleActive(
+    id: string,
+    next: boolean,
+    action: (id: string, active: boolean) => Promise<ActionResult>,
+  ) {
+    if (toggleId) return;
+    setToggleId(id);
+    setActiveOverrides((prev) => ({ ...prev, [id]: next }));
+    try {
+      const res = await action(id, next);
+      toast(res.message, res.ok ? "success" : "error");
+      if (res.ok) refresh();
+      else
+        setActiveOverrides((prev) => {
+          const copy = { ...prev };
+          delete copy[id];
+          return copy;
+        });
+    } finally {
+      setToggleId(null);
     }
   }
 
@@ -191,29 +222,31 @@ export function CatalogClient({
               }
             />
           )}
-          {services.map((s) => (
-            <Card key={s.id} className="flex items-center gap-3 px-4 py-3">
-              <div className="min-w-0 flex-1">
-                <p className={`truncate text-sm font-semibold ${s.active ? "" : "opacity-50"}`}>
-                  {s.name}
-                </p>
-                <p className="mt-0.5 text-xs text-[var(--ink-muted)]">
-                  {s.base_price != null ? money(s.base_price) : "Sin precio"}
-                  {s.estimated_minutes ? ` · ${s.estimated_minutes} min` : ""}
-                  {s.category ? ` · ${s.category}` : ""}
-                </p>
-              </div>
-              <Switch
-                checked={s.active}
-                disabled={busy}
-                onChange={(next) =>
-                  startTransition(async () => {
-                    await run(() => toggleServiceAction(s.id, next));
-                  })
-                }
-              />
-            </Card>
-          ))}
+          {services.map((s) => {
+            const on = isActive(s.id, s.active);
+            return (
+              <Card key={s.id} className="flex items-center gap-3 px-4 py-3">
+                <div className="min-w-0 flex-1">
+                  <p className={`truncate text-sm font-semibold ${on ? "" : "opacity-50"}`}>
+                    {s.name}
+                  </p>
+                  <p className="mt-0.5 text-xs text-[var(--ink-muted)]">
+                    {s.base_price != null ? money(s.base_price) : "Sin precio"}
+                    {s.estimated_minutes ? ` · ${s.estimated_minutes} min` : ""}
+                    {s.category ? ` · ${s.category}` : ""}
+                  </p>
+                </div>
+                <Switch
+                  checked={on}
+                  busy={toggleId === s.id}
+                  aria-label={`${on ? "Desactivar" : "Activar"} ${s.name}`}
+                  onChange={(next) => {
+                    void toggleActive(s.id, next, toggleServiceAction);
+                  }}
+                />
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -230,52 +263,52 @@ export function CatalogClient({
               }
             />
           )}
-          {materials.map((m) => (
-            <Card key={m.id} className="px-4 py-3">
-              <div className="flex items-start gap-3">
-                <div className="min-w-0 flex-1">
-                  <p className={`truncate text-sm font-semibold ${m.active ? "" : "opacity-50"}`}>
-                    {m.name}
-                    <span className="ml-1.5 text-xs font-normal text-[var(--ink-muted)]">
-                      ({m.unit})
-                    </span>
-                  </p>
-                  <p className="metric mt-0.5 text-sm font-semibold text-[var(--primary)]">
-                    {m.current_price != null ? money(m.current_price) : "Sin precio"}
-                  </p>
-                  <p className="text-[11px] text-[var(--ink-muted)]">
-                    {m.price_count > 0
-                      ? `${m.price_count} precio${m.price_count > 1 ? "s" : ""} en historial`
-                      : "Aún sin historial"}
-                  </p>
+          {materials.map((m) => {
+            const on = isActive(m.id, m.active);
+            return (
+              <Card key={m.id} className="px-4 py-3">
+                <div className="flex items-start gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className={`truncate text-sm font-semibold ${on ? "" : "opacity-50"}`}>
+                      {m.name}
+                      <span className="ml-1.5 text-xs font-normal text-[var(--ink-muted)]">
+                        ({m.unit})
+                      </span>
+                    </p>
+                    <p className="metric mt-0.5 text-sm font-semibold text-[var(--primary)]">
+                      {m.current_price != null ? money(m.current_price) : "Sin precio"}
+                    </p>
+                    <p className="text-[11px] text-[var(--ink-muted)]">
+                      {m.price_count > 0
+                        ? `${m.price_count} precio${m.price_count > 1 ? "s" : ""} en historial`
+                        : "Aún sin historial"}
+                    </p>
+                  </div>
+                  <div className="flex shrink-0 flex-col items-end gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={busy || toggleId !== null}
+                      onClick={() => {
+                        setPriceMaterialId(m.id);
+                        setModal("price");
+                      }}
+                    >
+                      Precio
+                    </Button>
+                    <Switch
+                      checked={on}
+                      busy={toggleId === m.id}
+                      aria-label={`${on ? "Desactivar" : "Activar"} ${m.name}`}
+                      onChange={(next) => {
+                        void toggleActive(m.id, next, toggleMaterialAction);
+                      }}
+                    />
+                  </div>
                 </div>
-                <div className="flex shrink-0 flex-col items-end gap-1">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    disabled={busy}
-                    onClick={() => {
-                      setPriceMaterialId(m.id);
-                      setModal("price");
-                    }}
-                  >
-                    Precio
-                  </Button>
-                  <Switch
-                    checked={m.active}
-                    disabled={busy}
-                    labelOn="Act."
-                    labelOff="Inact."
-                    onChange={(next) =>
-                      startTransition(async () => {
-                        await run(() => toggleMaterialAction(m.id, next));
-                      })
-                    }
-                  />
-                </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
 
@@ -292,24 +325,26 @@ export function CatalogClient({
               }
             />
           )}
-          {categories.map((c) => (
-            <Card key={c.id} className="flex items-center gap-3 px-4 py-3">
-              <div className="min-w-0 flex-1">
-                <p className={`truncate text-sm font-semibold ${c.active ? "" : "opacity-50"}`}>
-                  {c.name}
-                </p>
-              </div>
-              <Switch
-                checked={c.active}
-                disabled={busy}
-                onChange={(next) =>
-                  startTransition(async () => {
-                    await run(() => toggleJobCategoryAction(c.id, next));
-                  })
-                }
-              />
-            </Card>
-          ))}
+          {categories.map((c) => {
+            const on = isActive(c.id, c.active);
+            return (
+              <Card key={c.id} className="flex items-center gap-3 px-4 py-3">
+                <div className="min-w-0 flex-1">
+                  <p className={`truncate text-sm font-semibold ${on ? "" : "opacity-50"}`}>
+                    {c.name}
+                  </p>
+                </div>
+                <Switch
+                  checked={on}
+                  busy={toggleId === c.id}
+                  aria-label={`${on ? "Desactivar" : "Activar"} ${c.name}`}
+                  onChange={(next) => {
+                    void toggleActive(c.id, next, toggleJobCategoryAction);
+                  }}
+                />
+              </Card>
+            );
+          })}
         </div>
       )}
 

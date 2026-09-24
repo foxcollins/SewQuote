@@ -187,37 +187,58 @@ export function Switch({
   onChange,
   labelOn = "Activo",
   labelOff = "Inactivo",
+  showLabel = true,
   disabled,
+  busy,
+  "aria-label": ariaLabel,
 }: {
   checked: boolean;
   onChange: (next: boolean) => void;
   labelOn?: string;
   labelOff?: string;
+  showLabel?: boolean;
   disabled?: boolean;
+  busy?: boolean;
+  "aria-label"?: string;
 }) {
+  const label = checked ? labelOn : labelOff;
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      disabled={disabled}
-      onClick={() => onChange(!checked)}
-      className="inline-flex h-11 min-w-[44px] items-center gap-2 text-xs font-semibold text-[var(--ink-muted)] disabled:opacity-50"
-    >
-      <span
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-          checked ? "bg-[var(--primary)]" : "bg-[var(--border)]"
+    <span className="inline-flex items-center gap-2">
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={ariaLabel ?? label}
+        disabled={disabled || busy}
+        onClick={() => onChange(!checked)}
+        className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)] disabled:opacity-60 ${
+          checked ? "bg-[var(--success)]" : "bg-[var(--border)]"
         }`}
       >
         <span
-          className={`inline-block size-5 transform rounded-full bg-white shadow transition-transform ${
-            checked ? "translate-x-5.5" : "translate-x-0.5"
+          className={`absolute left-0 size-5 rounded-full bg-white shadow-[0_1px_3px_rgba(28,29,31,0.25)] transition-transform duration-200 ${
+            checked ? "translate-x-[22px]" : "translate-x-[2px]"
           }`}
-          style={{ transform: checked ? "translateX(22px)" : "translateX(2px)" }}
         />
-      </span>
-      <span className="hidden sm:inline">{checked ? labelOn : labelOff}</span>
-    </button>
+      </button>
+      {showLabel && (
+        <span
+          className={`inline-flex min-w-[4.25rem] justify-center rounded-full px-2 py-0.5 text-[11px] leading-tight font-semibold transition-colors ${
+            checked
+              ? "bg-[var(--success-bg)] text-[var(--success)]"
+              : "bg-[var(--surface-2)] text-[var(--ink-muted)]"
+          }`}
+        >
+          {label}
+        </span>
+      )}
+      {busy && (
+        <span
+          className="size-3.5 shrink-0 animate-spin rounded-full border-2 border-[var(--ink-muted)] border-t-transparent"
+          aria-hidden
+        />
+      )}
+    </span>
   );
 }
 

@@ -64,12 +64,17 @@ export async function toggleServiceAction(
   try {
     const ctx = await requireSessionContext();
     const supabase = await createClient();
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("services")
       .update({ active, updated_at: new Date().toISOString() })
       .eq("id", id)
-      .eq("tenant_id", ctx.tenantId);
+      .eq("tenant_id", ctx.tenantId)
+      .select("id, active")
+      .single();
     if (error) return fail(error.message);
+    if (!data || data.active !== active) {
+      return fail("No se pudo actualizar el servicio");
+    }
     revalidatePath("/catalog");
     return ok(active ? "Servicio activado" : "Servicio desactivado");
   } catch {
@@ -196,12 +201,17 @@ export async function toggleJobCategoryAction(
   try {
     const ctx = await requireSessionContext();
     const supabase = await createClient();
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("job_categories")
       .update({ active })
       .eq("id", id)
-      .eq("tenant_id", ctx.tenantId);
+      .eq("tenant_id", ctx.tenantId)
+      .select("id, active")
+      .single();
     if (error) return fail(error.message);
+    if (!data || data.active !== active) {
+      return fail("No se pudo actualizar la categoría");
+    }
     revalidatePath("/catalog");
     return ok(active ? "Categoría activada" : "Categoría desactivada");
   } catch {
@@ -216,12 +226,17 @@ export async function toggleMaterialAction(
   try {
     const ctx = await requireSessionContext();
     const supabase = await createClient();
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from("materials")
       .update({ active })
       .eq("id", id)
-      .eq("tenant_id", ctx.tenantId);
+      .eq("tenant_id", ctx.tenantId)
+      .select("id, active")
+      .single();
     if (error) return fail(error.message);
+    if (!data || data.active !== active) {
+      return fail("No se pudo actualizar el material");
+    }
     revalidatePath("/catalog");
     return ok(active ? "Material activado" : "Material desactivado");
   } catch {
