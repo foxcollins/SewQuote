@@ -66,10 +66,10 @@ export function QuoteLifecycleActions({
           className="w-full"
           loading={busy || pending}
           onClick={() =>
-            run(() => sendQuoteAction(quoteId), "Presupuesto enviado")
+            run(() => sendQuoteAction(quoteId), "Presupuesto publicado")
           }
         >
-          Enviar / publicar
+          Publicar
         </Button>
         <Button
           size="lg"
