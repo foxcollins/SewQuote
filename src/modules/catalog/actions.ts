@@ -82,6 +82,51 @@ export async function toggleServiceAction(
   }
 }
 
+export async function deleteServiceAction(id: string): Promise<ActionResult> {
+  try {
+    const ctx = await requireSessionContext();
+    const supabase = await createClient();
+
+    const { data: service } = await supabase
+      .from("services")
+      .select("id, name")
+      .eq("id", id)
+      .eq("tenant_id", ctx.tenantId)
+      .maybeSingle();
+    if (!service) return fail("Servicio no encontrado");
+
+    const { count, error: countError } = await supabase
+      .from("quote_items")
+      .select("id", { count: "exact", head: true })
+      .eq("service_id", id);
+    if (countError) return fail(countError.message);
+    if (count && count > 0) {
+      return fail(
+        `“${service.name}” está en uso en ${count} presupuesto${count > 1 ? "s" : ""}. Desactívalo en su lugar.`,
+      );
+    }
+
+    const { error } = await supabase
+      .from("services")
+      .delete()
+      .eq("id", id)
+      .eq("tenant_id", ctx.tenantId);
+    if (error) {
+      if (error.code === "23503") {
+        return fail(
+          `“${service.name}” está referenciado en presupuestos. Desactívalo en su lugar.`,
+        );
+      }
+      return fail(error.message);
+    }
+
+    revalidatePath("/catalog");
+    return ok(`Servicio “${service.name}” eliminado`);
+  } catch {
+    return fail("No se pudo eliminar el servicio");
+  }
+}
+
 export async function createMaterialAction(
   _prev: ActionResult | null,
   formData: FormData,

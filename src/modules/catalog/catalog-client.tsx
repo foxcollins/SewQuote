@@ -18,6 +18,7 @@ import {
   createJobCategoryAction,
   createMaterialAction,
   createServiceAction,
+  deleteServiceAction,
   toggleJobCategoryAction,
   toggleMaterialAction,
   toggleServiceAction,
@@ -76,6 +77,8 @@ export function CatalogClient({
   const [busy, setBusy] = useState(false);
   const [toggleId, setToggleId] = useState<string | null>(null);
   const [activeOverrides, setActiveOverrides] = useState<Record<string, boolean>>({});
+  const [deleteTarget, setDeleteTarget] = useState<Service | null>(null);
+  const [deleting, setDeleting] = useState(false);
   const forms = {
     service: useRef<HTMLFormElement>(null),
     material: useRef<HTMLFormElement>(null),
@@ -153,6 +156,21 @@ export function CatalogClient({
         });
     } finally {
       setToggleId(null);
+    }
+  }
+
+  async function confirmDeleteService() {
+    if (!deleteTarget || deleting || busy || toggleId) return;
+    setDeleting(true);
+    try {
+      const res = await deleteServiceAction(deleteTarget.id);
+      toast(res.message, res.ok ? "success" : "error");
+      if (res.ok) {
+        setDeleteTarget(null);
+        refresh();
+      }
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -236,14 +254,25 @@ export function CatalogClient({
                     {s.category ? ` · ${s.category}` : ""}
                   </p>
                 </div>
-                <Switch
-                  checked={on}
-                  busy={toggleId === s.id}
-                  aria-label={`${on ? "Desactivar" : "Activar"} ${s.name}`}
-                  onChange={(next) => {
-                    void toggleActive(s.id, next, toggleServiceAction);
-                  }}
-                />
+                <div className="flex shrink-0 items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={`Eliminar ${s.name}`}
+                    disabled={busy || toggleId !== null || deleting}
+                    onClick={() => setDeleteTarget(s)}
+                  >
+                    Eliminar
+                  </Button>
+                  <Switch
+                    checked={on}
+                    busy={toggleId === s.id}
+                    aria-label={`${on ? "Desactivar" : "Activar"} ${s.name}`}
+                    onChange={(next) => {
+                      void toggleActive(s.id, next, toggleServiceAction);
+                    }}
+                  />
+                </div>
               </Card>
             );
           })}
@@ -347,6 +376,43 @@ export function CatalogClient({
           })}
         </div>
       )}
+
+      <Modal
+        open={Boolean(deleteTarget)}
+        onClose={() => {
+          if (!deleting) setDeleteTarget(null);
+        }}
+        title="Eliminar servicio"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-[var(--ink-muted)]">
+            ¿Eliminar “{deleteTarget?.name}”? Solo se puede si no se usa en
+            ningún presupuesto. Si está en uso, desactívalo.
+          </p>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              variant="secondary"
+              className="flex-1"
+              disabled={deleting}
+              onClick={() => setDeleteTarget(null)}
+            >
+              Cancelar
+            </Button>
+            <Button
+              type="button"
+              variant="danger"
+              className="flex-1"
+              loading={deleting}
+              onClick={() => {
+                void confirmDeleteService();
+              }}
+            >
+              Eliminar
+            </Button>
+          </div>
+        </div>
+      </Modal>
 
       <Modal
         open={modal === "service"}

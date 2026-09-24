@@ -33,7 +33,7 @@ export default async function QuoteDetailPage({
     .from("quotes")
     .select(
       `*,
-      clients(id, name),
+      clients(id, name, phone, whatsapp),
       quote_jobs(
         id, garment_type, garment_description, labor_method, labor_fixed_price,
         estimated_minutes, complexity, urgency, measurements_snapshot, notes, sort_order,
@@ -95,6 +95,16 @@ export default async function QuoteDetailPage({
   const publicHref = quote.public_token
     ? `${process.env.NEXT_PUBLIC_APP_URL ?? ""}/orcamento/${quote.public_token}`
     : null;
+  const client = (quote.clients ?? {}) as {
+    name?: string;
+    phone?: string | null;
+    whatsapp?: string | null;
+  };
+  const totalLabel = formatMoney(
+    quote.final_price != null ? Number(quote.final_price) : price,
+    quote.currency ?? ctx.currency,
+    locale,
+  );
 
   return (
     <main className="mx-auto max-w-lg p-4 pb-28">
@@ -266,6 +276,11 @@ export default async function QuoteDetailPage({
         <QuoteLifecycleActions
           quoteId={quote.id}
           status={quote.status}
+          quoteNumber={quote.quote_number}
+          clientName={client.name ?? null}
+          totalLabel={totalLabel}
+          whatsapp={client.whatsapp ?? null}
+          phone={client.phone ?? null}
           publicHref={
             publicHref && quote.public_token
               ? `/orcamento/${quote.public_token}`

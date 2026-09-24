@@ -60,6 +60,7 @@ Catálogo (servicios, materiales, precios, configuración)
 - Registro básico de resultado real del trabajo.
 - Medidas: historial por persona + snapshot en el trabajo (REQ-025).
 - Enlace público de solo lectura con aprobación registrada, sin cuenta del cliente (REQ-026).
+- Compartir presupuesto por **WhatsApp deep-link** (`wa.me` + mensaje con enlace público) solo si el cliente tiene número; sin API oficial (SPEC-004).
 - PWA responsive e instalable.
 
 ## 10. Funcionalidades fuera del MVP
@@ -67,11 +68,12 @@ Marcadas como futuras (no promover al MVP):
 - Pagos, Pix, comprobantes.
 - Inventario/stock.
 - Gastos del negocio y rentabilidad (dashboard financiero).
-- Agenda, WhatsApp oficial, fotografías (gestión de fotos de prendas).
+- Agenda, **WhatsApp oficial** (Business API, plantillas, notificaciones/webhooks, envío automático), fotografías (gestión de fotos de prendas).
 - IA (interpreta; no calcula precios).
 - Contabilidad, facturación electrónica, nómina, marketplace, e-commerce, app nativa.
 
 Nota: medidas y enlace público de aprobación **pasan a esta versión** (decisión del usuario); ver sección 9.
+Nota: compartir por `wa.me` (deep-link manual) **sí va en el MVP**; no confundir con “WhatsApp oficial” de V1 (ver ADR-005 / SPEC-004).
 
 ## 11. Principios del producto
 1. El motor determinístico calcula; la IA interpreta y asiste; la profesional decide.
@@ -107,6 +109,7 @@ Nota: medidas y enlace público de aprobación **pasan a esta versión** (decisi
 10. El cliente no asume que es la persona que usa la prenda: separar CLIENTE y PERSONA DESTINATARIA.
 11. Medidas con historial por persona, reutilizables como referencia con advertencia si son antiguas; el trabajo guarda snapshot de las medidas usadas + referencia al registro de origen. **Incluida en esta versión.**
 12. Presupuesto compartible por enlace público con botón de aprobación registrada, sin cuenta del cliente. **Incluida en esta versión.**
+12b. Botón “Enviar por WhatsApp” = deep-link `wa.me` con mensaje + enlace público, solo si el cliente tiene número. **Incluida en esta versión** (no es API oficial; ver SPEC-004 / ADR-005).
 13. Versionado importante en modificaciones formales (envío, aprobación, recálculo por vencimiento), no por cada edición en borrador.
 14. Gastos adicionales fuera del MVP.
 15. Categorías de trabajos por presupuesto (ej. #100: Reparación—camisa, Ajuste—pantalón, Confección—blusa).
@@ -132,6 +135,6 @@ Nota: medidas y enlace público de aprobación **pasan a esta versión** (decisi
 - Aislamiento completo entre Tenant A y Tenant B desde el diseño (no como parche posterior).
 
 ## 17. Evolución futura prevista
-- **V1**: PDF, WhatsApp, fotos, agenda, pagos, dashboard financiero, rentabilidad, historial avanzado. (Medidas y enlace público: **ya incluidos en esta versión**.)
+- **V1**: PDF, **WhatsApp oficial** (API/plantillas/notificaciones), fotos, agenda, pagos, dashboard financiero, rentabilidad, historial avanzado. (Medidas, enlace público y **share wa.me** del presupuesto: **ya incluidos en esta versión**.)
 - **V2**: IA asistiva, recomendaciones por histórico, predicción de tiempo, detección de subprecio, análisis de imágenes.
 - **Métricas antes de ampliar**: presupuestos/usuario, tiempo de creación, % aceptados, trabajos registrados, reutilización, brecha sugerido vs final, retención.

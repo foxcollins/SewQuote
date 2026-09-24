@@ -11,7 +11,7 @@ Existe un prototipo Stitch (`docs/stitch_sewquote_atelier_management_saas/`) con
 2. Fuente de verdad de UI/alcance: `design.md` + `requirements.md` + `specs/*`. En conflicto, gana SDD.
 3. Design tokens del Atelier Craft Tech (colores, tipografía, radius, spacing) se implementan en Tailwind/CSS variables en el MVP.
 4. Pantallas a tomar del mock (adaptadas): login/registro, shell+nav, lista/detalle presupuesto, form nuevo presupuesto, clientes/personas/medidas, vista pública, trabajos, catálogo, config, dashboard.
-5. Se omiten del mock: Google login, botón WhatsApp, idioma EN, impuestos, IA activa en dashboard, copy de features fuera de MVP.
+5. Se omiten del mock: Google login, botón WhatsApp de **integración/API**, idioma EN, impuestos, IA activa en dashboard, copy de features fuera de MVP. *(Share `wa.me` del presupuesto se incorpora luego por ADR-005 / SPEC-004.)*
 6. Light mode obligatorio; dark mode con tokens existentes si no retrasa el MVP.
 7. i18n ES/PT desde el inicio (SPEC-002); moneda/fechas vía `Intl` (NFR-004).
 
@@ -30,7 +30,7 @@ Existe un prototipo Stitch (`docs/stitch_sewquote_atelier_management_saas/`) con
 Mayor costo y retraso sin necesidad durante la validación.
 
 ### Copiar el HTML del mock tal cual
-Incluye alcance fuera de specs (Google, WhatsApp, EN) y no integra Next/i18n/RLS.
+Incluye alcance fuera de specs (Google, WhatsApp API, EN) y no integra Next/i18n/RLS.
 
 ## Condiciones de revisión
 - Cambio mayor de marca o design system.

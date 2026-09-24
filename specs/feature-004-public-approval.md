@@ -27,9 +27,13 @@ Compartir un presupuesto con el cliente por link (WhatsApp u otro) sin cuenta en
 9. Sin Storage del público; sin montos enviados por el cliente.
 10. Rate limit en GET/POST del token.
 11. Notas de sugerencia: solo lectura para el tenant en su UI de la quote; no ejecutan cambios automáticos en el cálculo — la profesional decide.
+12. **Compartir por WhatsApp (deep-link, no API):** en detalle de quote con token público, botón **“Enviar por WhatsApp”** que abre `https://wa.me/{telefono}?text={mensaje}` con mensaje precompuesto (saludo, `#NNN`, enlace público `/orcamento/[token]`, total opcional).
+13. **Habilitación del botón:** solo si el cliente de la quote tiene `whatsapp` (o `phone` como fallback) no vacío. Sin número → botón **oculto o deshabilitado** con hint; no se abre `wa.me` sin destino.
+14. El deep-link **no** es la integración oficial de WhatsApp (sin Business API, plantillas, webhooks ni envío automático). Eso sigue fuera del MVP (V1).
+15. Tras enviar (`status=sent`) y con token, el botón de share es CTA junto a “Abrir página pública”. En `draft` no se muestra (aún no hay token vigente para el cliente).
 
 ## DECISIÓN PENDIENTE
-No aplica. Aprobado: aprobar + rechazar + nota de sugerencia en el mismo enlace.
+No aplica. Aprobado: aprobar + rechazar + nota de sugerencia en el mismo enlace. **Share WhatsApp por wa.me (deep-link) con número del cliente: DECISIÓN ACEPTADA (opción A).**
 
 ## Acceptance Criteria
 
@@ -62,3 +66,12 @@ Dado el presupuesto `sent`, Cuando envía una sugerencia ("¿Se puede bajar el l
 
 ### AC-010
 Dado el tenant, Cuando revisa la quote, Entonces distingue acciones: aprobada / rechazada / con sugerencias pendientes de respuesta.
+
+### AC-011
+Dado un presupuesto `sent` con `public_token` y un cliente con `whatsapp` no vacío, Cuando el tenant pulsa “Enviar por WhatsApp”, Entonces se abre `wa.me` (o WhatsApp Web) con destino el número del cliente y un mensaje que incluye el enlace público de la quote.
+
+### AC-012
+Dado un presupuesto con cliente **sin** número WhatsApp/telefónico utilizable, Cuando se muestra la UI de acciones, Entonces el botón de compartir por WhatsApp no está habilitado (oculto o disabled con hint) y no se genera URL `wa.me` sin número.
+
+### AC-013
+Dado el mismo botón, Cuando se activa, Entonces **no** se invoca la API oficial de WhatsApp ni se registra envío automático: solo se abre el deep-link y la usuaria envía el mensaje manualmente.

@@ -17,9 +17,10 @@ Administrar el catálogo del tenant: servicios, categorías de trabajo, material
 5. Servicios y categorías de trabajo: CRUD + `active` (baja lógica).
 6. Un presupuesto no asume una sola categoría: cada job referencia `job_categories`.
 7. Valores `base_price` de servicio son default de UI, no autoridad final del quote (el motor resuelve).
+8. **Borrado físico de servicio solo si no está referenciado** en `quote_items` (ni borradores). Si tiene al menos una referencia, el sistema **rechaza el DELETE** y ofrece/reactiva la baja lógica (`active=false`). El borrado no debe tocar el histórico de otras tablas.
 
 ## DECISIÓN PENDIENTE
-No aplica.
+No aplica. Borrado condicional de servicios: **DECISIÓN ACEPTADA** (opción B).
 
 ## Acceptance Criteria
 
@@ -40,3 +41,12 @@ Dado un tenant con categorías Reparación/Ajuste/Confección, Cuando crea jobs 
 
 ### AC-006
 Dado un usuario, Cuando intenta editar precios históricos de un material, Entonces la operación no existe/rechaza; solo agregar nuevo precio.
+
+### AC-007
+Dado un servicio sin ninguna fila en `quote_items`, Cuando el usuario confirma eliminar, Entonces el servicio se borra de `services` y ya no aparece en el catálogo.
+
+### AC-008
+Dado un servicio con al menos un `quote_items` (incluido borrador), Cuando el usuario intenta eliminarlo, Entonces la operación se rechaza con mensaje de “en uso”, el servicio sigue existiendo y puede desactivarse (`active=false`).
+
+### AC-009
+Dado un servicio eliminado (caso AC-007), Cuando se consulta un presupuesto que nunca lo usó, Entonces no hay referencias colgantes; presupuestos existentes no se modifican.

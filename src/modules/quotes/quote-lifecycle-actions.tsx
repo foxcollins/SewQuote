@@ -18,10 +18,20 @@ export function QuoteLifecycleActions({
   quoteId,
   status,
   publicHref,
+  quoteNumber,
+  clientName,
+  totalLabel,
+  whatsapp,
+  phone,
 }: {
   quoteId: string;
   status: string;
   publicHref?: string | null;
+  quoteNumber?: number | string;
+  clientName?: string | null;
+  totalLabel?: string | null;
+  whatsapp?: string | null;
+  phone?: string | null;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -77,6 +87,27 @@ export function QuoteLifecycleActions({
   }
 
   if (status === "sent") {
+    const rawWa = (whatsapp ?? "").trim();
+    const rawPhone = (phone ?? "").trim();
+    const waDigits = normalizeWaNumber(rawWa || rawPhone);
+    const canShareWa = Boolean(publicHref && waDigits);
+    const quoteLabel =
+      quoteNumber != null
+        ? `#${String(quoteNumber).padStart(3, "0")}`
+        : "";
+    const messageParts = [
+      clientName ? `Hola ${clientName},` : "Hola,",
+      quoteLabel
+        ? `Te comparto el presupuesto ${quoteLabel}.`
+        : "Te comparto el presupuesto.",
+      totalLabel ? `Total: ${totalLabel}.` : null,
+      publicHref ? absoluteUrl(publicHref) : null,
+    ].filter(Boolean) as string[];
+    const waHref =
+      canShareWa && publicHref
+        ? `https://wa.me/${waDigits}?text=${encodeURIComponent(messageParts.join("\n"))}`
+        : null;
+
     return (
       <div className="space-y-2">
         <Button
@@ -122,6 +153,20 @@ export function QuoteLifecycleActions({
         >
           Cancelar
         </Button>
+        {waHref ? (
+          <a
+            href={waHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex h-12 items-center justify-center rounded-[6px] border border-[var(--success)] bg-[var(--success-bg)] text-sm font-semibold text-[var(--success)] transition-opacity hover:opacity-90"
+          >
+            Enviar por WhatsApp
+          </a>
+        ) : publicHref ? (
+          <p className="text-center text-xs text-[var(--ink-muted)]">
+            Añade WhatsApp del cliente para compartir por wa.me
+          </p>
+        ) : null}
         {publicHref && (
           <a
             href={publicHref}
@@ -171,4 +216,21 @@ export function QuoteLifecycleActions({
   }
 
   return null;
+}
+
+function normalizeWaNumber(raw: string): string | null {
+  const trimmed = raw.trim();
+  if (!trimmed) return null;
+  const digits = trimmed.replace(/\D/g, "");
+  if (digits.length < 8 || digits.length > 15) return null;
+  return digits;
+}
+
+function absoluteUrl(href: string): string {
+  if (/^https?:\/\//i.test(href)) return href;
+  const base =
+    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
+    (typeof window !== "undefined" ? window.location.origin : "");
+  if (!base) return href;
+  return `${base}${href.startsWith("/") ? "" : "/"}${href}`;
 }

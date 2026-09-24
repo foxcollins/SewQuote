@@ -88,11 +88,12 @@ No hay mock de: listado de trabajos/work orders, catálogo servicios/materiales,
 | Del prototipo | Acción | Motivo |
 |---------------|--------|--------|
 | Login “Google” | **Quitar** o diferir | Auth email/password en SPEC-009 |
-| Botón **WhatsApp** en presupuesto | **Quitar** de esta versión | WhatsApp = V1 |
+| Botón **WhatsApp** (API / integración) en presupuesto | **Quitar** | WhatsApp oficial = V1 |
+| Compartir **wa.me** (deep-link) en presupuesto `sent` | **Incluir** | SPEC-004 / ADR-005; solo si cliente tiene número |
 | Idioma **EN** en topbar | **Quitar** | Solo **ES / PT** (SPEC-002) |
 | “Impuestos y materiales / Incluido” | **Quitar** | Sin impuestos en specs |
 | Nav: *Fittings, New Spec, Atelier Clients* | **Reemplazar** | Ver nav real abajo |
-| “Copia de seguridad automática / WhatsApp integrado” en login | **Quitar** copy | No prometer fuera de alcance |
+| “Copia de seguridad automática / WhatsApp integrado” en login | **Quitar** copy | No prometer API oficial fuera de alcance |
 | Régimen tipo “Bespoke Approved” inglés | **i18n** ES/PT | Textos de dominio en catálogo |
 | Métricas dashboard con R$ hardcodeado | formatear por **currency tenant** | NFR-004 |
 | “Asistente IA” activo en dashboard | **Ocultar/sección V2** | IA fuera del MVP actual |
@@ -129,6 +130,7 @@ No hay mock de: listado de trabajos/work orders, catálogo servicios/materiales,
 - IDs de presupuesto → `#001` en mono.
 - Adv. medidas antigüedad **> 1 mes** en ámbar + acción Confirmar.
 - Enlace público: 3 acciones (aprobar / rechazar / sugerir nota) si `sent` y no vencido; si `expired`, solo lectura + aviso.
+- Acciones tenant en quote `sent`: “Enviar por WhatsApp” (`wa.me` + enlace) solo si `clients.whatsapp`/`phone` con valor; si no, oculto o disabled + hint. Junto a “Abrir página pública”.
 - Estados quote/work = mismos textos/badges en ES y PT (claves i18n).
 - Snapshot de materiales y medidas: etiqueta visual “Congelado / Snapshot” como en el mock.
 - i18n: selector ES/PT en login (como el mock sin EN).
