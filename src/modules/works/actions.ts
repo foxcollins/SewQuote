@@ -21,27 +21,68 @@ export async function convertQuoteToWorkOrderAction(quoteId: string) {
 
   const { data: quote } = await supabase
     .from("quotes")
-    .select("id, status, version_number, final_price, suggested_price, quote_jobs(measurements_snapshot)")
+    .select("id, status, version_number, final_price, suggested_price")
     .eq("id", quoteId)
     .eq("tenant_id", ctx.tenantId)
     .single();
   if (!quote) throw new Error("Quote not found");
   if (quote.status !== "accepted") throw new Error("Only accepted quotes convert");
 
-  const snapshot =
-    (quote.quote_jobs as { measurements_snapshot?: unknown }[] | null)?.find(
-      (j) => j.measurements_snapshot,
-    )?.measurements_snapshot ?? null;
+  const { data: active } = await supabase
+    .from("work_orders")
+    .select("id")
+    .eq("quote_id", quoteId)
+    .eq("tenant_id", ctx.tenantId)
+    .neq("status", "cancelled")
+    .maybeSingle();
+  if (active) {
+    throw new Error("Este presupuesto ya tiene una orden de trabajo");
+  }
 
-  const { error } = await supabase.from("work_orders").insert({
-    tenant_id: ctx.tenantId,
-    quote_id: quoteId,
-    quote_version_number: quote.version_number,
-    status: "accepted",
-    actual_price: quote.final_price ?? quote.suggested_price,
-    measurements_snapshot: snapshot,
-  });
-  if (error) throw new Error(error.message);
+  const { data: jobs } = await supabase
+    .from("quote_jobs")
+    .select("id, measurements_snapshot, sort_order")
+    .eq("quote_id", quoteId)
+    .eq("tenant_id", ctx.tenantId);
+  const quoteJobs = (jobs ?? []) as {
+    id: string;
+    measurements_snapshot: unknown;
+    sort_order: number | null;
+  }[];
+
+  const { data: wo, error } = await supabase
+    .from("work_orders")
+    .insert({
+      tenant_id: ctx.tenantId,
+      quote_id: quoteId,
+      quote_version_number: quote.version_number,
+      status: "accepted",
+      actual_price: quote.final_price ?? quote.suggested_price,
+      measurements_snapshot: quoteJobs.find((j) => j.measurements_snapshot)
+        ?.measurements_snapshot ?? null,
+    })
+    .select("id")
+    .single();
+  if (error) {
+    if (error.code === "23505") {
+      throw new Error("Este presupuesto ya tiene una orden de trabajo");
+    }
+    throw new Error(error.message);
+  }
+
+  if (quoteJobs.length) {
+    const { error: itemErr } = await supabase.from("work_order_items").insert(
+      quoteJobs.map((j) => ({
+        tenant_id: ctx.tenantId,
+        work_order_id: wo.id,
+        quote_job_id: j.id,
+        status: "accepted",
+        measurements_snapshot: j.measurements_snapshot,
+        sort_order: j.sort_order ?? 0,
+      })),
+    );
+    if (itemErr) throw new Error(itemErr.message);
+  }
 
   revalidatePath("/works");
   revalidatePath(`/quotes/${quoteId}`);

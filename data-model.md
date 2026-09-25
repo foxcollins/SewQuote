@@ -177,12 +177,13 @@ Regla crítica: al guardar el presupuesto, nombre/unidad/precio quedan congelado
 
 Solo en modificaciones formales; no por edición de borrador.
 
-### work_orders  (REQ-019..022)
+### work_orders  (REQ-019..022 — ejecución; ADR-006 aceptado)
 - id
 - tenant_id
-- quote_id
+- quote_id  (vínculo obligatorio; **`Quote 1 ─ N WorkOrders`**; MVP crea 1 OT al convertir; índice único **parcial** `where status <> 'cancelled'`)
 - quote_version_number
 - status: accepted | waiting_garment | in_production | fitting | adjustments | ready | delivered | cancelled
+  (roll-up de la OT; detalle de producción por pieza en `work_order_items`)
 - started_at
 - completed_at
 - actual_minutes
@@ -191,6 +192,23 @@ Solo en modificaciones formales; no por edición de borrador.
 - notes
 - created_at
 - updated_at
+
+Regla (ADR-006): no añadir a esta tabla `payment_status`, `delivery_status` ni flags de presupuesto.
+
+### work_order_items  (piezas en producción — ADR-006 aceptado)
+- id
+- tenant_id
+- work_order_id
+- quote_job_id  (pieza origen; `quote_jobs 1 ─ N work_order_items`; única por OT+job)
+- status  (MVP: mismos valores que la OT; vocabulario fino de item = DECISIÓN PENDIENTE en SPEC-006)
+- measurements_snapshot (jsonb — copia desde el job al convertir)
+- started_at / completed_at (nullable)
+- notes
+- sort_order
+- created_at
+- updated_at
+
+Al convertir la quote aceptada: 1 OT + 1 item por `quote_job`. Medidas solo desde snapshot; no releer personas.
 
 ### work_materials  (materiales realmente usados)
 - id
@@ -246,7 +264,7 @@ Quote B → snapshot 45
 
 ## Estados
 
-### quotes
+### quotes (comercial)
 ```text
 draft → sent → accepted
              ↘ rejected
@@ -256,12 +274,18 @@ draft → sent → accepted
 ```
 
 accepted no se edita: cambios → nueva versión (o nuevo presupuesto según regla de negocio en REQ-016/018).
+La quote **no** lleva estados de producción ni de pago (ADR-006).
 
-### work_orders
+### work_orders (ejecución — roll-up; detalle en work_order_items)
 ```text
 accepted → waiting_garment → in_production → fitting → adjustments
          → ready → delivered
 cualquiera activo → cancelled
+```
+
+```text
+quotes.quote_jobs (pieza cotizada) 1 ─ N work_order_items
+quotes 1 ─ N work_orders (MVP: 1 al convertir)
 ```
 
 ## Multi-tenancy
@@ -274,6 +298,8 @@ cualquiera activo → cancelled
 - quote_jobs (quote_id)
 - material_prices (material_id, valid_from DESC)
 - work_orders (tenant_id, status)
+- work_orders (quote_id) **unique parcial** `where status <> 'cancelled'`
+- work_order_items (work_order_id)
 - measurement_sets (person_id, recorded_at DESC)
 
 ## Fuera del modelo (MVP)

@@ -25,6 +25,7 @@ export function QuoteLifecycleActions({
   totalLabel,
   whatsapp,
   phone,
+  workOrderId,
 }: {
   quoteId: string;
   status: string;
@@ -34,6 +35,7 @@ export function QuoteLifecycleActions({
   totalLabel?: string | null;
   whatsapp?: string | null;
   phone?: string | null;
+  workOrderId?: string | null;
 }) {
   const router = useRouter();
   const { toast } = useToast();
@@ -207,6 +209,16 @@ export function QuoteLifecycleActions({
   }
 
   if (status === "accepted") {
+    if (workOrderId) {
+      return (
+        <Link
+          href={`/works/${workOrderId}` as Route}
+          className="flex h-12 items-center justify-center rounded-[6px] bg-[var(--primary)] text-center text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
+        >
+          Ver orden de trabajo
+        </Link>
+      );
+    }
     return (
       <Button
         size="lg"

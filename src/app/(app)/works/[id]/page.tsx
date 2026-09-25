@@ -50,6 +50,10 @@ export default async function WorkDetailPage({
          id, quote_number, suggested_price, final_price, status, currency,
          clients(id, name),
          quote_jobs(garment_type, garment_description, measurements_snapshot)
+       ),
+       work_order_items(
+         id, status, measurements_snapshot, sort_order, notes,
+         quote_jobs(garment_type, garment_description)
        )`,
     )
     .eq("id", id)
@@ -58,13 +62,46 @@ export default async function WorkDetailPage({
   if (!work) notFound();
 
   const quote = Array.isArray(work.quotes) ? work.quotes[0] : work.quotes;
-  const jobs = (quote?.quote_jobs ?? []) as {
+  const items = (
+    (work.work_order_items as {
+      id: string;
+      status: string;
+      measurements_snapshot: {
+        values?: { name: string; value: number; unit: string }[];
+      } | null;
+      sort_order: number | null;
+      notes: string | null;
+      quote_jobs: {
+        garment_type: string | null;
+        garment_description: string | null;
+      } | null;
+    }[] | null) ?? []
+  ).sort((a, b) => (a.sort_order ?? 0) - (b.sort_order ?? 0));
+  const legacyJobs = (quote?.quote_jobs ?? []) as {
     garment_type: string | null;
     garment_description: string | null;
     measurements_snapshot: {
       values?: { name: string; value: number; unit: string }[];
     } | null;
   }[];
+  const pieces = items.length
+    ? items.map((it, i) => ({
+        key: it.id,
+        title:
+          it.quote_jobs?.garment_type || `Pieza ${i + 1}`,
+        description: it.quote_jobs?.garment_description,
+        measurements: it.measurements_snapshot,
+        status: it.status,
+        notes: it.notes,
+      }))
+    : legacyJobs.map((j, i) => ({
+        key: `legacy-${i}`,
+        title: j.garment_type || `Pieza ${i + 1}`,
+        description: j.garment_description,
+        measurements: j.measurements_snapshot,
+        status: work.status,
+        notes: null as string | null,
+      }));
   const nexts = TRANSITIONS[work.status] ?? [];
   const terminal = work.status === "delivered" || work.status === "cancelled";
   const money = (n: number) => formatMoney(n, quote?.currency ?? ctx.currency, locale);
@@ -97,27 +134,38 @@ export default async function WorkDetailPage({
       </Card>
 
       <section className="mb-4 space-y-2">
-        <SectionTitle>Piezas</SectionTitle>
-        {jobs.map((j, i) => (
+        <SectionTitle>Piezas ({pieces.length})</SectionTitle>
+        {pieces.map((p) => (
           <article
-            key={i}
+            key={p.key}
             className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)]"
           >
-            <p className="text-sm font-semibold">
-              {j.garment_type || `Pieza ${i + 1}`}
-            </p>
-            {j.garment_description && (
-              <p className="text-xs text-[var(--ink-muted)]">
-                {j.garment_description}
+            <div className="flex flex-wrap items-start justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-sm font-semibold break-words">{p.title}</p>
+                {p.description && (
+                  <p className="text-xs text-[var(--ink-muted)] break-words">
+                    {p.description}
+                  </p>
+                )}
+              </div>
+              <StatusBadge
+                status={p.status}
+                label={WORK_LABEL[p.status] ?? p.status}
+              />
+            </div>
+            {p.notes && (
+              <p className="mt-1 text-xs text-[var(--ink-muted)] break-words">
+                {p.notes}
               </p>
             )}
-            {j.measurements_snapshot?.values?.length ? (
+            {p.measurements?.values?.length ? (
               <details className="mt-2">
                 <summary className="cursor-pointer text-xs font-semibold text-[var(--primary)]">
-                  Medidas del presupuesto
+                  Medidas congeladas (presupuesto)
                 </summary>
-                <dl className="mt-2 grid grid-cols-3 gap-2">
-                  {j.measurements_snapshot.values.map((v, idx) => (
+                <dl className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  {p.measurements.values.map((v, idx) => (
                     <div key={idx} className="rounded-[4px] bg-[var(--surface-2)] px-2 py-1">
                       <dt className="text-[10px] uppercase text-[var(--ink-muted)]">
                         {v.name}

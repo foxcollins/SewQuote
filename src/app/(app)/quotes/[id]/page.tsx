@@ -1,5 +1,3 @@
-import Link from "next/link";
-import type { Route } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
@@ -55,7 +53,7 @@ export default async function QuoteDetailPage({
         quote_items(id, description_snapshot, quantity, unit_price_snapshot, total),
         quote_materials(id, material_name_snapshot, quantity, unit_snapshot, unit_price_snapshot, waste_percent, total)
       ),
-      work_orders(id)`,
+      work_orders(id, status)`,
     )
     .eq("id", id)
     .eq("tenant_id", ctx.tenantId)
@@ -99,7 +97,9 @@ export default async function QuoteDetailPage({
   }[];
   jobs.sort((a, b) => a.sort_order - b.sort_order);
 
-  const workOrder = (quote.work_orders as { id: string }[] | null)?.[0];
+  const activeWorkOrder = (
+    (quote.work_orders as { id: string; status: string }[] | null) ?? []
+  ).find((w) => w.status !== "cancelled");
   const money = (n: number) => formatMoney(n, quote.currency ?? ctx.currency, locale);
   const price = Number(quote.final_price ?? quote.suggested_price ?? 0);
   const today = new Date().toISOString().slice(0, 10);
@@ -228,20 +228,13 @@ export default async function QuoteDetailPage({
               totalLabel={totalLabel}
               whatsapp={client.whatsapp ?? null}
               phone={client.phone ?? null}
+              workOrderId={activeWorkOrder?.id ?? null}
               publicHref={
                 publicHref && quote.public_token
                   ? `/orcamento/${quote.public_token}`
                   : null
               }
             />
-            {workOrder && (
-              <Link
-                href={`/works/${workOrder.id}` as Route}
-                className="mt-2 flex h-12 items-center justify-center rounded-[6px] bg-[var(--primary)] text-center text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
-              >
-                Ver orden de trabajo
-              </Link>
-            )}
           </Card>
         </aside>
 
