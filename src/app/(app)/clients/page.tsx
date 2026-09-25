@@ -28,7 +28,7 @@ export default async function ClientsPage({
   const { data: clients } = await query;
 
   return (
-    <main className="pb-8">
+    <main className="w-full min-w-0 pb-8">
       <PageHeader
         title="Clientes"
         subtitle="Ficha, personas destinatarias y medidas"
@@ -39,7 +39,7 @@ export default async function ClientsPage({
         }
       />
 
-      <form className="mb-4 max-w-md" role="search">
+      <form className="mb-4 w-full max-w-md" role="search">
         <input
           name="q"
           defaultValue={q}
@@ -48,28 +48,28 @@ export default async function ClientsPage({
         />
       </form>
 
-      <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+      <ul className="grid w-full min-w-0 grid-cols-1 gap-2 md:grid-cols-2 xl:grid-cols-3">
         {(clients ?? []).map((c) => (
-          <li key={c.id}>
+          <li key={c.id} className="min-w-0">
             <Link
               href={`/clients/${c.id}` as Route}
-              className="flex items-center justify-between gap-2 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
+              className="flex w-full min-w-0 items-center gap-3 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
             >
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-semibold">{c.name}</p>
                 <p className="truncate text-xs text-[var(--ink-muted)]">
                   {[c.phone, c.whatsapp, c.email].filter(Boolean).join(" · ") ||
                     "Sin contacto"}
                 </p>
               </div>
-              <span aria-hidden className="text-[var(--ink-muted)]">
+              <span aria-hidden className="shrink-0 text-[var(--ink-muted)]">
                 →
               </span>
             </Link>
           </li>
         ))}
         {!clients?.length && (
-          <li>
+          <li className="min-w-0">
             <EmptyState
               title={q ? "Sin resultados" : "Sin clientes"}
               description={

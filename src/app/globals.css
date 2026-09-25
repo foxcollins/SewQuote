@@ -71,6 +71,10 @@ body {
   min-height: 100%;
 }
 
+html {
+  overflow-x: clip;
+}
+
 h1,
 h2,
 .display {
