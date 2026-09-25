@@ -14,7 +14,7 @@ Fuente de verdad: los documentos de la raíz (`product.md`, `requirements.md`, `
 8. ADR en `decisions/` para cada decisión estructural
 9. Solo después: código
 
-Estado actual: fases 1–8 completadas (docs + 11 specs + ADR-001..004). Fase 9 (código) iniciada: scaffold Next.js + Tailwind + tokens `design.md`, motor pricing con tests (6), i18n ES/PT, Rutas app shell, migración SQL `supabase/migrations/0001_init.sql`. Pendiente usuario: fórmula SPEC-001 con clienta testing. Pendientes de código: auth real Supabase, CRUD modules, quotes UI completa, público `/orcamento/[token]`, env vars, deploy Vercel/Supabase.
+Estado actual: fases 1–8 completadas (docs + 11 specs + ADR-001..006). Fase 9 (código) en curso: app Next.js, motor pricing, migraciones `supabase/migrations/0001..0004` (0004 aplicada en prod), CI de migraciones en `.github/workflows/supabase-migrate.yml` (push a `main` sobre `/supabase/migrations` → `supabase db push`; secret `SUPABASE_ACCESS_TOKEN`). Pendientes: fórmula SPEC-001 con clienta testing; vocabulario estados `work_order_item`; commit/push del lote actual.
 
 No avanzar de fase sin aprobación del usuario en la fase anterior.
 

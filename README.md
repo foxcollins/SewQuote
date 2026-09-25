@@ -9,6 +9,7 @@ SDD fases 1–8 completadas. Código (fase 9) iniciado: app Next.js + motor de p
 - `npm test` (vitest — pricing)
 - `npm run typecheck`
 - Copiar `.env.example` → `.env.local` con claves Supabase
+- Migraciones: archivos en `/supabase/migrations/`; en push a `main` la GitHub Action `supabase-migrate` ejecuta `supabase db push` (requiere secret `SUPABASE_ACCESS_TOKEN`)
 
 ## Fuente de verdad
 Estos documentos definen el alcance, reglas y arquitectura del MVP. UI base: `design.md`.
@@ -40,6 +41,9 @@ Estos documentos definen el alcance, reglas y arquitectura del MVP. UI base: `de
 - decisions/ADR-002-snapshot-material-prices.md
 - decisions/ADR-003-vercel-supabase-free-tier.md
 - decisions/ADR-004-ui-prototype-design.md
+- decisions/ADR-005-whatsapp-deep-link-share.md
+- decisions/ADR-006-quote-work-order-aggregates.md
+- .github/workflows/supabase-migrate.yml (push → aplica `/supabase/migrations`)
 - AGENTS.md
 
 ## Principio

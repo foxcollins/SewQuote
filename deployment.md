@@ -55,7 +55,13 @@ Nunca secretos en Git.
 
 ## CI/CD
 - GitHub + despliegue automático en Vercel (preview por PR, production por rama principal).
-- Migraciones SQL versionadas en el repo; aplicar a producción de forma controlada (supabase db push o migración manual revisada).
+- Migraciones SQL versionadas en el repo bajo **`/supabase/migrations/`** (fuente de verdad del esquema).
+- **GitHub Action** `.github/workflows/supabase-migrate.yml`:
+  - **Trigger**: push a `main` que modifique `/supabase/migrations/**` (o ejecución manual `workflow_dispatch`).
+  - **Acción**: `supabase db push --project-ref wmgntbvlnoknrxfuulcq` (aplica solo migraciones pendientes).
+  - **Secret requerido en el repo GitHub**: `SUPABASE_ACCESS_TOKEN` (token personal de Supabase; Settings → Access tokens). Sin este secret la job falla; en ese caso aplicar a mano con `supabase db push` desde local.
+- Migración manual revisada sigue siendo válida como alternativa al pipeline.
+- Flujo recomendado: editar SQL en `/supabase/migrations/NNNN_*.sql` → commit/push a `main` → Action aplica en Supabase; Vercel redespliega el código en paralelo.
 
 ## Migraciones iniciales (orden sugerido)
 1. tenants + profiles + auth
