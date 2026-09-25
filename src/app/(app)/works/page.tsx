@@ -5,23 +5,12 @@ import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState, PageHeader } from "@/components/ui/primitives";
-import { formatDate, type Locale } from "@/lib/i18n";
-
-const WORK_LABEL: Record<string, string> = {
-  accepted: "Aceptado",
-  waiting_garment: "Esperando prenda",
-  in_production: "En producción",
-  fitting: "Prueba",
-  adjustments: "Ajustes",
-  ready: "Listo",
-  delivered: "Entregado",
-  cancelled: "Cancelado",
-};
+import { formatDate, statusLabel, t } from "@/lib/i18n";
 
 export default async function WorksPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/");
-  const locale = (ctx.locale as Locale) || "es";
+  const locale = ctx.locale;
   const supabase = await createClient();
 
   const { data: works } = await supabase
@@ -36,10 +25,7 @@ export default async function WorksPage() {
 
   return (
     <main className="pb-8">
-      <PageHeader
-        title="Trabajos"
-        subtitle="Desde presupuesto aprobado hasta entrega"
-      />
+      <PageHeader title={t(locale, "works.title")} subtitle={t(locale, "works.subtitle")} />
 
       <ul className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
         {(works ?? []).map((w) => {
@@ -62,13 +48,17 @@ export default async function WorksPage() {
                   </div>
                   <StatusBadge
                     status={w.status}
-                    label={WORK_LABEL[w.status] ?? w.status}
+                    label={statusLabel(locale, "work", w.status)}
                   />
                 </div>
                 <p className="mt-2 text-xs text-[var(--ink-muted)]">
                   {formatDate(w.created_at, locale, ctx.timezone)}
                   {w.completed_at
-                    ? ` · listo ${formatDate(w.completed_at, locale)}`
+                    ? ` · ${t(locale, "works.completed_at")} ${formatDate(
+                        w.completed_at,
+                        locale,
+                        ctx.timezone,
+                      )}`
                     : ""}
                 </p>
               </Link>
@@ -78,8 +68,8 @@ export default async function WorksPage() {
         {!works?.length && (
           <li>
             <EmptyState
-              title="Sin trabajos activos"
-              description="Aprueba un presupuesto para convertirlo en trabajo."
+              title={t(locale, "works.none_active")}
+              description={t(locale, "works.none_active_hint")}
             />
           </li>
         )}

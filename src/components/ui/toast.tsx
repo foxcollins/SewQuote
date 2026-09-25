@@ -7,6 +7,8 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { translateServerMessage } from "@/lib/i18n";
 
 export type ToastTone = "success" | "error" | "info";
 
@@ -74,20 +76,20 @@ export function useToastEffect() {
   return useToast();
 }
 
-/** Reads one-shot query params for server-action feedback (e.g. ?saved=service). */
 export function useQueryToasts() {
   const { toast } = useToast();
+  const { locale } = useI18n();
   useEffect(() => {
     if (typeof window === "undefined") return;
     const params = new URLSearchParams(window.location.search);
     const saved = params.get("saved");
     const error = params.get("error");
     if (saved) {
-      toast(decodeURIComponent(saved), "success");
+      toast(translateServerMessage(decodeURIComponent(saved), locale), "success");
       params.delete("saved");
     }
     if (error) {
-      toast(decodeURIComponent(error), "error");
+      toast(translateServerMessage(decodeURIComponent(error), locale), "error");
       params.delete("error");
     }
     if (saved || error) {
@@ -98,5 +100,5 @@ export function useQueryToasts() {
         window.location.pathname + (qs ? `?${qs}` : ""),
       );
     }
-  }, [toast]);
+  }, [toast, locale]);
 }

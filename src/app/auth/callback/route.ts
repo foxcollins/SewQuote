@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { readLocaleCookie, syncTenantLocale } from "@/lib/tenant-locale";
 
 export const dynamic = "force-dynamic";
 
@@ -25,6 +26,8 @@ export async function GET(request: Request) {
       code,
     );
     if (!exchangeError) {
+      const locale = await readLocaleCookie();
+      if (locale) await syncTenantLocale(locale);
       const safeNext = next.startsWith("/") ? next : "/dashboard";
       return NextResponse.redirect(new URL(safeNext, origin));
     }

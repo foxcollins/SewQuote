@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import {
   Button,
   Card,
@@ -13,7 +14,6 @@ import {
   inputClass,
 } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
-import { formatMoney, type Locale } from "@/lib/i18n";
 import {
   createJobCategoryAction,
   createMaterialAction,
@@ -58,18 +58,17 @@ export function CatalogClient({
   materials,
   categories,
   currency,
-  locale,
   today,
 }: {
   services: Service[];
   materials: Material[];
   categories: JobCategory[];
   currency: string;
-  locale: Locale;
   today: string;
 }) {
   const router = useRouter();
-  const money = (n: number) => formatMoney(n, currency, locale);
+  const { t, formatMoney } = useI18n();
+  const money = (n: number) => formatMoney(n, currency);
   const { toast } = useToast();
   const [tab, setTab] = useState<Tab>("services");
   const [modal, setModal] = useState<null | "service" | "material" | "category" | "price">(null);
@@ -88,6 +87,10 @@ export function CatalogClient({
 
   function isActive(id: string, fallback: boolean) {
     return activeOverrides[id] ?? fallback;
+  }
+
+  function showResult(res: ActionResult) {
+    toast(t(res.code, res.vars), res.ok ? "success" : "error");
   }
 
   useEffect(() => {
@@ -124,7 +127,7 @@ export function CatalogClient({
     try {
       const fd = new FormData(form);
       const res = await action(null, fd);
-      toast(res.message, res.ok ? "success" : "error");
+      showResult(res);
       if (res.ok) {
         form.reset();
         setModal(null);
@@ -146,7 +149,7 @@ export function CatalogClient({
     setActiveOverrides((prev) => ({ ...prev, [id]: next }));
     try {
       const res = await action(id, next);
-      toast(res.message, res.ok ? "success" : "error");
+      showResult(res);
       if (res.ok) refresh();
       else
         setActiveOverrides((prev) => {
@@ -164,7 +167,7 @@ export function CatalogClient({
     setDeleting(true);
     try {
       const res = await deleteServiceAction(deleteTarget.id);
-      toast(res.message, res.ok ? "success" : "error");
+      showResult(res);
       if (res.ok) {
         setDeleteTarget(null);
         refresh();
@@ -175,16 +178,16 @@ export function CatalogClient({
   }
 
   const tabs: { id: Tab; label: string; count: number }[] = [
-    { id: "services", label: "Servicios", count: services.length },
-    { id: "materials", label: "Materiales", count: materials.length },
-    { id: "categories", label: "Categorías", count: categories.length },
+    { id: "services", label: t("catalog.services"), count: services.length },
+    { id: "materials", label: t("catalog.materials"), count: materials.length },
+    { id: "categories", label: t("catalog.categories"), count: categories.length },
   ];
 
   return (
     <main className="pb-8">
       <PageHeader
-        title="Catálogo"
-        subtitle="Servicios, materiales y tipos de trabajo"
+        title={t("catalog.title")}
+        subtitle={t("catalog.subtitle")}
         action={
           <Button
             size="sm"
@@ -198,31 +201,31 @@ export function CatalogClient({
               )
             }
           >
-            + Nuevo
+            + {t("common.new")}
           </Button>
         }
       />
 
       <div
         role="tablist"
-        aria-label="Secciones del catálogo"
+        aria-label={t("catalog.tabs_aria")}
         className="mb-5 flex gap-1 rounded-[8px] border border-[var(--border)] bg-[var(--surface-2)] p-1"
       >
-        {tabs.map((t) => (
+        {tabs.map((tabItem) => (
           <button
-            key={t.id}
+            key={tabItem.id}
             role="tab"
-            aria-selected={tab === t.id}
+            aria-selected={tab === tabItem.id}
             type="button"
-            onClick={() => setTab(t.id)}
+            onClick={() => setTab(tabItem.id)}
             className={`flex-1 rounded-[6px] px-2 py-2.5 text-xs font-semibold transition-colors ${
-              tab === t.id
+              tab === tabItem.id
                 ? "bg-[var(--surface)] text-[var(--ink)] shadow-[0_1px_2px_rgba(28,29,31,0.06)]"
                 : "text-[var(--ink-muted)] hover:text-[var(--ink)]"
             }`}
           >
-            {t.label}
-            <span className="metric ml-1 text-[10px] opacity-70">{t.count}</span>
+            {tabItem.label}
+            <span className="metric ml-1 text-[10px] opacity-70">{tabItem.count}</span>
           </button>
         ))}
       </div>
@@ -231,11 +234,11 @@ export function CatalogClient({
         <div className="space-y-2">
           {services.length === 0 && (
             <EmptyState
-              title="Sin servicios"
-              description="Añade confección, arreglos u otros servicios con precio base."
+              title={t("catalog.no_services")}
+              description={t("catalog.no_services_hint")}
               action={
                 <Button size="sm" onClick={() => setModal("service")}>
-                  Añadir servicio
+                  {t("catalog.add_service")}
                 </Button>
               }
             />
@@ -249,8 +252,10 @@ export function CatalogClient({
                     {s.name}
                   </p>
                   <p className="mt-0.5 text-xs text-[var(--ink-muted)]">
-                    {s.base_price != null ? money(s.base_price) : "Sin precio"}
-                    {s.estimated_minutes ? ` · ${s.estimated_minutes} min` : ""}
+                    {s.base_price != null ? money(s.base_price) : t("catalog.no_price")}
+                    {s.estimated_minutes
+                      ? ` · ${s.estimated_minutes} ${t("common.minutes_short")}`
+                      : ""}
                     {s.category ? ` · ${s.category}` : ""}
                   </p>
                 </div>
@@ -258,16 +263,18 @@ export function CatalogClient({
                   <Button
                     variant="ghost"
                     size="sm"
-                    aria-label={`Eliminar ${s.name}`}
+                    aria-label={t("catalog.delete_item", { name: s.name })}
                     disabled={busy || toggleId !== null || deleting}
                     onClick={() => setDeleteTarget(s)}
                   >
-                    Eliminar
+                    {t("common.delete")}
                   </Button>
                   <Switch
                     checked={on}
                     busy={toggleId === s.id}
-                    aria-label={`${on ? "Desactivar" : "Activar"} ${s.name}`}
+                    aria-label={t(on ? "catalog.deactivate_item" : "catalog.activate_item", {
+                      name: s.name,
+                    })}
                     onChange={(next) => {
                       void toggleActive(s.id, next, toggleServiceAction);
                     }}
@@ -283,11 +290,11 @@ export function CatalogClient({
         <div className="space-y-2">
           {materials.length === 0 && (
             <EmptyState
-              title="Sin materiales"
-              description="Tejidos, forros, cierres… con precio vigente e historial."
+              title={t("catalog.no_materials")}
+              description={t("catalog.no_materials_hint")}
               action={
                 <Button size="sm" onClick={() => setModal("material")}>
-                  Añadir material
+                  {t("catalog.add_material")}
                 </Button>
               }
             />
@@ -305,12 +312,19 @@ export function CatalogClient({
                       </span>
                     </p>
                     <p className="metric mt-0.5 text-sm font-semibold text-[var(--primary)]">
-                      {m.current_price != null ? money(m.current_price) : "Sin precio"}
+                      {m.current_price != null
+                        ? money(m.current_price)
+                        : t("catalog.no_price")}
                     </p>
                     <p className="text-[11px] text-[var(--ink-muted)]">
                       {m.price_count > 0
-                        ? `${m.price_count} precio${m.price_count > 1 ? "s" : ""} en historial`
-                        : "Aún sin historial"}
+                        ? t(
+                            m.price_count > 1
+                              ? "catalog.price_history"
+                              : "catalog.price_history_one",
+                            { count: m.price_count },
+                          )
+                        : t("catalog.no_price_history")}
                     </p>
                   </div>
                   <div className="flex shrink-0 flex-col items-end gap-2">
@@ -323,12 +337,14 @@ export function CatalogClient({
                         setModal("price");
                       }}
                     >
-                      Precio
+                      {t("catalog.price")}
                     </Button>
                     <Switch
                       checked={on}
                       busy={toggleId === m.id}
-                      aria-label={`${on ? "Desactivar" : "Activar"} ${m.name}`}
+                      aria-label={t(on ? "catalog.deactivate_item" : "catalog.activate_item", {
+                        name: m.name,
+                      })}
                       onChange={(next) => {
                         void toggleActive(m.id, next, toggleMaterialAction);
                       }}
@@ -345,11 +361,11 @@ export function CatalogClient({
         <div className="space-y-2">
           {categories.length === 0 && (
             <EmptyState
-              title="Sin categorías"
-              description="ej: Vestido, Camisa, Ajuste… para clasificar trabajos."
+              title={t("catalog.no_categories")}
+              description={t("catalog.no_categories_hint")}
               action={
                 <Button size="sm" onClick={() => setModal("category")}>
-                  Añadir categoría
+                  {t("catalog.add_category")}
                 </Button>
               }
             />
@@ -366,7 +382,9 @@ export function CatalogClient({
                 <Switch
                   checked={on}
                   busy={toggleId === c.id}
-                  aria-label={`${on ? "Desactivar" : "Activar"} ${c.name}`}
+                  aria-label={t(on ? "catalog.deactivate_item" : "catalog.activate_item", {
+                    name: c.name,
+                  })}
                   onChange={(next) => {
                     void toggleActive(c.id, next, toggleJobCategoryAction);
                   }}
@@ -382,12 +400,11 @@ export function CatalogClient({
         onClose={() => {
           if (!deleting) setDeleteTarget(null);
         }}
-        title="Eliminar servicio"
+        title={t("catalog.delete_service_title")}
       >
         <div className="space-y-4">
           <p className="text-sm text-[var(--ink-muted)]">
-            ¿Eliminar “{deleteTarget?.name}”? Solo se puede si no se usa en
-            ningún presupuesto. Si está en uso, desactívalo.
+            {t("catalog.delete_service_body", { name: deleteTarget?.name ?? "" })}
           </p>
           <div className="flex gap-2">
             <Button
@@ -397,7 +414,7 @@ export function CatalogClient({
               disabled={deleting}
               onClick={() => setDeleteTarget(null)}
             >
-              Cancelar
+              {t("common.cancel")}
             </Button>
             <Button
               type="button"
@@ -408,7 +425,7 @@ export function CatalogClient({
                 void confirmDeleteService();
               }}
             >
-              Eliminar
+              {t("common.delete")}
             </Button>
           </div>
         </div>
@@ -417,7 +434,7 @@ export function CatalogClient({
       <Modal
         open={modal === "service"}
         onClose={() => setModal(null)}
-        title="Nuevo servicio"
+        title={t("catalog.new_service")}
       >
         <form
           ref={forms.service}
@@ -427,17 +444,17 @@ export function CatalogClient({
             void submitForm("service", createServiceAction);
           }}
         >
-          <Field label="Nombre *">
+          <Field label={`${t("common.name")} *`}>
             <input
               name="name"
               required
               autoComplete="off"
-              placeholder="ej: Confección de vestido"
+              placeholder={t("catalog.name_placeholder_service")}
               className={inputClass}
             />
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Precio base">
+            <Field label={t("catalog.base_price")}>
               <input
                 name="base_price"
                 type="number"
@@ -447,7 +464,7 @@ export function CatalogClient({
                 className={inputClass}
               />
             </Field>
-            <Field label="Minutos">
+            <Field label={t("catalog.minutes")}>
               <input
                 name="estimated_minutes"
                 type="number"
@@ -457,10 +474,10 @@ export function CatalogClient({
               />
             </Field>
           </div>
-          <Field label="Categoría" hint="Opcional">
+          <Field label={t("catalog.category_optional")} hint={t("common.optional")}>
             <input
               name="category"
-              placeholder="ej: Confección"
+              placeholder={t("catalog.category_placeholder_service")}
               className={inputClass}
             />
           </Field>
@@ -471,10 +488,10 @@ export function CatalogClient({
               className="flex-1"
               onClick={() => setModal(null)}
             >
-              Cancelar
+              {t("common.cancel")}
             </Button>
             <Button type="submit" className="flex-1" loading={busy}>
-              Guardar
+              {t("common.save")}
             </Button>
           </div>
         </form>
@@ -483,7 +500,7 @@ export function CatalogClient({
       <Modal
         open={modal === "material"}
         onClose={() => setModal(null)}
-        title="Nuevo material"
+        title={t("catalog.new_material")}
       >
         <form
           ref={forms.material}
@@ -493,20 +510,20 @@ export function CatalogClient({
             void submitForm("material", createMaterialAction);
           }}
         >
-          <Field label="Nombre *">
+          <Field label={`${t("common.name")} *`}>
             <input
               name="name"
               required
               autoComplete="off"
-              placeholder="ej: Satén de seda"
+              placeholder={t("catalog.name_placeholder_material")}
               className={inputClass}
             />
           </Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Unidad">
+            <Field label={t("catalog.unit")}>
               <input name="unit" defaultValue="m" className={inputClass} />
             </Field>
-            <Field label={`Precio (${currency})`}>
+            <Field label={t("catalog.price_currency", { currency })}>
               <input
                 name="unit_price"
                 type="number"
@@ -517,10 +534,10 @@ export function CatalogClient({
               />
             </Field>
           </div>
-          <Field label="Categoría" hint="Opcional">
+          <Field label={t("catalog.category_optional")} hint={t("common.optional")}>
             <input
               name="category"
-              placeholder="ej: Tejidos"
+              placeholder={t("catalog.category_placeholder_material")}
               className={inputClass}
             />
           </Field>
@@ -531,10 +548,10 @@ export function CatalogClient({
               className="flex-1"
               onClick={() => setModal(null)}
             >
-              Cancelar
+              {t("common.cancel")}
             </Button>
             <Button type="submit" className="flex-1" loading={busy}>
-              Guardar
+              {t("common.save")}
             </Button>
           </div>
         </form>
@@ -543,7 +560,7 @@ export function CatalogClient({
       <Modal
         open={modal === "category"}
         onClose={() => setModal(null)}
-        title="Nueva categoría"
+        title={t("catalog.new_category")}
       >
         <form
           ref={forms.category}
@@ -553,12 +570,12 @@ export function CatalogClient({
             void submitForm("category", createJobCategoryAction);
           }}
         >
-          <Field label="Nombre *">
+          <Field label={`${t("common.name")} *`}>
             <input
               name="name"
               required
               autoComplete="off"
-              placeholder="ej: Vestido"
+              placeholder={t("catalog.name_placeholder_category")}
               className={inputClass}
             />
           </Field>
@@ -569,10 +586,10 @@ export function CatalogClient({
               className="flex-1"
               onClick={() => setModal(null)}
             >
-              Cancelar
+              {t("common.cancel")}
             </Button>
             <Button type="submit" className="flex-1" loading={busy}>
-              Guardar
+              {t("common.save")}
             </Button>
           </div>
         </form>
@@ -584,7 +601,7 @@ export function CatalogClient({
           setModal(null);
           setPriceMaterialId(null);
         }}
-        title="Actualizar precio"
+        title={t("catalog.new_price_title")}
       >
         <form
           ref={forms.price}
@@ -596,10 +613,9 @@ export function CatalogClient({
         >
           <input type="hidden" name="material_id" value={priceMaterialId ?? ""} />
           <p className="rounded-[6px] bg-[var(--surface-2)] px-3 py-2 text-xs text-[var(--ink-muted)]">
-            Se añade al historial. El precio anterior no se borra (congelado en
-            presupuestos existentes).
+            {t("catalog.price_history_note")}
           </p>
-          <Field label={`Nuevo precio (${currency}) *`}>
+          <Field label={t("catalog.new_price_currency", { currency })}>
             <input
               name="unit_price"
               type="number"
@@ -609,7 +625,7 @@ export function CatalogClient({
               className={inputClass}
             />
           </Field>
-          <Field label="Vigente desde">
+          <Field label={t("catalog.valid_from")}>
             <input
               name="valid_from"
               type="date"
@@ -624,10 +640,10 @@ export function CatalogClient({
               className="flex-1"
               onClick={() => setModal(null)}
             >
-              Cancelar
+              {t("common.cancel")}
             </Button>
             <Button type="submit" className="flex-1" loading={busy}>
-              Guardar precio
+              {t("common.save")}
             </Button>
           </div>
         </form>

@@ -1,10 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { createClient } from "@/lib/supabase/client";
 
-export function SignOutButton({ label }: { label: string }) {
+export function SignOutButton() {
   const router = useRouter();
+  const { t } = useI18n();
+  const label = t("nav.sign_out");
 
   return (
     <button

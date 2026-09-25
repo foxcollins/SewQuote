@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Field, inputClass } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { translateError } from "@/lib/i18n";
 import { createPersonAction } from "@/modules/clients/actions";
 
 export function PersonForm({ clientId }: { clientId?: string }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { locale, t } = useI18n();
   const [pending, setPending] = useState(false);
 
   return (
@@ -18,7 +21,7 @@ export function PersonForm({ clientId }: { clientId?: string }) {
         setPending(true);
         try {
           await createPersonAction(fd);
-          toast("Persona añadida", "success");
+          toast(t("clients.person.created"), "success");
         } catch (e) {
           if (
             e &&
@@ -29,8 +32,7 @@ export function PersonForm({ clientId }: { clientId?: string }) {
           ) {
             return;
           }
-          const msg = e instanceof Error ? e.message : "Error al guardar";
-          toast(msg, "error");
+          toast(translateError(e, locale), "error");
         } finally {
           setPending(false);
           router.refresh();
@@ -39,15 +41,16 @@ export function PersonForm({ clientId }: { clientId?: string }) {
       className="space-y-3"
     >
       <input type="hidden" name="client_id" value={clientId ?? ""} />
-      <Field label="Nombre de la persona *">
+      <Field label={t("clients.person.name")}>
         <input
           name="name"
           required
-          placeholder="ej: Ana"
+          placeholder={t("clients.person.name_placeholder")}
+          aria-label={t("clients.person.name")}
           className={inputClass}
         />
       </Field>
-      <Field label="Notas">
+      <Field label={t("clients.person.notes")}>
         <textarea
           name="notes"
           rows={2}
@@ -55,7 +58,7 @@ export function PersonForm({ clientId }: { clientId?: string }) {
         />
       </Field>
       <Button type="submit" loading={pending} className="w-full">
-        Añadir persona
+        {t("clients.person.add")}
       </Button>
     </form>
   );

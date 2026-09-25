@@ -6,6 +6,8 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { t, translateError } from "@/lib/i18n";
 import {
   acceptQuoteAction,
   cancelQuoteAction,
@@ -39,23 +41,23 @@ export function QuoteLifecycleActions({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { locale } = useI18n();
   const [pending, startTransition] = useTransition();
   const [busy, setBusy] = useState(false);
 
   function run(
     fn: () => Promise<void>,
-    success: string,
+    successKey: string,
   ) {
     if (busy || pending) return;
     setBusy(true);
     startTransition(async () => {
       try {
         await fn();
-        toast(success, "success");
+        toast(t(locale, successKey), "success");
         router.refresh();
       } catch (e) {
-        const msg = e instanceof Error ? e.message : "No se pudo completar";
-        toast(msg, "error");
+        toast(translateError(e, locale), "error");
       } finally {
         setBusy(false);
       }
@@ -69,7 +71,7 @@ export function QuoteLifecycleActions({
           href={`/quotes/${quoteId}/edit` as Route}
           className="flex h-12 items-center justify-center rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
         >
-          Editar presupuesto
+          {t(locale, "quotes.lifecycle.edit_quote")}
         </Link>
         <Button
           size="lg"
@@ -77,10 +79,10 @@ export function QuoteLifecycleActions({
           className="w-full"
           loading={busy || pending}
           onClick={() =>
-            run(() => sendQuoteAction(quoteId), "Presupuesto publicado")
+            run(() => sendQuoteAction(quoteId), "quotes.lifecycle.send")
           }
         >
-          Publicar
+          {t(locale, "quotes.lifecycle.publish")}
         </Button>
         <Button
           size="lg"
@@ -88,10 +90,10 @@ export function QuoteLifecycleActions({
           className="w-full"
           loading={busy || pending}
           onClick={() =>
-            run(() => cancelQuoteAction(quoteId), "Presupuesto cancelado")
+            run(() => cancelQuoteAction(quoteId), "quotes.lifecycle.cancelled")
           }
         >
-          Cancelar
+          {t(locale, "common.cancel")}
         </Button>
       </div>
     );
@@ -107,11 +109,13 @@ export function QuoteLifecycleActions({
         ? `#${String(quoteNumber).padStart(3, "0")}`
         : "";
     const messageParts = [
-      clientName ? `Hola ${clientName},` : "Hola,",
+      clientName
+        ? t(locale, "quotes.lifecycle.whatsapp_hello", { name: clientName })
+        : t(locale, "quotes.lifecycle.whatsapp_hello"),
       quoteLabel
-        ? `Te comparto el presupuesto ${quoteLabel}.`
-        : "Te comparto el presupuesto.",
-      totalLabel ? `Total: ${totalLabel}.` : null,
+        ? t(locale, "quotes.lifecycle.whatsapp_share", { quote: quoteLabel })
+        : t(locale, "quotes.lifecycle.whatsapp_share_short"),
+      totalLabel ? t(locale, "quotes.lifecycle.whatsapp_total", { total: totalLabel }) : null,
       publicHref ? absoluteUrl(publicHref) : null,
     ].filter(Boolean) as string[];
     const waHref =
@@ -126,10 +130,10 @@ export function QuoteLifecycleActions({
           className="w-full"
           loading={busy || pending}
           onClick={() =>
-            run(() => acceptQuoteAction(quoteId), "Presupuesto aprobado")
+            run(() => acceptQuoteAction(quoteId), "quotes.lifecycle.accepted")
           }
         >
-          Aprobar (interna)
+          {t(locale, "quotes.lifecycle.accept_internal")}
         </Button>
         <Button
           size="lg"
@@ -137,10 +141,10 @@ export function QuoteLifecycleActions({
           className="w-full"
           loading={busy || pending}
           onClick={() =>
-            run(() => rejectQuoteAction(quoteId), "Presupuesto rechazado")
+            run(() => rejectQuoteAction(quoteId), "quotes.lifecycle.rejected")
           }
         >
-          Rechazar
+          {t(locale, "quotes.lifecycle.reject")}
         </Button>
         <Button
           size="lg"
@@ -148,10 +152,10 @@ export function QuoteLifecycleActions({
           className="w-full"
           loading={busy || pending}
           onClick={() =>
-            run(() => expireQuoteAction(quoteId), "Marcado como vencido")
+            run(() => expireQuoteAction(quoteId), "quotes.lifecycle.marked_expired")
           }
         >
-          Marcar vencido
+          {t(locale, "quotes.lifecycle.mark_expired")}
         </Button>
         <Button
           size="lg"
@@ -159,10 +163,10 @@ export function QuoteLifecycleActions({
           className="w-full"
           loading={busy || pending}
           onClick={() =>
-            run(() => cancelQuoteAction(quoteId), "Presupuesto cancelado")
+            run(() => cancelQuoteAction(quoteId), "quotes.lifecycle.cancelled")
           }
         >
-          Cancelar
+          {t(locale, "common.cancel")}
         </Button>
         {waHref ? (
           <a
@@ -171,11 +175,11 @@ export function QuoteLifecycleActions({
             rel="noopener noreferrer"
             className="flex h-12 items-center justify-center rounded-[6px] border border-[var(--success)] bg-[var(--success-bg)] text-sm font-semibold text-[var(--success)] transition-opacity hover:opacity-90"
           >
-            Enviar por WhatsApp
+            {t(locale, "quotes.lifecycle.send_whatsapp")}
           </a>
         ) : publicHref ? (
           <p className="text-center text-xs text-[var(--ink-muted)]">
-            Añade WhatsApp del cliente para compartir por wa.me
+            {t(locale, "quotes.lifecycle.whatsapp_needs_number")}
           </p>
         ) : null}
         {publicHref && (
@@ -183,7 +187,7 @@ export function QuoteLifecycleActions({
             href={publicHref}
             className="flex h-12 items-center justify-center rounded-[6px] border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold"
           >
-            Abrir página pública
+            {t(locale, "quotes.lifecycle.open_public")}
           </a>
         )}
       </div>
@@ -199,11 +203,11 @@ export function QuoteLifecycleActions({
         onClick={() =>
           run(
             () => recalculateQuoteAfterExpiryAction(quoteId),
-            "Recalculado y reenviado",
+            "quotes.lifecycle.recalculated",
           )
         }
       >
-        Recalcular y reenviar
+        {t(locale, "quotes.lifecycle.recalculate_resend")}
       </Button>
     );
   }
@@ -215,7 +219,7 @@ export function QuoteLifecycleActions({
           href={`/works/${workOrderId}` as Route}
           className="flex h-12 items-center justify-center rounded-[6px] bg-[var(--primary)] text-center text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
         >
-          Ver orden de trabajo
+          {t(locale, "quotes.lifecycle.view_work")}
         </Link>
       );
     }
@@ -227,11 +231,11 @@ export function QuoteLifecycleActions({
         onClick={() =>
           run(
             () => convertQuoteToWorkOrderAction(quoteId),
-            "Orden de trabajo creada",
+            "quotes.lifecycle.work_created",
           )
         }
       >
-        Convertir en orden de trabajo
+        {t(locale, "quotes.lifecycle.convert_work")}
       </Button>
     );
   }

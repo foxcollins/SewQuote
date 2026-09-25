@@ -4,6 +4,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Field, inputClass } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { translateError } from "@/lib/i18n";
 import {
   createClientAction,
   updateClientAction,
@@ -27,6 +29,7 @@ export function ClientForm({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { locale, t } = useI18n();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -40,10 +43,10 @@ export function ClientForm({
         try {
           if (mode === "create") {
             await createClientAction(formData);
-            toast("Cliente creado", "success");
+            toast(t("clients.created"), "success");
           } else if (clientId) {
             await updateClientAction(clientId, formData);
-            toast("Cliente guardado", "success");
+            toast(t("clients.saved"), "success");
             router.refresh();
           }
         } catch (e) {
@@ -56,7 +59,7 @@ export function ClientForm({
           ) {
             return;
           }
-          const msg = e instanceof Error ? e.message : "Error al guardar";
+          const msg = translateError(e, locale);
           setError(msg);
           toast(msg, "error");
         } finally {
@@ -69,7 +72,7 @@ export function ClientForm({
           {error}
         </p>
       )}
-      <Field label="Nombre *">
+      <Field label={t("clients.name")}>
         <input
           name="name"
           required
@@ -78,7 +81,7 @@ export function ClientForm({
         />
       </Field>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Field label="Teléfono">
+        <Field label={t("clients.phone")}>
           <input
             name="phone"
             type="tel"
@@ -95,7 +98,7 @@ export function ClientForm({
           />
         </Field>
       </div>
-      <Field label="Email">
+      <Field label={t("clients.email")}>
         <input
           name="email"
           type="email"
@@ -103,14 +106,14 @@ export function ClientForm({
           className={inputClass}
         />
       </Field>
-      <Field label="Dirección">
+      <Field label={t("clients.address")}>
         <input
           name="address"
           defaultValue={initial?.address ?? ""}
           className={inputClass}
         />
       </Field>
-      <Field label="Notas">
+      <Field label={t("clients.form.notes")}>
         <textarea
           name="notes"
           rows={3}
@@ -119,7 +122,7 @@ export function ClientForm({
         />
       </Field>
       <Button type="submit" size="lg" className="w-full" loading={pending}>
-        {mode === "create" ? "Crear cliente" : "Guardar"}
+        {mode === "create" ? t("clients.create") : t("clients.save")}
       </Button>
     </form>
   );

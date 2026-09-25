@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { normalizeLocale } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/server";
 import { requireSessionContext } from "@/lib/session";
 
@@ -10,6 +11,7 @@ export async function updateTenantSettingsAction(formData: FormData) {
 
   const name = String(formData.get("name") ?? "").trim();
   if (!name) throw new Error("Name required");
+  const locale = normalizeLocale(formData.get("locale") ?? ctx.locale);
 
   const complexityFactors = {
     low: Number(formData.get("cx_low") ?? 0),
@@ -28,9 +30,9 @@ export async function updateTenantSettingsAction(formData: FormData) {
     .update({
       name,
       country: String(formData.get("country") ?? "").trim() || null,
-      currency: String(formData.get("currency") ?? "BRL").trim() || "BRL",
-      timezone: String(formData.get("timezone") ?? "UTC").trim() || "UTC",
-      locale: String(formData.get("locale") ?? "es").trim() || "es",
+      currency: String(formData.get("currency") ?? ctx.currency).trim() || ctx.currency,
+      timezone: String(formData.get("timezone") ?? ctx.timezone).trim() || ctx.timezone,
+      locale,
       hourly_rate: Number(formData.get("hourly_rate") ?? 0),
       default_margin_percent: Number(formData.get("default_margin_percent") ?? 40),
       default_waste_percent: Number(formData.get("default_waste_percent") ?? 0),
@@ -41,6 +43,22 @@ export async function updateTenantSettingsAction(formData: FormData) {
     .eq("id", ctx.tenantId);
   if (error) throw new Error(error.message);
 
-  revalidatePath("/settings");
-  revalidatePath("/dashboard");
+  revalidatePath("/", "layout");
+  return { locale };
+}
+
+export async function syncTenantLocaleAction(value: unknown) {
+  const locale = normalizeLocale(value);
+  const ctx = await requireSessionContext();
+  if (ctx.locale === locale) return { locale };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("tenants")
+    .update({ locale })
+    .eq("id", ctx.tenantId);
+  if (error) throw new Error(error.message);
+
+  revalidatePath("/", "layout");
+  return { locale };
 }

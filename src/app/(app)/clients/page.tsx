@@ -5,6 +5,7 @@ import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 
 import { EmptyState, PageHeader, PrimaryLink, inputClass } from "@/components/ui/primitives";
+import { t } from "@/lib/i18n";
 
 export default async function ClientsPage({
   searchParams,
@@ -13,6 +14,7 @@ export default async function ClientsPage({
 }) {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/");
+  const locale = ctx.locale;
   const { q = "" } = await searchParams;
   const supabase = await createClient();
 
@@ -30,11 +32,11 @@ export default async function ClientsPage({
   return (
     <main className="w-full min-w-0 pb-8">
       <PageHeader
-        title="Clientes"
-        subtitle="Ficha, personas destinatarias y medidas"
+        title={t(locale, "clients.title")}
+        subtitle={t(locale, "clients.subtitle")}
         action={
           <PrimaryLink href={"/clients/new" as Route} size="sm">
-            + Nuevo
+            + {t(locale, "common.new")}
           </PrimaryLink>
         }
       />
@@ -43,7 +45,8 @@ export default async function ClientsPage({
         <input
           name="q"
           defaultValue={q}
-          placeholder="Buscar por nombre o teléfono"
+          placeholder={t(locale, "clients.search_placeholder")}
+          aria-label={t(locale, "clients.search_placeholder")}
           className={`${inputClass} h-10`}
         />
       </form>
@@ -59,7 +62,7 @@ export default async function ClientsPage({
                 <p className="truncate text-sm font-semibold">{c.name}</p>
                 <p className="truncate text-xs text-[var(--ink-muted)]">
                   {[c.phone, c.whatsapp, c.email].filter(Boolean).join(" · ") ||
-                    "Sin contacto"}
+                    t(locale, "clients.no_contact")}
                 </p>
               </div>
               <span aria-hidden className="shrink-0 text-[var(--ink-muted)]">
@@ -71,16 +74,16 @@ export default async function ClientsPage({
         {!clients?.length && (
           <li className="min-w-0">
             <EmptyState
-              title={q ? "Sin resultados" : "Sin clientes"}
+              title={q ? t(locale, "clients.no_results") : t(locale, "clients.none")}
               description={
                 q
-                  ? "Prueba con otro nombre o teléfono."
-                  : "Crea el primero para emitir presupuestos."
+                  ? t(locale, "clients.no_results_hint")
+                  : t(locale, "clients.none_hint")
               }
               action={
                 !q ? (
                   <PrimaryLink href={"/clients/new" as Route} size="sm">
-                    Nuevo cliente
+                    {t(locale, "clients.new")}
                   </PrimaryLink>
                 ) : undefined
               }

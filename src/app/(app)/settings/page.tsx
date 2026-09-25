@@ -8,10 +8,12 @@ import {
   SectionTitle,
   inputClass,
 } from "@/components/ui/primitives";
+import { t } from "@/lib/i18n";
 
 export default async function SettingsPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/");
+  const locale = ctx.locale;
   const supabase = await createClient();
 
   const { data: tenant } = await supabase
@@ -25,42 +27,63 @@ export default async function SettingsPage() {
 
   return (
     <main className="mx-auto max-w-2xl pb-8">
-      <PageHeader title="Configuración" subtitle="Atelier, precios y factores" />
+      <PageHeader
+        title={t(locale, "settings.title")}
+        subtitle={t(locale, "settings.subtitle")}
+      />
 
       <SettingsForm>
-        <SectionTitle>Atelier</SectionTitle>
+        <SectionTitle>{t(locale, "settings.section_atelier")}</SectionTitle>
+        <p className="-mt-2 mb-1 text-xs text-[var(--ink-muted)]">
+          {t(locale, "settings.atelier_section_hint")}
+        </p>
         <label className="block text-sm font-semibold">
-          Nombre
+          {t(locale, "settings.name")}
           <input name="name" required defaultValue={tenant?.name ?? ""} className={inputClass} />
         </label>
         <div className="grid grid-cols-2 gap-3">
           <label className="block text-sm font-semibold">
-            País
+            {t(locale, "settings.country")}
             <input name="country" defaultValue={tenant?.country ?? ""} className={inputClass} />
           </label>
           <label className="block text-sm font-semibold">
-            Moneda
-            <input name="currency" defaultValue={tenant?.currency ?? "BRL"} className={inputClass} />
+            {t(locale, "common.currency")}
+            <input
+              name="currency"
+              defaultValue={tenant?.currency ?? ctx.currency}
+              className={inputClass}
+            />
           </label>
         </div>
         <div className="grid grid-cols-2 gap-3">
           <label className="block text-sm font-semibold">
-            Zona horaria
-            <input name="timezone" defaultValue={tenant?.timezone ?? "UTC"} className={inputClass} />
+            {t(locale, "common.timezone")}
+            <input
+              name="timezone"
+              defaultValue={tenant?.timezone ?? ctx.timezone}
+              className={inputClass}
+            />
           </label>
           <label className="block text-sm font-semibold">
-            Idioma
-            <select name="locale" defaultValue={tenant?.locale ?? "es"} className={inputClass}>
-              <option value="es">Español</option>
-              <option value="pt-BR">Português (BR)</option>
+            {t(locale, "common.language")}
+            <select
+              name="locale"
+              defaultValue={tenant?.locale ?? ctx.locale}
+              className={inputClass}
+            >
+              <option value="es">{t(locale, "settings.locale_es")}</option>
+              <option value="pt-BR">{t(locale, "settings.locale_pt")}</option>
             </select>
           </label>
         </div>
+        <p className="text-xs text-[var(--ink-muted)]">
+          {t(locale, "settings.locale_hint")}
+        </p>
 
-        <SectionTitle>Precios base</SectionTitle>
+        <SectionTitle>{t(locale, "settings.base_prices")}</SectionTitle>
         <div className="grid grid-cols-2 gap-3">
           <label className="block text-sm font-semibold">
-            Tarifa horaria
+            {t(locale, "settings.hourly_rate")}
             <input
               name="hourly_rate"
               type="number"
@@ -70,7 +93,7 @@ export default async function SettingsPage() {
             />
           </label>
           <label className="block text-sm font-semibold">
-            Margen %
+            {t(locale, "settings.margin")}
             <input
               name="default_margin_percent"
               type="number"
@@ -82,7 +105,7 @@ export default async function SettingsPage() {
         </div>
         <div className="grid grid-cols-2 gap-3">
           <label className="block text-sm font-semibold">
-            Merma %
+            {t(locale, "settings.waste")}
             <input
               name="default_waste_percent"
               type="number"
@@ -92,7 +115,7 @@ export default async function SettingsPage() {
             />
           </label>
           <label className="block text-sm font-semibold">
-            Alerta medidas (días)
+            {t(locale, "settings.stale_days")}
             <input
               name="measurement_stale_days"
               type="number"
@@ -102,14 +125,14 @@ export default async function SettingsPage() {
           </label>
         </div>
 
-        <SectionTitle>Factores de complejidad</SectionTitle>
+        <SectionTitle>{t(locale, "settings.complexity_factors")}</SectionTitle>
         <div className="grid grid-cols-4 gap-2">
           {(
             [
-              ["cx_low", "Baja", cx.low ?? 0],
-              ["cx_medium", "Media", cx.medium ?? 0.1],
-              ["cx_high", "Alta", cx.high ?? 0.2],
-              ["cx_very_high", "Muy alta", cx.very_high ?? 0.35],
+              ["cx_low", t(locale, "settings.cx_low"), cx.low ?? 0],
+              ["cx_medium", t(locale, "settings.cx_medium"), cx.medium ?? 0.1],
+              ["cx_high", t(locale, "settings.cx_high"), cx.high ?? 0.2],
+              ["cx_very_high", t(locale, "settings.cx_very_high"), cx.very_high ?? 0.35],
             ] as const
           ).map(([name, label, value]) => (
             <label key={name} className="block text-xs font-semibold">
@@ -125,13 +148,13 @@ export default async function SettingsPage() {
           ))}
         </div>
 
-        <SectionTitle>Factores de urgencia</SectionTitle>
+        <SectionTitle>{t(locale, "settings.urgency_factors")}</SectionTitle>
         <div className="grid grid-cols-3 gap-2">
           {(
             [
-              ["ur_normal", "Normal", ur.normal ?? 0],
-              ["ur_urgent", "Urgente", ur.urgent ?? 0.2],
-              ["ur_very_urgent", "Muy urgente", ur.very_urgent ?? 0.4],
+              ["ur_normal", t(locale, "settings.ur_normal"), ur.normal ?? 0],
+              ["ur_urgent", t(locale, "settings.ur_urgent"), ur.urgent ?? 0.2],
+              ["ur_very_urgent", t(locale, "settings.ur_very_urgent"), ur.very_urgent ?? 0.4],
             ] as const
           ).map(([name, label, value]) => (
             <label key={name} className="block text-xs font-semibold">
@@ -149,7 +172,7 @@ export default async function SettingsPage() {
       </SettingsForm>
 
       <Card className="mt-6 p-4 text-sm">
-        <SectionTitle>Cuenta</SectionTitle>
+        <SectionTitle>{t(locale, "settings.account")}</SectionTitle>
         <p className="text-[var(--ink-muted)]">{ctx.profileName}</p>
         <p className="text-xs text-[var(--ink-muted)]">
           {ctx.tenantName} · {ctx.currency} · {ctx.locale}

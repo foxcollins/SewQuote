@@ -3,6 +3,7 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { forwardRef } from "react";
+import { useI18n } from "@/components/i18n/i18n-provider";
 
 export function PageHeader({
   title,
@@ -187,8 +188,8 @@ export function EmptyState({
 export function Switch({
   checked,
   onChange,
-  labelOn = "Activo",
-  labelOff = "Inactivo",
+  labelOn,
+  labelOff,
   showLabel = true,
   disabled,
   busy,
@@ -203,7 +204,10 @@ export function Switch({
   busy?: boolean;
   "aria-label"?: string;
 }) {
-  const label = checked ? labelOn : labelOff;
+  const { t } = useI18n();
+  const label = checked
+    ? (labelOn ?? t("common.active"))
+    : (labelOff ?? t("common.inactive"));
   return (
     <span className="inline-flex items-center gap-2">
       <button
@@ -255,23 +259,24 @@ export function Modal({
   title: string;
   children: React.ReactNode;
 }) {
+  const { t } = useI18n();
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center">
       <button
         type="button"
-        aria-label="Cerrar"
+        aria-label={t("common.close")}
         className="absolute inset-0 bg-[rgba(28,29,31,0.4)] backdrop-blur-[2px]"
         onClick={onClose}
       />
-      <div className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-[12px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0 -8px 32px_rgba(28,29,31,0.16)] sm:rounded-[12px] sm:bottom-auto">
+      <div className="relative z-10 max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-[12px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-[0 -8px_32px_rgba(28,29,31,0.16)] sm:rounded-[12px] sm:bottom-auto">
         <div className="mb-4 flex items-center justify-between gap-3">
           <h2 className="text-lg font-semibold">{title}</h2>
           <button
             type="button"
             onClick={onClose}
             className="flex size-10 items-center justify-center rounded-[6px] text-[var(--ink-muted)] hover:bg-[var(--surface-2)]"
-            aria-label="Cerrar"
+            aria-label={t("common.close")}
           >
             ✕
           </button>

@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { type Locale, t } from "@/lib/i18n";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { translateServerMessage } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
+import { syncTenantLocaleAction } from "@/modules/tenant/actions";
 
 type Mode = "login" | "register";
 
@@ -43,19 +45,10 @@ const icons = {
   arrow: "M5 12h14M13 6l6 6-6 6",
 };
 
-function mapAuthError(message: string, locale: Locale): string {
-  const m = message.toLowerCase();
-  if (m.includes("invalid login")) return t(locale, "auth.invalid_credentials");
-  if (m.includes("already registered") || m.includes("user already"))
-    return t(locale, "auth.email_exists");
-  if (m.includes("password")) return t(locale, "auth.weak_password");
-  return t(locale, "auth.generic_error");
-}
-
 export function AuthScreen() {
   const router = useRouter();
+  const { locale, setLocale, t } = useI18n();
   const [mode, setMode] = useState<Mode>("login");
-  const [locale, setLocale] = useState<Locale>("es");
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -67,6 +60,11 @@ export function AuthScreen() {
     "flex-1 rounded-[6px] bg-[var(--surface)] px-3 py-2 text-center text-sm font-semibold text-[var(--primary)] shadow-sm";
   const idleTab =
     "flex-1 rounded-[6px] px-3 py-2 text-center text-sm font-medium text-[var(--ink-muted)] transition-colors hover:text-[var(--ink)]";
+
+  function redirectToDashboard() {
+    router.push("/dashboard");
+    router.refresh();
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -103,10 +101,9 @@ export function AuthScreen() {
         });
         if (signUpError) throw signUpError;
         if (data.session) {
-          router.push("/dashboard");
-          router.refresh();
+          redirectToDashboard();
         } else {
-          setNotice(t(locale, "auth.check_email"));
+          setNotice(t("auth.check_email"));
         }
         return;
       }
@@ -116,11 +113,13 @@ export function AuthScreen() {
         password,
       });
       if (signInError) throw signInError;
-      router.push("/dashboard");
-      router.refresh();
+
+      await supabase.auth.updateUser({ data: { locale } });
+      await syncTenantLocaleAction(locale).catch(() => undefined);
+
+      redirectToDashboard();
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setError(mapAuthError(msg, locale));
+      setError(translateServerMessage(err, locale));
       setLoading(false);
     }
   }
@@ -144,8 +143,7 @@ export function AuthScreen() {
       });
       if (oauthError) throw oauthError;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setError(mapAuthError(msg, locale));
+      setError(translateServerMessage(err, locale));
       setLoading(false);
     }
   }
@@ -156,7 +154,7 @@ export function AuthScreen() {
       document.getElementById("auth-email") as HTMLInputElement | null
     )?.value?.trim();
     if (!email) {
-      setError(t(locale, "auth.email"));
+      setError(t("auth.error_email"));
       return;
     }
     setError(null);
@@ -173,10 +171,9 @@ export function AuthScreen() {
         { redirectTo: `${origin}/auth/callback?next=/dashboard` },
       );
       if (resetError) throw resetError;
-      setNotice(t(locale, "auth.reset_sent"));
+      setNotice(t("auth.reset_sent"));
     } catch (err) {
-      const msg = err instanceof Error ? err.message : String(err);
-      setError(mapAuthError(msg, locale));
+      setError(translateServerMessage(err, locale));
     } finally {
       setLoading(false);
     }
@@ -202,10 +199,14 @@ export function AuthScreen() {
               </svg>
             </span>
             <span className="font-display text-lg font-medium tracking-tight">
-              {t(locale, "app.name")}
+              {t("app.name")}
             </span>
           </div>
-          <div className="flex items-center gap-1 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-0.5">
+          <div
+            className="flex items-center gap-1 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] p-0.5"
+            role="group"
+            aria-label={t("auth.select_language")}
+          >
             {(["es", "pt-BR"] as const).map((code) => (
               <button
                 key={code}
@@ -261,16 +262,17 @@ export function AuthScreen() {
               </span>
             </div>
             <h1 className="mt-3 font-display text-3xl tracking-tight text-[var(--ink)] sm:text-4xl">
-              {t(locale, "app.name")}
+              {t("app.name")}
             </h1>
             <p className="mt-1 font-display text-base italic text-[var(--secondary)]">
-              {t(locale, "app.tagline")}
+              {t("app.tagline")}
             </p>
           </div>
 
           <div className="w-full rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-4 shadow-sm sm:p-6">
             <div
               role="tablist"
+              aria-label={t("auth.title")}
               className="mb-5 flex items-center rounded-[8px] border border-[var(--border)] bg-[var(--surface-2)] p-1"
             >
               <button
@@ -284,7 +286,7 @@ export function AuthScreen() {
                 }}
                 className={isRegister ? idleTab : activeTab}
               >
-                {t(locale, "auth.login")}
+                {t("auth.login")}
               </button>
               <button
                 type="button"
@@ -297,7 +299,7 @@ export function AuthScreen() {
                 }}
                 className={isRegister ? activeTab : idleTab}
               >
-                {t(locale, "auth.register")}
+                {t("auth.register")}
               </button>
             </div>
 
@@ -325,14 +327,12 @@ export function AuthScreen() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"
                 />
               </svg>
-              {t(locale, "auth.google")}
+              {t("auth.continue_google")}
             </button>
 
             <div className="mb-4 flex items-center justify-center gap-3">
               <span className="h-px flex-1 bg-[var(--border)]" />
-              <span className="text-xs text-[var(--ink-muted)]">
-                {t(locale, "auth.continue_email")}
-              </span>
+              <span className="text-xs text-[var(--ink-muted)]">{t("auth.or")}</span>
               <span className="h-px flex-1 bg-[var(--border)]" />
             </div>
 
@@ -357,7 +357,7 @@ export function AuthScreen() {
               {isRegister && (
                 <div className="space-y-3">
                   <label className="block text-sm font-semibold text-[var(--ink)]">
-                    {t(locale, "auth.full_name")}
+                    {t("auth.full_name")}
                     <span className="relative mt-1 block">
                       <FieldIcon path={icons.user} />
                       <input
@@ -365,16 +365,16 @@ export function AuthScreen() {
                         name="name"
                         autoComplete="name"
                         required
-                        placeholder={t(locale, "auth.full_name_placeholder")}
+                        placeholder={t("auth.placeholder_full_name")}
                         className={`${inputClass} pl-10`}
                       />
                     </span>
                   </label>
                   <label className="block text-sm font-semibold text-[var(--ink)]">
                     <span className="mb-1 flex items-center justify-between gap-2">
-                      <span>{t(locale, "auth.atelier_name")}</span>
+                      <span>{t("auth.atelier")}</span>
                       <span className="text-[11px] font-normal text-[var(--secondary)]">
-                        {t(locale, "auth.atelier_name_hint")}
+                        {t("auth.atelier_hint")}
                       </span>
                     </span>
                     <span className="relative block">
@@ -384,7 +384,7 @@ export function AuthScreen() {
                         name="atelier"
                         autoComplete="organization"
                         required
-                        placeholder={t(locale, "auth.atelier_name_placeholder")}
+                        placeholder={t("auth.placeholder_atelier")}
                         className={`${inputClass} pl-10`}
                       />
                     </span>
@@ -393,7 +393,7 @@ export function AuthScreen() {
               )}
 
               <label className="block text-sm font-semibold text-[var(--ink)]">
-                {t(locale, "auth.email")}
+                {t("auth.email")}
                 <span className="relative mt-1 block">
                   <FieldIcon path={icons.mail} />
                   <input
@@ -402,7 +402,7 @@ export function AuthScreen() {
                     name="email"
                     required
                     autoComplete="email"
-                    placeholder={t(locale, "auth.email_placeholder")}
+                    placeholder={t("auth.placeholder_email")}
                     className={`${inputClass} pl-10`}
                   />
                 </span>
@@ -414,7 +414,7 @@ export function AuthScreen() {
                     htmlFor="password"
                     className="text-sm font-semibold text-[var(--ink)]"
                   >
-                    {t(locale, "auth.password")}
+                    {t("auth.password")}
                   </label>
                   {!isRegister && (
                     <button
@@ -423,7 +423,7 @@ export function AuthScreen() {
                       disabled={loading}
                       className="text-xs font-semibold text-[var(--primary)] hover:underline disabled:opacity-60"
                     >
-                      {t(locale, "auth.forgot_password")}
+                      {t("auth.forgot_password")}
                     </button>
                   )}
                 </div>
@@ -438,11 +438,14 @@ export function AuthScreen() {
                     autoComplete={
                       isRegister ? "new-password" : "current-password"
                     }
+                    placeholder={t("auth.placeholder_password")}
                     className={`${inputClass} pl-10 pr-11 font-mono`}
                   />
                   <button
                     type="button"
-                    aria-label={t(locale, "auth.show_password")}
+                    aria-label={
+                      showPassword ? t("auth.hide_password") : t("auth.show_password")
+                    }
                     onClick={() => setShowPassword((v) => !v)}
                     className="absolute right-2.5 top-1/2 -translate-y-1/2 rounded-[4px] p-1 text-[var(--ink-muted)] hover:text-[var(--ink)]"
                   >
@@ -462,7 +465,7 @@ export function AuthScreen() {
                 </div>
                 {isRegister && (
                   <p className="mt-1 text-[11px] text-[var(--ink-muted)]">
-                    {t(locale, "auth.password_hint")}
+                    {t("auth.password_hint")}
                   </p>
                 )}
               </div>
@@ -474,7 +477,7 @@ export function AuthScreen() {
                   onChange={(e) => setRemember(e.target.checked)}
                   className="h-4 w-4 rounded border-[var(--border)] text-[var(--primary)] accent-[var(--primary)]"
                 />
-                {t(locale, "auth.remember")}
+                {t("auth.remember")}
               </label>
 
               <div className="pt-1">
@@ -484,8 +487,10 @@ export function AuthScreen() {
                   className="flex h-11 w-full items-center justify-center gap-2 rounded-[6px] bg-[var(--primary)] text-sm font-semibold tracking-wide text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)] active:scale-[0.98] disabled:opacity-60"
                 >
                   {loading
-                    ? t(locale, "auth.loading")
-                    : t(locale, isRegister ? "auth.submit_register" : "auth.submit")}
+                    ? t("auth.loading")
+                    : isRegister
+                      ? t("auth.submit_register")
+                      : t("auth.submit")}
                   {!loading && (
                     <svg
                       viewBox="0 0 24 24"
@@ -506,7 +511,7 @@ export function AuthScreen() {
 
             {isRegister && (
               <p className="mt-3 text-center text-[11px] leading-relaxed text-[var(--ink-muted)]">
-                {t(locale, "auth.terms")}
+                {t("auth.terms")}
               </p>
             )}
           </div>
@@ -525,7 +530,7 @@ export function AuthScreen() {
               >
                 <path d={icons.verified} />
               </svg>
-              {t(locale, "auth.trust_title")}
+              {t("auth.trust_title")}
             </p>
           </div>
         </div>
@@ -533,11 +538,11 @@ export function AuthScreen() {
 
       <footer className="border-t border-[var(--border)]/60 bg-[var(--surface)]/90">
         <div className="mx-auto flex max-w-lg flex-col items-center justify-center gap-1 px-4 py-3 text-center text-[11px] text-[var(--ink-muted)] sm:flex-row sm:gap-2">
-          <span>{t(locale, "auth.footer_copy")}</span>
+          <span>{t("auth.footer_copy")}</span>
           <span aria-hidden>·</span>
-          <span>{t(locale, "auth.footer_terms")}</span>
+          <span>{t("auth.footer_terms")}</span>
           <span aria-hidden>·</span>
-          <span>{t(locale, "auth.footer_privacy")}</span>
+          <span>{t("auth.footer_privacy")}</span>
         </div>
       </footer>
     </div>

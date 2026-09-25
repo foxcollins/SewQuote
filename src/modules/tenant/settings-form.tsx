@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { Button } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { translateError } from "@/lib/i18n";
 import { updateTenantSettingsAction } from "@/modules/tenant/actions";
 
 export function SettingsForm({
@@ -13,6 +15,7 @@ export function SettingsForm({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { locale, setLocale, t } = useI18n();
   const [pending, setPending] = useState(false);
 
   return (
@@ -21,12 +24,13 @@ export function SettingsForm({
         if (pending) return;
         setPending(true);
         try {
-          await updateTenantSettingsAction(fd);
-          toast("Configuración guardada", "success");
+          const result = await updateTenantSettingsAction(fd);
+          const nextLocale = result?.locale ?? locale;
+          if (nextLocale !== locale) setLocale(nextLocale);
+          toast(t("settings.saved"), "success");
           router.refresh();
         } catch (e) {
-          const msg = e instanceof Error ? e.message : "Error al guardar";
-          toast(msg, "error");
+          toast(translateError(e, locale), "error");
         } finally {
           setPending(false);
         }
@@ -35,7 +39,7 @@ export function SettingsForm({
     >
       {children}
       <Button type="submit" size="lg" className="mt-2 w-full" loading={pending}>
-        Guardar configuración
+        {t("settings.save_full")}
       </Button>
     </form>
   );

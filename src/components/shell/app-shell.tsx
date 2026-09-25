@@ -3,17 +3,42 @@
 import Link from "next/link";
 import type { Route } from "next";
 import { usePathname } from "next/navigation";
-import { BottomNav } from "@/components/nav/bottom-nav";
+import { useI18n } from "@/components/i18n/i18n-provider";
 import { SignOutButton } from "@/components/auth/sign-out-button";
+import { BottomNav } from "@/components/nav/bottom-nav";
 import { useQueryToasts } from "@/components/ui/toast";
 
 const nav = [
-  { href: "/dashboard" as Route, label: "Dashboard", icon: "M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z" },
-  { href: "/quotes" as Route, label: "Presupuestos", icon: "M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm7 0v5h5" },
-  { href: "/works" as Route, label: "Trabajos", icon: "M4 7h16M4 12h16M4 17h10" },
-  { href: "/clients" as Route, label: "Clientes", icon: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" },
-  { href: "/catalog" as Route, label: "Catálogo", icon: "M4 6h16M4 12h16M4 18h16" },
-  { href: "/settings" as Route, label: "Configuración", icon: "M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z" },
+  {
+    href: "/dashboard" as Route,
+    key: "nav.dashboard",
+    icon: "M3 10.5 12 3l9 7.5V21a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1v-10.5z",
+  },
+  {
+    href: "/quotes" as Route,
+    key: "nav.quotes",
+    icon: "M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zm7 0v5h5",
+  },
+  {
+    href: "/works" as Route,
+    key: "nav.works",
+    icon: "M4 7h16M4 12h16M4 17h10",
+  },
+  {
+    href: "/clients" as Route,
+    key: "nav.clients",
+    icon: "M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75",
+  },
+  {
+    href: "/catalog" as Route,
+    key: "nav.catalog",
+    icon: "M4 6h16M4 12h16M4 18h16",
+  },
+  {
+    href: "/settings" as Route,
+    key: "nav.settings",
+    icon: "M12 15.5A3.5 3.5 0 1 0 12 8.5a3.5 3.5 0 0 0 0 7zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a1.7 1.7 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a1.7 1.7 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z",
+  },
 ];
 
 function isActive(pathname: string, href: string) {
@@ -33,6 +58,7 @@ function LogoMark() {
 
 function DesktopSidebar({ tenantName }: { tenantName: string }) {
   const pathname = usePathname();
+  const { t } = useI18n();
   return (
     <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 flex-col border-r border-[var(--border)] bg-[var(--surface)] lg:flex">
       <div className="flex items-center gap-2.5 border-b border-[var(--border)] px-4 py-4">
@@ -48,11 +74,11 @@ function DesktopSidebar({ tenantName }: { tenantName: string }) {
           href={"/quotes/new" as Route}
           className="flex h-11 items-center justify-center gap-2 rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
         >
-          + Nuevo presupuesto
+          + {t("nav.new_quote")}
         </Link>
       </div>
 
-      <nav className="mt-4 flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label="Principal">
+      <nav className="mt-4 flex-1 space-y-1 overflow-y-auto px-3 pb-4" aria-label={t("nav.principal")}>
         {nav.map((item) => {
           const active = isActive(pathname, item.href);
           return (
@@ -68,26 +94,28 @@ function DesktopSidebar({ tenantName }: { tenantName: string }) {
               <svg viewBox="0 0 24 24" className="size-4.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
                 <path d={item.icon} />
               </svg>
-              {item.label}
+              {t(item.key)}
             </Link>
           );
         })}
       </nav>
 
       <div className="border-t border-[var(--border)] px-3 py-3">
-        <SignOutButton label="Salir" />
+        <SignOutButton />
       </div>
     </aside>
   );
 }
 
 function DesktopTopbar({ tenantName }: { tenantName: string }) {
+  const { t } = useI18n();
   return (
     <header className="sticky top-0 z-30 hidden h-14 items-center gap-3 border-b border-[var(--border)] bg-[var(--canvas)]/92 px-6 backdrop-blur-md lg:flex">
       <div className="relative min-w-0 flex-1 max-w-md">
         <input
           type="search"
-          placeholder="Buscar cliente, trabajo o #presupuesto…"
+          placeholder={t("nav.search_placeholder")}
+          aria-label={t("nav.search_placeholder")}
           className="h-9 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] pl-8 pr-3 text-xs text-[var(--ink)] outline-none placeholder:text-[var(--ink-muted)] focus:border-[var(--primary)]"
         />
         <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-[var(--ink-muted)]" aria-hidden>
@@ -101,7 +129,7 @@ function DesktopTopbar({ tenantName }: { tenantName: string }) {
         <Link
           href={"/settings" as Route}
           className="flex size-9 items-center justify-center rounded-[6px] text-sm text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
-          aria-label="Configuración"
+          aria-label={t("nav.settings")}
         >
           ⚙
         </Link>
@@ -109,7 +137,7 @@ function DesktopTopbar({ tenantName }: { tenantName: string }) {
           href={"/quotes/new" as Route}
           className="ml-1 inline-flex h-9 items-center rounded-[6px] bg-[var(--primary)] px-3 text-xs font-semibold text-[var(--on-primary)] transition-colors hover:bg-[var(--primary-hover)]"
         >
-          + Nuevo encargo
+          + {t("nav.new_order")}
         </Link>
       </div>
     </header>
@@ -117,6 +145,7 @@ function DesktopTopbar({ tenantName }: { tenantName: string }) {
 }
 
 function MobileHeader({ tenantName }: { tenantName: string }) {
+  const { t } = useI18n();
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--canvas)]/92 backdrop-blur-md lg:hidden">
       <div className="mx-auto flex h-14 max-w-lg items-center justify-between gap-2 px-4">
@@ -134,11 +163,11 @@ function MobileHeader({ tenantName }: { tenantName: string }) {
           <Link
             href={"/settings" as Route}
             className="flex size-10 items-center justify-center rounded-[6px] text-sm text-[var(--ink-muted)] transition-colors hover:bg-[var(--surface-2)] hover:text-[var(--ink)]"
-            aria-label="Configuración"
+            aria-label={t("nav.settings")}
           >
             ⚙
           </Link>
-          <SignOutButton label="Salir" />
+          <SignOutButton />
         </div>
       </div>
     </header>

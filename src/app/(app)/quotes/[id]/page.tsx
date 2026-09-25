@@ -3,31 +3,18 @@ import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button, Card, PageHeader, SectionTitle, inputClass } from "@/components/ui/primitives";
-import { formatMoney, formatDate, type Locale } from "@/lib/i18n";
+import {
+  complexityLabel,
+  formatDate,
+  formatMeasurement,
+  formatMoney,
+  measurementFieldLabel,
+  statusLabel,
+  t,
+  urgencyLabel,
+} from "@/lib/i18n";
 import { overrideFinalPriceAction } from "@/modules/quotes/actions";
 import { QuoteLifecycleActions } from "@/modules/quotes/quote-lifecycle-actions";
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Borrador",
-  sent: "Enviado",
-  accepted: "Aprobado",
-  rejected: "Rechazado",
-  expired: "Vencido",
-  cancelled: "Cancelado",
-};
-
-const COMPLEXITY_LABEL: Record<string, string> = {
-  low: "Baja",
-  medium: "Media",
-  high: "Alta",
-  very_high: "Muy alta",
-};
-
-const URGENCY_LABEL: Record<string, string> = {
-  normal: "Normal",
-  urgent: "Urgente",
-  very_urgent: "Muy urgente",
-};
 
 export default async function QuoteDetailPage({
   params,
@@ -37,7 +24,7 @@ export default async function QuoteDetailPage({
   const ctx = await getSessionContext();
   if (!ctx) redirect("/");
   const { id } = await params;
-  const locale = (ctx.locale as Locale) || "es";
+  const locale = ctx.locale;
   const supabase = await createClient();
 
   const { data: quote } = await supabase
@@ -123,12 +110,12 @@ export default async function QuoteDetailPage({
     <main className="pb-8">
       <PageHeader
         title={`#${String(quote.quote_number).padStart(3, "0")}`}
-        subtitle={`${client.name ?? ""} · v${quote.version_number} · ${tLabel(quote.status)}${quote.valid_until ? ` · ${formatDate(quote.valid_until, locale)}` : ""}`}
+        subtitle={`${client.name ?? ""} · v${quote.version_number} · ${statusLabel(locale, "quote", quote.status)}${quote.valid_until ? ` · ${formatDate(quote.valid_until, locale, ctx.timezone)}` : ""}`}
         action={
           <div className="flex flex-wrap items-center justify-end gap-2">
             <StatusBadge
               status={quote.status}
-              label={STATUS_LABEL[quote.status] ?? quote.status}
+              label={statusLabel(locale, "quote", quote.status)}
             />
             <span className="metric rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2.5 py-1 text-sm font-semibold text-[var(--primary)] sm:hidden">
               {totalLabel}
@@ -139,47 +126,59 @@ export default async function QuoteDetailPage({
 
       {(pastDue || quote.status === "expired") && (
         <p className="mb-4 rounded-[6px] border border-[var(--warning)]/40 bg-[var(--warning-bg)] px-3 py-2 text-xs text-[var(--warning)]">
-          Este presupuesto está vencido. Los precios pueden haber cambiado.
+          {t(locale, "quotes.detail.expired_notice")}
         </p>
       )}
 
       <div className="grid gap-4 lg:grid-cols-[1fr_340px] lg:gap-6 xl:grid-cols-[1fr_380px]">
         <aside className="min-w-0 space-y-4 lg:order-2 lg:sticky lg:top-20 lg:self-start">
           <Card className="p-4">
-            <SectionTitle>Cálculo transparente</SectionTitle>
+            <SectionTitle>{t(locale, "quotes.detail.calculation")}</SectionTitle>
             <dl className="space-y-1 text-sm">
               <div className="flex justify-between gap-3">
-                <dt className="min-w-0 text-[var(--ink-muted)]">Materiales</dt>
+                <dt className="min-w-0 text-[var(--ink-muted)]">
+                  {t(locale, "quotes.detail.line_materials")}
+                </dt>
                 <dd className="metric shrink-0">{money(Number(quote.subtotal_materials))}</dd>
               </div>
               <div className="flex justify-between gap-3">
-                <dt className="min-w-0 text-[var(--ink-muted)]">Mano de obra</dt>
+                <dt className="min-w-0 text-[var(--ink-muted)]">
+                  {t(locale, "quotes.detail.line_labor")}
+                </dt>
                 <dd className="metric shrink-0">{money(Number(quote.subtotal_labor))}</dd>
               </div>
               <div className="flex justify-between gap-3">
-                <dt className="min-w-0 text-[var(--ink-muted)]">Complejidad</dt>
+                <dt className="min-w-0 text-[var(--ink-muted)]">
+                  {t(locale, "quotes.detail.line_complexity")}
+                </dt>
                 <dd className="metric shrink-0">{money(Number(quote.complexity_amount))}</dd>
               </div>
               <div className="flex justify-between gap-3">
-                <dt className="min-w-0 text-[var(--ink-muted)]">Urgencia</dt>
+                <dt className="min-w-0 text-[var(--ink-muted)]">
+                  {t(locale, "quotes.detail.line_urgency")}
+                </dt>
                 <dd className="metric shrink-0">{money(Number(quote.urgency_amount))}</dd>
               </div>
               <div className="flex justify-between gap-3">
-                <dt className="min-w-0 text-[var(--ink-muted)]">Otros</dt>
+                <dt className="min-w-0 text-[var(--ink-muted)]">
+                  {t(locale, "quotes.detail.line_other")}
+                </dt>
                 <dd className="metric shrink-0">{money(Number(quote.other_costs_amount))}</dd>
               </div>
               <div className="flex justify-between gap-3">
-                <dt className="min-w-0 text-[var(--ink-muted)]">Margen</dt>
+                <dt className="min-w-0 text-[var(--ink-muted)]">
+                  {t(locale, "quotes.detail.line_margin")}
+                </dt>
                 <dd className="metric shrink-0">{money(Number(quote.margin_amount))}</dd>
               </div>
               <div className="mt-2 flex justify-between gap-3 border-t border-[var(--border)] pt-2 font-semibold">
-                <dt className="min-w-0">Sugerido</dt>
+                <dt className="min-w-0">{t(locale, "quotes.detail.line_suggested")}</dt>
                 <dd className="metric shrink-0">{money(Number(quote.suggested_price))}</dd>
               </div>
               <div className="mt-1 rounded-[6px] bg-[var(--surface-2)] px-3 py-3">
                 <div className="flex items-end justify-between gap-3">
                   <dt className="text-xs font-semibold tracking-wide text-[var(--ink-muted)] uppercase">
-                    Final
+                    {t(locale, "quotes.detail.final")}
                   </dt>
                   <dd className="metric text-xl font-semibold text-[var(--primary)] sm:text-2xl">
                     {money(
@@ -191,7 +190,7 @@ export default async function QuoteDetailPage({
             </dl>
             {quote.override_reason && (
               <p className="mt-2 text-xs text-[var(--ink-muted)] break-words">
-                Override: {quote.override_reason}
+                {t(locale, "quotes.detail.override", { reason: quote.override_reason })}
               </p>
             )}
             {(quote.status === "draft" || quote.status === "sent") && (
@@ -203,23 +202,25 @@ export default async function QuoteDetailPage({
                   name="final_price"
                   type="number"
                   step="0.01"
-                  placeholder="Precio final"
+                  placeholder={t(locale, "quotes.detail.final_price_placeholder")}
+                  aria-label={t(locale, "quotes.detail.final_price_placeholder")}
                   className={`${inputClass} h-10`}
                 />
                 <input
                   name="override_reason"
-                  placeholder="Motivo"
+                  placeholder={t(locale, "quotes.detail.reason_placeholder")}
+                  aria-label={t(locale, "quotes.detail.reason_placeholder")}
                   className={`${inputClass} h-10`}
                 />
                 <Button type="submit" variant="secondary" size="sm" className="sm:h-10">
-                  OK
+                  {t(locale, "common.confirm")}
                 </Button>
               </form>
             )}
           </Card>
 
           <Card className="p-4">
-            <SectionTitle>Acciones</SectionTitle>
+            <SectionTitle>{t(locale, "common.actions")}</SectionTitle>
             <QuoteLifecycleActions
               quoteId={quote.id}
               status={quote.status}
@@ -240,7 +241,9 @@ export default async function QuoteDetailPage({
 
         <div className="min-w-0 space-y-4 lg:order-1">
           <section className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)] sm:p-4">
-            <SectionTitle>Trabajos / piezas ({jobs.length})</SectionTitle>
+            <SectionTitle>
+              {t(locale, "quotes.detail.jobs_title", { count: jobs.length })}
+            </SectionTitle>
             <div className="space-y-3">
               {jobs.map((job, i) => (
                 <article
@@ -250,7 +253,8 @@ export default async function QuoteDetailPage({
                   <div className="flex flex-wrap items-start justify-between gap-x-2 gap-y-1">
                     <div className="min-w-0 flex-1">
                       <p className="text-sm font-semibold break-words">
-                        {job.garment_type || `Pieza ${i + 1}`}
+                        {job.garment_type ||
+                          t(locale, "quotes.detail.piece_fallback", { number: i + 1 })}
                       </p>
                       <p className="text-xs text-[var(--ink-muted)] break-words">
                         {job.job_categories?.name ?? ""}
@@ -264,10 +268,10 @@ export default async function QuoteDetailPage({
                     </div>
                     <div className="flex shrink-0 flex-wrap items-center gap-1">
                       <span className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 text-[10px] font-semibold text-[var(--ink-muted)] uppercase">
-                        {COMPLEXITY_LABEL[job.complexity] ?? job.complexity}
+                        {complexityLabel(locale, job.complexity)}
                       </span>
                       <span className="rounded-full bg-[var(--surface-2)] px-2 py-0.5 text-[10px] font-semibold text-[var(--ink-muted)] uppercase">
-                        {URGENCY_LABEL[job.urgency] ?? job.urgency}
+                        {urgencyLabel(locale, job.urgency)}
                       </span>
                     </div>
                   </div>
@@ -275,10 +279,13 @@ export default async function QuoteDetailPage({
                   {(job.labor_method === "fixed" ||
                     (job.estimated_minutes ?? 0) > 0) && (
                     <p className="mt-2 text-xs text-[var(--ink-muted)]">
-                      Mano de obra:{" "}
                       {job.labor_method === "fixed" && job.labor_fixed_price != null
-                        ? `fijo ${money(Number(job.labor_fixed_price))}`
-                        : `${job.estimated_minutes ?? 0} min estimados`}
+                        ? t(locale, "quotes.detail.labor_fixed", {
+                            value: money(Number(job.labor_fixed_price)),
+                          })
+                        : t(locale, "quotes.detail.labor_minutes", {
+                            minutes: job.estimated_minutes ?? 0,
+                          })}
                     </p>
                   )}
 
@@ -302,7 +309,9 @@ export default async function QuoteDetailPage({
                           <span className="min-w-0 break-words">
                             {m.material_name_snapshot} {m.quantity} {m.unit_snapshot}{" "}
                             <span className="text-[var(--ink-muted)]">
-                              (merma {m.waste_percent}%)
+                              {t(locale, "quotes.detail.waste", {
+                                percent: m.waste_percent,
+                              })}
                             </span>
                           </span>
                           <span className="metric shrink-0">{money(Number(m.total))}</span>
@@ -314,9 +323,13 @@ export default async function QuoteDetailPage({
                   {job.measurements_snapshot?.values?.length ? (
                     <details className="mt-3" open>
                       <summary className="cursor-pointer text-xs font-semibold text-[var(--primary)]">
-                        Medidas congeladas
+                        {t(locale, "quotes.detail.frozen_measurements")}
                         {job.measurements_snapshot.recorded_at
-                          ? ` · ${formatDate(job.measurements_snapshot.recorded_at, locale)}`
+                          ? ` · ${formatDate(
+                              job.measurements_snapshot.recorded_at,
+                              locale,
+                              ctx.timezone,
+                            )}`
                           : ""}
                       </summary>
                       <dl className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">
@@ -326,10 +339,10 @@ export default async function QuoteDetailPage({
                             className="rounded-[4px] bg-[var(--surface-2)] px-2 py-1"
                           >
                             <dt className="text-[10px] tracking-wide text-[var(--ink-muted)] uppercase break-words">
-                              {v.name}
+                              {measurementFieldLabel(locale, v.name)}
                             </dt>
                             <dd className="metric text-sm font-semibold">
-                              {v.value} {v.unit}
+                              {formatMeasurement(v.value, v.unit, locale)}
                             </dd>
                           </div>
                         ))}
@@ -349,15 +362,11 @@ export default async function QuoteDetailPage({
 
           {quote.notes && (
             <p className="rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-xs text-[var(--ink-muted)] break-words">
-              Notas: {quote.notes}
+              {t(locale, "quotes.detail.notes_prefix", { notes: quote.notes })}
             </p>
           )}
         </div>
       </div>
     </main>
   );
-}
-
-function tLabel(status: string) {
-  return STATUS_LABEL[status] ?? status;
 }

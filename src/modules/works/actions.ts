@@ -3,17 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { requireSessionContext } from "@/lib/session";
-
-const TRANSITIONS: Record<string, string[]> = {
-  accepted: ["waiting_garment", "in_production", "cancelled"],
-  waiting_garment: ["in_production", "cancelled"],
-  in_production: ["fitting", "adjustments", "ready", "cancelled"],
-  fitting: ["adjustments", "ready", "in_production", "cancelled"],
-  adjustments: ["fitting", "ready", "in_production", "cancelled"],
-  ready: ["delivered", "adjustments"],
-  delivered: [],
-  cancelled: [],
-};
+import { WORK_TRANSITIONS } from "@/modules/work-transitions";
 
 export async function convertQuoteToWorkOrderAction(quoteId: string) {
   const ctx = await requireSessionContext();
@@ -103,7 +93,7 @@ export async function transitionWorkOrderAction(
     .single();
   if (!wo) throw new Error("Work order not found");
 
-  const allowed = TRANSITIONS[wo.status] ?? [];
+  const allowed = WORK_TRANSITIONS[wo.status] ?? [];
   if (!allowed.includes(nextStatus)) {
     throw new Error(`Invalid transition ${wo.status} → ${nextStatus}`);
   }

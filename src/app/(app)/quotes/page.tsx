@@ -9,21 +9,12 @@ import {
   PageHeader,
   PrimaryLink,
 } from "@/components/ui/primitives";
-import { formatMoney, formatDate, type Locale } from "@/lib/i18n";
-
-const STATUS_LABEL: Record<string, string> = {
-  draft: "Borrador",
-  sent: "Enviado",
-  accepted: "Aprobado",
-  rejected: "Rechazado",
-  expired: "Vencido",
-  cancelled: "Cancelado",
-};
+import { formatDate, formatMoney, statusLabel, t } from "@/lib/i18n";
 
 export default async function QuotesPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/");
-  const locale = (ctx.locale as Locale) || "es";
+  const locale = ctx.locale;
   const supabase = await createClient();
 
   const { data: quotes } = await supabase
@@ -37,11 +28,11 @@ export default async function QuotesPage() {
   return (
     <main className="pb-8">
       <PageHeader
-        title="Presupuestos"
-        subtitle="Borradores, enviados y aprobados"
+        title={t(locale, "quotes.title")}
+        subtitle={t(locale, "quotes.subtitle")}
         action={
           <PrimaryLink href={"/quotes/new" as Route} size="sm">
-            + Nuevo
+            + {t(locale, "common.new")}
           </PrimaryLink>
         }
       />
@@ -67,14 +58,18 @@ export default async function QuotesPage() {
                   </div>
                   <StatusBadge
                     status={q.status}
-                    label={STATUS_LABEL[q.status] ?? q.status}
+                    label={statusLabel(locale, "quote", q.status)}
                   />
                 </div>
                 <div className="mt-3 flex items-center justify-between">
                   <p className="text-xs text-[var(--ink-muted)]">
                     {formatDate(q.created_at, locale, ctx.timezone)}
                     {q.valid_until
-                      ? ` · vence ${formatDate(q.valid_until, locale)}`
+                      ? ` · ${t(locale, "quotes.valid_until")} ${formatDate(
+                          q.valid_until,
+                          locale,
+                          ctx.timezone,
+                        )}`
                       : ""}
                   </p>
                   <p className="metric text-sm font-semibold">
@@ -88,11 +83,11 @@ export default async function QuotesPage() {
         {!quotes?.length && (
           <li>
             <EmptyState
-              title="Sin presupuestos"
-              description="Crea el primero para enviar a tu clienta."
+              title={t(locale, "quotes.none")}
+              description={t(locale, "quotes.none_hint")}
               action={
                 <PrimaryLink href={"/quotes/new" as Route} size="sm">
-                  Nuevo presupuesto
+                  {t(locale, "quotes.new")}
                 </PrimaryLink>
               }
             />

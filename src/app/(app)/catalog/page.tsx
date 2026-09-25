@@ -1,13 +1,11 @@
 import { redirect } from "next/navigation";
 import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
-import type { Locale } from "@/lib/i18n";
 import { CatalogClient } from "@/modules/catalog/catalog-client";
 
 export default async function CatalogPage() {
   const ctx = await getSessionContext();
   if (!ctx) redirect("/");
-  const locale = (ctx.locale as Locale) || "es";
   const supabase = await createClient();
   const today = new Date().toISOString().slice(0, 10);
 
@@ -58,7 +56,6 @@ export default async function CatalogPage() {
         active: c.active,
       }))}
       currency={ctx.currency}
-      locale={locale}
       today={today}
     />
   );

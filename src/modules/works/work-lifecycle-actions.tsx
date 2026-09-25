@@ -4,17 +4,9 @@ import { useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { statusLabel, t, translateError } from "@/lib/i18n";
 import { transitionWorkOrderAction } from "@/modules/works/actions";
-
-const LABEL: Record<string, string> = {
-  waiting_garment: "Esperando prenda",
-  in_production: "En producción",
-  fitting: "Prueba",
-  adjustments: "Ajustes",
-  ready: "Listo",
-  delivered: "Entregado",
-  cancelled: "Cancelado",
-};
 
 export function WorkLifecycleActions({
   workId,
@@ -25,6 +17,7 @@ export function WorkLifecycleActions({
 }) {
   const router = useRouter();
   const { toast } = useToast();
+  const { locale } = useI18n();
   const [pending, startTransition] = useTransition();
 
   return (
@@ -40,17 +33,20 @@ export function WorkLifecycleActions({
             startTransition(async () => {
               try {
                 await transitionWorkOrderAction(workId, s);
-                toast(`Estado: ${LABEL[s] ?? s}`, "success");
+                toast(
+                  t(locale, "works.lifecycle.moved", {
+                    status: statusLabel(locale, "work", s),
+                  }),
+                  "success",
+                );
                 router.refresh();
               } catch (e) {
-                const msg =
-                  e instanceof Error ? e.message : "No se pudo actualizar";
-                toast(msg, "error");
+                toast(translateError(e, locale), "error");
               }
             })
           }
         >
-          {LABEL[s] ?? s}
+          {statusLabel(locale, "work", s)}
         </Button>
       ))}
     </div>

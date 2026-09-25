@@ -1,20 +1,22 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
+import type { TranslationKey, TranslationVars } from "@/lib/i18n";
 import { requireSessionContext } from "@/lib/session";
+import { createClient } from "@/lib/supabase/server";
 
 export type ActionResult = {
   ok: boolean;
-  message: string;
+  code: TranslationKey | string;
+  vars?: TranslationVars;
 };
 
-function ok(message: string): ActionResult {
-  return { ok: true, message };
+function ok(code: TranslationKey, vars?: TranslationVars): ActionResult {
+  return { ok: true, code, vars };
 }
 
-function fail(message: string): ActionResult {
-  return { ok: false, message };
+function fail(code: TranslationKey, vars?: TranslationVars): ActionResult {
+  return { ok: false, code, vars };
 }
 
 export async function createServiceAction(
@@ -25,7 +27,7 @@ export async function createServiceAction(
     const ctx = await requireSessionContext();
     const supabase = await createClient();
     const name = String(formData.get("name") ?? "").trim();
-    if (!name) return fail("El nombre es obligatorio");
+    if (!name) return fail("catalog.name_required");
 
     const basePrice = formData.get("base_price");
     const minutes = formData.get("estimated_minutes");
@@ -36,7 +38,7 @@ export async function createServiceAction(
       .eq("tenant_id", ctx.tenantId)
       .ilike("name", name)
       .maybeSingle();
-    if (dup) return fail("Ya existe un servicio con ese nombre");
+    if (dup) return fail("catalog.name_taken");
 
     const { error } = await supabase.from("services").insert({
       tenant_id: ctx.tenantId,
@@ -48,12 +50,12 @@ export async function createServiceAction(
         minutes !== null && minutes !== "" ? Number(minutes) : null,
       unit: String(formData.get("unit") ?? "").trim() || null,
     });
-    if (error) return fail(error.message);
+    if (error) return fail("catalog.service_save_failed");
 
     revalidatePath("/catalog");
-    return ok(`Servicio “${name}” guardado`);
+    return ok("catalog.service_saved_named", { name });
   } catch {
-    return fail("No se pudo guardar el servicio");
+    return fail("catalog.service_save_failed");
   }
 }
 
@@ -71,14 +73,14 @@ export async function toggleServiceAction(
       .eq("tenant_id", ctx.tenantId)
       .select("id, active")
       .single();
-    if (error) return fail(error.message);
+    if (error) return fail("catalog.service_update_failed");
     if (!data || data.active !== active) {
-      return fail("No se pudo actualizar el servicio");
+      return fail("catalog.service_update_failed");
     }
     revalidatePath("/catalog");
-    return ok(active ? "Servicio activado" : "Servicio desactivado");
+    return ok(active ? "catalog.service_active" : "catalog.service_inactive");
   } catch {
-    return fail("No se pudo actualizar el servicio");
+    return fail("catalog.service_update_failed");
   }
 }
 
@@ -93,17 +95,15 @@ export async function deleteServiceAction(id: string): Promise<ActionResult> {
       .eq("id", id)
       .eq("tenant_id", ctx.tenantId)
       .maybeSingle();
-    if (!service) return fail("Servicio no encontrado");
+    if (!service) return fail("catalog.service_not_found");
 
     const { count, error: countError } = await supabase
       .from("quote_items")
       .select("id", { count: "exact", head: true })
       .eq("service_id", id);
-    if (countError) return fail(countError.message);
+    if (countError) return fail("error.generic");
     if (count && count > 0) {
-      return fail(
-        `“${service.name}” está en uso en ${count} presupuesto${count > 1 ? "s" : ""}. Desactívalo en su lugar.`,
-      );
+      return fail("catalog.service_in_use", { name: service.name, count });
     }
 
     const { error } = await supabase
@@ -113,17 +113,15 @@ export async function deleteServiceAction(id: string): Promise<ActionResult> {
       .eq("tenant_id", ctx.tenantId);
     if (error) {
       if (error.code === "23503") {
-        return fail(
-          `“${service.name}” está referenciado en presupuestos. Desactívalo en su lugar.`,
-        );
+        return fail("catalog.service_referenced", { name: service.name });
       }
-      return fail(error.message);
+      return fail("error.generic");
     }
 
     revalidatePath("/catalog");
-    return ok(`Servicio “${service.name}” eliminado`);
+    return ok("catalog.service_deleted_named", { name: service.name });
   } catch {
-    return fail("No se pudo eliminar el servicio");
+    return fail("catalog.service_delete_failed");
   }
 }
 
@@ -136,7 +134,7 @@ export async function createMaterialAction(
     const supabase = await createClient();
     const name = String(formData.get("name") ?? "").trim();
     const unit = String(formData.get("unit") ?? "").trim() || "m";
-    if (!name) return fail("El nombre es obligatorio");
+    if (!name) return fail("catalog.name_required");
 
     const { data: dup } = await supabase
       .from("materials")
@@ -144,7 +142,7 @@ export async function createMaterialAction(
       .eq("tenant_id", ctx.tenantId)
       .ilike("name", name)
       .maybeSingle();
-    if (dup) return fail("Ya existe un material con ese nombre");
+    if (dup) return fail("catalog.name_taken");
 
     const { data: material, error } = await supabase
       .from("materials")
@@ -156,7 +154,7 @@ export async function createMaterialAction(
       })
       .select("id")
       .single();
-    if (error) return fail(error.message);
+    if (error) return fail("catalog.material_save_failed");
 
     const price = formData.get("unit_price");
     if (price !== null && price !== "" && Number(price) >= 0) {
@@ -167,13 +165,13 @@ export async function createMaterialAction(
         currency: ctx.currency,
         valid_from: new Date().toISOString().slice(0, 10),
       });
-      if (pErr) return fail(pErr.message);
+      if (pErr) return fail("catalog.material_save_failed");
     }
 
     revalidatePath("/catalog");
-    return ok(`Material “${name}” guardado`);
+    return ok("catalog.material_saved_named", { name });
   } catch {
-    return fail("No se pudo guardar el material");
+    return fail("catalog.material_save_failed");
   }
 }
 
@@ -190,7 +188,7 @@ export async function upsertMaterialPriceAction(
       String(formData.get("valid_from") ?? "") ||
       new Date().toISOString().slice(0, 10);
     if (!materialId || !Number.isFinite(unitPrice) || unitPrice < 0) {
-      return fail("Precio no válido");
+      return fail("catalog.price_invalid");
     }
 
     const { error } = await supabase.from("material_prices").insert({
@@ -200,12 +198,12 @@ export async function upsertMaterialPriceAction(
       currency: ctx.currency,
       valid_from: validFrom,
     });
-    if (error) return fail(error.message);
+    if (error) return fail("catalog.price_update_failed");
 
     revalidatePath("/catalog");
-    return ok("Precio actualizado (historial conservado)");
+    return ok("catalog.price_updated");
   } catch {
-    return fail("No se pudo actualizar el precio");
+    return fail("catalog.price_update_failed");
   }
 }
 
@@ -217,7 +215,7 @@ export async function createJobCategoryAction(
     const ctx = await requireSessionContext();
     const supabase = await createClient();
     const name = String(formData.get("name") ?? "").trim();
-    if (!name) return fail("El nombre es obligatorio");
+    if (!name) return fail("catalog.name_required");
 
     const { data: dup } = await supabase
       .from("job_categories")
@@ -225,17 +223,17 @@ export async function createJobCategoryAction(
       .eq("tenant_id", ctx.tenantId)
       .ilike("name", name)
       .maybeSingle();
-    if (dup) return fail("Ya existe esa categoría");
+    if (dup) return fail("catalog.name_taken");
 
     const { error } = await supabase
       .from("job_categories")
       .insert({ tenant_id: ctx.tenantId, name });
-    if (error) return fail(error.message);
+    if (error) return fail("catalog.category_save_failed");
 
     revalidatePath("/catalog");
-    return ok(`Categoría “${name}” guardada`);
+    return ok("catalog.category_saved_named", { name });
   } catch {
-    return fail("No se pudo guardar la categoría");
+    return fail("catalog.category_save_failed");
   }
 }
 
@@ -253,14 +251,14 @@ export async function toggleJobCategoryAction(
       .eq("tenant_id", ctx.tenantId)
       .select("id, active")
       .single();
-    if (error) return fail(error.message);
+    if (error) return fail("catalog.category_update_failed");
     if (!data || data.active !== active) {
-      return fail("No se pudo actualizar la categoría");
+      return fail("catalog.category_update_failed");
     }
     revalidatePath("/catalog");
-    return ok(active ? "Categoría activada" : "Categoría desactivada");
+    return ok(active ? "catalog.category_active" : "catalog.category_inactive");
   } catch {
-    return fail("No se pudo actualizar la categoría");
+    return fail("catalog.category_update_failed");
   }
 }
 
@@ -278,13 +276,13 @@ export async function toggleMaterialAction(
       .eq("tenant_id", ctx.tenantId)
       .select("id, active")
       .single();
-    if (error) return fail(error.message);
+    if (error) return fail("catalog.material_update_failed");
     if (!data || data.active !== active) {
-      return fail("No se pudo actualizar el material");
+      return fail("catalog.material_update_failed");
     }
     revalidatePath("/catalog");
-    return ok(active ? "Material activado" : "Material desactivado");
+    return ok(active ? "catalog.material_active" : "catalog.material_inactive");
   } catch {
-    return fail("No se pudo actualizar el material");
+    return fail("catalog.material_update_failed");
   }
 }

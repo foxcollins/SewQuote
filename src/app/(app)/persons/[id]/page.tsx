@@ -6,7 +6,12 @@ import { createClient } from "@/lib/supabase/server";
 import { PersonForm } from "@/modules/clients/person-form";
 import { MeasurementForm } from "@/modules/clients/measurement-form";
 import { Card, EmptyState, PageHeader, SectionTitle } from "@/components/ui/primitives";
-import { formatDate, type Locale } from "@/lib/i18n";
+import {
+  formatDate,
+  formatMeasurement,
+  measurementFieldLabel,
+  t,
+} from "@/lib/i18n";
 
 export default async function PersonDetailPage({
   params,
@@ -17,7 +22,7 @@ export default async function PersonDetailPage({
   if (!ctx) redirect("/");
   const { id } = await params;
   const supabase = await createClient();
-  const locale = (ctx.locale as Locale) || "es";
+  const locale = ctx.locale;
 
   const { data: person } = await supabase
     .from("persons")
@@ -42,8 +47,10 @@ export default async function PersonDetailPage({
         title={person.name}
         subtitle={
           (person.clients as { name?: string } | null)?.name
-            ? `Persona destinataria · de ${(person.clients as { name?: string }).name}`
-            : "Persona destinataria"
+            ? t(locale, "clients.person.subtitle_of", {
+                name: (person.clients as { name?: string }).name ?? "",
+              })
+            : t(locale, "clients.person.subtitle")
         }
       />
       {person.notes && (
@@ -51,7 +58,7 @@ export default async function PersonDetailPage({
       )}
 
       <section className="mb-6">
-        <SectionTitle>Historial de medidas</SectionTitle>
+        <SectionTitle>{t(locale, "clients.measurements.history")}</SectionTitle>
         <ul className="space-y-3">
           {(sets ?? []).map((set) => {
             const ageMs = now - new Date(set.recorded_at).getTime();
@@ -64,26 +71,27 @@ export default async function PersonDetailPage({
               >
                 <div className="mb-2 flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
                   <p className="min-w-0 text-sm font-semibold break-words">
-                    {set.label || formatDate(set.recorded_at, locale)}
+                    {set.label || formatDate(set.recorded_at, locale, ctx.timezone)}
                   </p>
                   <p className="shrink-0 text-xs whitespace-nowrap text-[var(--ink-muted)]">
-                    {formatDate(set.recorded_at, locale)}
+                    {formatDate(set.recorded_at, locale, ctx.timezone)}
                   </p>
                 </div>
                 {stale && (
                   <p className="mb-2 rounded-[4px] bg-[var(--warning-bg)] px-2 py-1 text-[11px] text-[var(--warning)]">
-                    Estas medidas fueron registradas hace {months} meses. Se
-                    recomienda confirmar antes de usarlas.
+                    {t(locale, "clients.measurements.stale_warning", {
+                      count: months,
+                    })}
                   </p>
                 )}
                 <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {(set.measurement_values ?? []).map((v, i) => (
                     <div key={i} className="min-w-0 rounded-[4px] bg-[var(--surface-2)] px-2 py-1">
                       <dt className="truncate text-[10px] uppercase text-[var(--ink-muted)]">
-                        {v.name}
+                        {measurementFieldLabel(locale, v.name)}
                       </dt>
                       <dd className="metric truncate text-sm font-semibold">
-                        {v.value} {v.unit}
+                        {formatMeasurement(v.value, v.unit, locale)}
                       </dd>
                     </div>
                   ))}
@@ -94,8 +102,8 @@ export default async function PersonDetailPage({
           {!sets?.length && (
             <li>
               <EmptyState
-                title="Sin medidas todavía"
-                description="Registra el primer set para congelarlo en presupuestos."
+                title={t(locale, "clients.measurements.no_rows")}
+                description={t(locale, "clients.measurements.hint")}
               />
             </li>
           )}
@@ -103,12 +111,12 @@ export default async function PersonDetailPage({
       </section>
 
       <Card className="mb-6 p-4">
-        <SectionTitle>Nuevo set de medidas</SectionTitle>
+        <SectionTitle>{t(locale, "clients.measurements.new_set")}</SectionTitle>
         <MeasurementForm personId={id} />
       </Card>
 
       <Card className="p-4">
-        <SectionTitle>Añadir otra persona</SectionTitle>
+        <SectionTitle>{t(locale, "clients.person.add")}</SectionTitle>
         <PersonForm clientId={typeof person.client_id === "string" ? person.client_id : undefined} />
       </Card>
 
@@ -118,7 +126,7 @@ export default async function PersonDetailPage({
             href={`/clients/${person.client_id}` as Route}
             className="text-sm font-semibold text-[var(--primary)]"
           >
-            ← Volver al cliente
+            ← {t(locale, "clients.person.back")}
           </Link>
         </p>
       )}

@@ -4,15 +4,20 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Field, inputClass } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { defaultMeasurementFieldNames, translateError } from "@/lib/i18n";
 import { createMeasurementSetAction } from "@/modules/clients/actions";
-
-const DEFAULT_FIELDS = ["Busto", "Cintura", "Cadera", "Largo", "Manga", "Hombro", "Cuello"];
 
 export function MeasurementForm({ personId }: { personId: string }) {
   const router = useRouter();
   const { toast } = useToast();
-  const [rows, setRows] = useState(
-    DEFAULT_FIELDS.map((name) => ({ name, value: "", unit: "cm" })),
+  const { locale, t } = useI18n();
+  const [rows, setRows] = useState(() =>
+    defaultMeasurementFieldNames(locale).map((name) => ({
+      name,
+      value: "",
+      unit: "cm",
+    })),
   );
   const [pending, setPending] = useState(false);
 
@@ -28,7 +33,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
             fd.append("m_unit", r.unit);
           });
           await createMeasurementSetAction(fd);
-          toast("Medidas guardadas", "success");
+          toast(t("clients.measurements.saved"), "success");
         } catch (e) {
           if (
             e &&
@@ -39,8 +44,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
           ) {
             return;
           }
-          const msg = e instanceof Error ? e.message : "Error al guardar";
-          toast(msg, "error");
+          toast(translateError(e, locale), "error");
         } finally {
           setPending(false);
           router.refresh();
@@ -50,14 +54,15 @@ export function MeasurementForm({ personId }: { personId: string }) {
     >
       <input type="hidden" name="person_id" value={personId} />
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Field label="Etiqueta">
+        <Field label={t("clients.measurements.label")}>
           <input
             name="label"
-            placeholder="Medidas 2026-09"
+            placeholder={t("clients.measurements.label_placeholder")}
+            aria-label={t("clients.measurements.label")}
             className={`${inputClass} h-10`}
           />
         </Field>
-        <Field label="Fecha">
+        <Field label={t("clients.measurements.date")}>
           <input
             type="date"
             name="recorded_at"
@@ -77,7 +82,8 @@ export function MeasurementForm({ personId }: { personId: string }) {
                 next[i] = { ...row, name: e.target.value };
                 setRows(next);
               }}
-              placeholder="Nombre"
+              placeholder={t("clients.measurements.name")}
+              aria-label={t("clients.measurements.name")}
               className="h-10 w-full min-w-0 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
             />
             <input
@@ -89,6 +95,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
               }}
               placeholder="0"
               inputMode="decimal"
+              aria-label={t("clients.measurements.value")}
               className="metric h-10 w-full min-w-0 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
             />
             <input
@@ -98,6 +105,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
                 next[i] = { ...row, unit: e.target.value };
                 setRows(next);
               }}
+              aria-label={t("clients.measurements.unit")}
               className="h-10 w-full min-w-0 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
             />
           </div>
@@ -111,11 +119,11 @@ export function MeasurementForm({ personId }: { personId: string }) {
         }
         className="text-xs font-semibold text-[var(--primary)]"
       >
-+ Campo
+        {t("clients.measurements.add")}
       </button>
 
       <label className="block text-sm font-semibold">
-        Notas
+        {t("clients.measurements.notes")}
         <textarea
           name="notes"
           rows={2}
@@ -124,7 +132,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
       </label>
 
       <Button type="submit" size="lg" className="w-full" loading={pending}>
-        Guardar set de medidas
+        {t("clients.measurements.save")}
       </Button>
     </form>
   );

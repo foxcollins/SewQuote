@@ -12,6 +12,7 @@ import {
   PageHeader,
   SectionTitle,
 } from "@/components/ui/primitives";
+import { t, tp, statusLabel } from "@/lib/i18n";
 
 export default async function ClientDetailPage({
   params,
@@ -22,6 +23,7 @@ export default async function ClientDetailPage({
   if (!ctx) redirect("/");
   const { id } = await params;
   const supabase = await createClient();
+  const locale = ctx.locale;
 
   const { data: client } = await supabase
     .from("clients")
@@ -47,10 +49,13 @@ export default async function ClientDetailPage({
 
   return (
     <main className="mx-auto max-w-3xl pb-8">
-      <PageHeader title={client.name} subtitle="Cliente" />
+      <PageHeader
+        title={client.name}
+        subtitle={t(locale, "clients.detail.subtitle")}
+      />
 
       <Card className="mb-6 p-4">
-        <SectionTitle>Datos</SectionTitle>
+        <SectionTitle>{t(locale, "clients.details")}</SectionTitle>
         <ClientForm mode="edit" clientId={id} initial={client} />
         <form
           action={async () => {
@@ -63,13 +68,13 @@ export default async function ClientDetailPage({
             type="submit"
             className="text-xs font-semibold text-[var(--error)] hover:underline"
           >
-            Archivar cliente
+            {t(locale, "clients.detail.archive")}
           </button>
         </form>
       </Card>
 
       <section className="mb-6">
-        <SectionTitle>Personas destinatarias</SectionTitle>
+        <SectionTitle>{t(locale, "clients.persons")}</SectionTitle>
         <ul className="space-y-2">
           {(persons ?? []).map((p) => (
             <li key={p.id}>
@@ -79,7 +84,7 @@ export default async function ClientDetailPage({
               >
                 <span className="min-w-0 truncate text-sm font-semibold">{p.name}</span>
                 <span className="shrink-0 text-xs whitespace-nowrap text-[var(--ink-muted)]">
-                  {p.measurement_sets?.length ?? 0} sets de medidas
+                  {tp(locale, "clients.detail.sets_count", p.measurement_sets?.length ?? 0)}
                 </span>
               </Link>
             </li>
@@ -87,15 +92,18 @@ export default async function ClientDetailPage({
           {!persons?.length && (
             <li>
               <EmptyState
-                title="Sin personas"
-                description="Añade a quien usa la prenda (ej. Ana para el vestido de María)."
+                title={t(locale, "clients.detail.no_persons")}
+                description={t(locale, "clients.detail.no_persons_hint")}
               />
             </li>
           )}
         </ul>
         <Card className="mt-3 p-4">
           <SectionTitle>
-            {persons?.length ? "Añadir persona" : "Crear primera persona"}
+            {t(
+              locale,
+              persons?.length ? "clients.person.add" : "clients.detail.first_person"
+            )}
           </SectionTitle>
           <PersonForm clientId={id} />
         </Card>
@@ -108,11 +116,11 @@ export default async function ClientDetailPage({
               href={`/quotes/new?client_id=${id}` as Route}
               className="text-xs font-semibold text-[var(--primary)]"
             >
-              + Nuevo
+              {t(locale, "clients.detail.new_quote")}
             </Link>
           }
         >
-          Presupuestos
+          {t(locale, "quotes.title")}
         </SectionTitle>
         <ul className="space-y-2">
           {(quotes ?? []).map((q) => (
@@ -125,7 +133,7 @@ export default async function ClientDetailPage({
                   #{String(q.quote_number).padStart(3, "0")}
                 </span>
                 <span className="shrink-0 text-xs whitespace-nowrap text-[var(--ink-muted)] uppercase">
-                  {q.status}
+                  {statusLabel(locale, "quote", q.status)}
                 </span>
               </Link>
             </li>
@@ -133,13 +141,19 @@ export default async function ClientDetailPage({
           {!quotes?.length && (
             <li>
               <EmptyState
-                title="Sin presupuestos"
-                description="Crea el primero desde el botón superior."
+                title={t(locale, "clients.detail.no_quotes")}
+                description={t(locale, "clients.detail.no_quotes_hint")}
               />
             </li>
           )}
         </ul>
       </section>
+
+      <p className="mt-4">
+        <Link href={"/clients" as Route} className="text-sm font-semibold text-[var(--primary)]">
+          ← {t(locale, "clients.back")}
+        </Link>
+      </p>
     </main>
   );
 }

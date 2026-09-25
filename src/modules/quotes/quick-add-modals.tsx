@@ -3,22 +3,14 @@
 import { useState } from "react";
 import { Button, Field, Modal, inputClass } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { defaultMeasurementFieldNames, translateError } from "@/lib/i18n";
 import {
   createMeasurementSetJsonAction,
   createPersonJsonAction,
   type MeasurementSetJson,
   type PersonJson,
 } from "@/modules/clients/actions";
-
-const DEFAULT_FIELDS = [
-  "Busto",
-  "Cintura",
-  "Cadera",
-  "Largo",
-  "Manga",
-  "Hombro",
-  "Cuello",
-];
 
 export function PersonQuickAddModal({
   open,
@@ -34,6 +26,7 @@ export function PersonQuickAddModal({
   onCreated: (person: PersonJson) => void;
 }) {
   const { toast } = useToast();
+  const { locale, t } = useI18n();
   const [pending, setPending] = useState(false);
   const [name, setName] = useState("");
   const [notes, setNotes] = useState("");
@@ -48,13 +41,13 @@ export function PersonQuickAddModal({
       fd.set("notes", notes.trim());
       fd.set("client_id", clientId);
       const person = await createPersonJsonAction(fd);
-      toast(`Persona “${person.name}” añadida`, "success");
+      toast(t("quotes.quick.person_created", { name: person.name }), "success");
       onCreated(person);
       setName("");
       setNotes("");
       onClose();
     } catch (err) {
-      toast(err instanceof Error ? err.message : "Error al guardar", "error");
+      toast(translateError(err, locale), "error");
     } finally {
       setPending(false);
     }
@@ -64,38 +57,39 @@ export function PersonQuickAddModal({
     <Modal
       open={open}
       onClose={onClose}
-      title="Añadir persona destinataria"
+      title={t("quotes.quick.person_title")}
     >
       <p className="mb-4 text-sm text-[var(--ink-muted)]">
-        Quien usa la prenda
-        {clientName ? ` · cliente ${clientName}` : ""}. Se queda en este
-        presupuesto sin salir.
+        {t("quotes.quick.person_hint")}
+        {clientName ? ` · ${t("quotes.quick.client_of", { name: clientName })}` : ""}
       </p>
       <form onSubmit={submit} className="space-y-3">
-        <Field label="Nombre *">
+        <Field label={t("clients.person.name")}>
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
             required
-            placeholder="ej: Ana"
+            placeholder={t("clients.person.name_placeholder")}
+            aria-label={t("clients.person.name")}
             className={inputClass}
             autoFocus
           />
         </Field>
-        <Field label="Notas (opcional)">
+        <Field label={t("common.optional")}>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
+            aria-label={t("clients.person.notes")}
             className={`${inputClass} h-auto min-h-[64px] py-2`}
           />
         </Field>
         <div className="flex gap-2">
           <Button type="button" variant="secondary" onClick={onClose} className="flex-1">
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button type="submit" loading={pending} className="flex-1">
-            Añadir y usar
+            {t("quotes.quick.add_and_use")}
           </Button>
         </div>
       </form>
@@ -117,9 +111,14 @@ export function MeasurementQuickAddModal({
   onCreated: (set: MeasurementSetJson) => void;
 }) {
   const { toast } = useToast();
+  const { locale, t } = useI18n();
   const [pending, setPending] = useState(false);
-  const [rows, setRows] = useState(
-    DEFAULT_FIELDS.map((n) => ({ name: n, value: "", unit: "cm" })),
+  const [rows, setRows] = useState(() =>
+    defaultMeasurementFieldNames(locale).map((name) => ({
+      name,
+      value: "",
+      unit: "cm",
+    })),
   );
   const [label, setLabel] = useState("");
   const [recordedAt, setRecordedAt] = useState(
@@ -132,7 +131,7 @@ export function MeasurementQuickAddModal({
     if (pending) return;
     const filled = rows.filter((r) => r.name.trim() && r.value.trim());
     if (!filled.length) {
-      toast("Indica al menos una medida con valor", "error");
+      toast(t("quotes.quick.measurements_required"), "error");
       return;
     }
     setPending(true);
@@ -148,33 +147,34 @@ export function MeasurementQuickAddModal({
         fd.append("m_unit", r.unit.trim() || "cm");
       }
       const set = await createMeasurementSetJsonAction(fd);
-      toast("Medidas guardadas", "success");
+      toast(t("clients.measurements.saved"), "success");
       onCreated(set);
       onClose();
     } catch (err) {
-      toast(err instanceof Error ? err.message : "Error al guardar", "error");
+      toast(translateError(err, locale), "error");
     } finally {
       setPending(false);
     }
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Registrar medidas">
+    <Modal open={open} onClose={onClose} title={t("quotes.quick.measurements_title")}>
       <p className="mb-4 text-sm text-[var(--ink-muted)]">
-        {personName ? `Para ${personName}. ` : ""}
-        Se guarda como set nuevo; no sobrescribe el historial.
+        {personName ? `${t("quotes.quick.measurements_for", { name: personName })} ` : ""}
+        {t("quotes.quick.measurements_hint")}
       </p>
       <form onSubmit={submit} className="space-y-3">
         <div className="grid grid-cols-2 gap-3">
-          <Field label="Etiqueta">
+          <Field label={t("clients.measurements.label")}>
             <input
               value={label}
               onChange={(e) => setLabel(e.target.value)}
-              placeholder="Medidas hoy"
+              placeholder={t("quotes.quick.measurements_today")}
+              aria-label={t("clients.measurements.label")}
               className={`${inputClass} h-10`}
             />
           </Field>
-          <Field label="Fecha">
+          <Field label={t("clients.measurements.date")}>
             <input
               type="date"
               value={recordedAt}
@@ -194,7 +194,8 @@ export function MeasurementQuickAddModal({
                   next[i] = { ...row, name: e.target.value };
                   setRows(next);
                 }}
-                placeholder="Nombre"
+                placeholder={t("clients.measurements.name")}
+                aria-label={t("clients.measurements.name")}
                 className="h-10 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
               />
               <input
@@ -206,6 +207,7 @@ export function MeasurementQuickAddModal({
                 }}
                 placeholder="0"
                 inputMode="decimal"
+                aria-label={t("clients.measurements.value")}
                 className="metric h-10 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
               />
               <input
@@ -215,6 +217,7 @@ export function MeasurementQuickAddModal({
                   next[i] = { ...row, unit: e.target.value };
                   setRows(next);
                 }}
+                aria-label={t("clients.measurements.unit")}
                 className="h-10 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
               />
             </div>
@@ -228,14 +231,15 @@ export function MeasurementQuickAddModal({
           }
           className="text-xs font-semibold text-[var(--primary)]"
         >
-          + Campo
+          {t("clients.measurements.add")}
         </button>
 
-        <Field label="Notas (opcional)">
+        <Field label={t("common.optional")}>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             rows={2}
+            aria-label={t("clients.measurements.notes")}
             className={`${inputClass} h-auto min-h-[64px] py-2`}
           />
         </Field>
@@ -247,10 +251,10 @@ export function MeasurementQuickAddModal({
             onClick={onClose}
             className="flex-1"
           >
-            Cancelar
+            {t("common.cancel")}
           </Button>
           <Button type="submit" loading={pending} className="flex-1">
-            Guardar set
+            {t("quotes.quick.save_set")}
           </Button>
         </div>
       </form>

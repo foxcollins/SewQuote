@@ -5,31 +5,10 @@ import { getSessionContext } from "@/lib/session";
 import { createClient } from "@/lib/supabase/server";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Button, Card, PageHeader, SectionTitle, inputClass } from "@/components/ui/primitives";
-import { formatMoney, formatDate, type Locale } from "@/lib/i18n";
+import { formatMoney, formatDate, formatMeasurement, measurementFieldLabel, statusLabel, t } from "@/lib/i18n";
 import { WorkLifecycleActions } from "@/modules/works/work-lifecycle-actions";
 import { updateWorkOrderMetaAction } from "@/modules/works/actions";
-
-const WORK_LABEL: Record<string, string> = {
-  accepted: "Aceptado",
-  waiting_garment: "Esperando prenda",
-  in_production: "En producción",
-  fitting: "Prueba",
-  adjustments: "Ajustes",
-  ready: "Listo",
-  delivered: "Entregado",
-  cancelled: "Cancelado",
-};
-
-const TRANSITIONS: Record<string, string[]> = {
-  accepted: ["waiting_garment", "in_production", "cancelled"],
-  waiting_garment: ["in_production", "cancelled"],
-  in_production: ["fitting", "adjustments", "ready", "cancelled"],
-  fitting: ["adjustments", "ready", "in_production", "cancelled"],
-  adjustments: ["fitting", "ready", "in_production", "cancelled"],
-  ready: ["delivered", "adjustments"],
-  delivered: [],
-  cancelled: [],
-};
+import { WORK_TRANSITIONS, isTerminalWorkStatus } from "@/modules/work-transitions";
 
 export default async function WorkDetailPage({
   params,
@@ -39,7 +18,7 @@ export default async function WorkDetailPage({
   const ctx = await getSessionContext();
   if (!ctx) redirect("/");
   const { id } = await params;
-  const locale = (ctx.locale as Locale) || "es";
+  const locale = ctx.locale;
   const supabase = await createClient();
 
   const { data: work } = await supabase
@@ -88,7 +67,8 @@ export default async function WorkDetailPage({
     ? items.map((it, i) => ({
         key: it.id,
         title:
-          it.quote_jobs?.garment_type || `Pieza ${i + 1}`,
+          it.quote_jobs?.garment_type ||
+          t(locale, "works.detail.piece_fallback", { number: i + 1 }),
         description: it.quote_jobs?.garment_description,
         measurements: it.measurements_snapshot,
         status: it.status,
@@ -96,45 +76,63 @@ export default async function WorkDetailPage({
       }))
     : legacyJobs.map((j, i) => ({
         key: `legacy-${i}`,
-        title: j.garment_type || `Pieza ${i + 1}`,
+        title:
+          j.garment_type || t(locale, "works.detail.piece_fallback", { number: i + 1 }),
         description: j.garment_description,
         measurements: j.measurements_snapshot,
         status: work.status,
         notes: null as string | null,
       }));
-  const nexts = TRANSITIONS[work.status] ?? [];
-  const terminal = work.status === "delivered" || work.status === "cancelled";
+  const nexts = WORK_TRANSITIONS[work.status] ?? [];
+  const terminal = isTerminalWorkStatus(work.status);
   const money = (n: number) => formatMoney(n, quote?.currency ?? ctx.currency, locale);
 
   return (
     <main className="mx-auto max-w-3xl pb-8">
       <PageHeader
-        title="Orden de trabajo"
+        title={t(locale, "works.detail.title")}
         subtitle={`${(quote?.clients as { name?: string } | null)?.name ?? ""} · ${money(Number(work.actual_price ?? 0))} · v${work.quote_version_number}`}
         action={
           <StatusBadge
             status={work.status}
-            label={WORK_LABEL[work.status] ?? work.status}
+            label={statusLabel(locale, "work", work.status)}
           />
         }
       />
 
       <Card className="mb-4 p-4 text-xs text-[var(--ink-muted)]">
-        <p>Creado: {formatDate(work.created_at, locale, ctx.timezone)}</p>
-        {work.started_at && <p>Iniciado: {formatDate(work.started_at, locale)}</p>}
+        <p>
+          {t(locale, "works.detail.created", {
+            date: formatDate(work.created_at, locale, ctx.timezone),
+          })}
+        </p>
+        {work.started_at && (
+          <p>
+            {t(locale, "works.detail.started", {
+              date: formatDate(work.started_at, locale, ctx.timezone),
+            })}
+          </p>
+        )}
         {work.completed_at && (
-          <p>Completado: {formatDate(work.completed_at, locale)}</p>
+          <p>
+            {t(locale, "works.detail.completed", {
+              date: formatDate(work.completed_at, locale, ctx.timezone),
+            })}
+          </p>
         )}
         <p className="mt-1">
           <Link href={`/quotes/${quote?.id}` as Route} className="text-[var(--primary)]">
-            Ver presupuesto #
-            {String(quote?.quote_number ?? 0).padStart(3, "0")}
+            {t(locale, "works.detail.view_quote", {
+              number: String(quote?.quote_number ?? 0).padStart(3, "0"),
+            })}
           </Link>
         </p>
       </Card>
 
       <section className="mb-4 space-y-2">
-        <SectionTitle>Piezas ({pieces.length})</SectionTitle>
+        <SectionTitle>
+          {t(locale, "works.detail.pieces_title", { count: pieces.length })}
+        </SectionTitle>
         {pieces.map((p) => (
           <article
             key={p.key}
@@ -151,7 +149,7 @@ export default async function WorkDetailPage({
               </div>
               <StatusBadge
                 status={p.status}
-                label={WORK_LABEL[p.status] ?? p.status}
+                label={statusLabel(locale, "work", p.status)}
               />
             </div>
             {p.notes && (
@@ -162,16 +160,16 @@ export default async function WorkDetailPage({
             {p.measurements?.values?.length ? (
               <details className="mt-2">
                 <summary className="cursor-pointer text-xs font-semibold text-[var(--primary)]">
-                  Medidas congeladas (presupuesto)
+                  {t(locale, "works.detail.frozen_measurements")}
                 </summary>
                 <dl className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {p.measurements.values.map((v, idx) => (
                     <div key={idx} className="rounded-[4px] bg-[var(--surface-2)] px-2 py-1">
-                      <dt className="text-[10px] uppercase text-[var(--ink-muted)]">
-                        {v.name}
+                      <dt className="text-[10px] uppercase text-[var(--ink-muted)] break-words">
+                        {measurementFieldLabel(locale, v.name)}
                       </dt>
                       <dd className="metric text-sm font-semibold">
-                        {v.value} {v.unit}
+                        {formatMeasurement(v.value, v.unit, locale)}
                       </dd>
                     </div>
                   ))}
@@ -184,17 +182,17 @@ export default async function WorkDetailPage({
 
       {!terminal && (
         <section className="mb-4">
-          <SectionTitle>Siguiente estado</SectionTitle>
+          <SectionTitle>{t(locale, "works.detail.next_state")}</SectionTitle>
           <WorkLifecycleActions workId={work.id} nexts={nexts} />
         </section>
       )}
 
       {!terminal && (
         <Card className="p-4">
-          <SectionTitle>Editar trabajo</SectionTitle>
+          <SectionTitle>{t(locale, "works.detail.edit")}</SectionTitle>
           <form action={updateWorkOrderMetaAction.bind(null, work.id)} className="space-y-3">
             <label className="block text-sm font-semibold">
-              Minutos reales
+              {t(locale, "works.detail.actual_minutes")}
               <input
                 name="actual_minutes"
                 type="number"
@@ -203,7 +201,7 @@ export default async function WorkDetailPage({
               />
             </label>
             <label className="block text-sm font-semibold">
-              Precio final cobrado
+              {t(locale, "works.detail.actual_price")}
               <input
                 name="actual_price"
                 type="number"
@@ -213,7 +211,7 @@ export default async function WorkDetailPage({
               />
             </label>
             <label className="block text-sm font-semibold">
-              Notas
+              {t(locale, "works.detail.notes")}
               <textarea
                 name="notes"
                 rows={3}
@@ -222,7 +220,7 @@ export default async function WorkDetailPage({
               />
             </label>
             <Button type="submit" variant="secondary" className="w-full">
-              Guardar
+              {t(locale, "common.save")}
             </Button>
           </form>
         </Card>

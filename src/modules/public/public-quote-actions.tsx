@@ -2,6 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useI18n } from "@/components/i18n/i18n-provider";
+import { t } from "@/lib/i18n";
 import {
   publicAcceptAction,
   publicCommentAction,
@@ -18,6 +20,7 @@ export function PublicQuoteActions({
   status: string;
 }) {
   const router = useRouter();
+  const { locale } = useI18n();
   const [showComment, setShowComment] = useState(false);
   const [body, setBody] = useState("");
   const [author, setAuthor] = useState("");
@@ -35,14 +38,14 @@ export function PublicQuoteActions({
       if (res.ok) {
         setMessage(
           kind === "accept"
-            ? "Presupuesto aprobado. ¡Gracias!"
-            : "Presupuesto rechazado.",
+            ? t(locale, "public.thanks")
+            : t(locale, "public.rejected"),
         );
         router.refresh();
       } else if (res.error === "expired") {
-        setMessage("Este presupuesto está vencido — no se puede aprobar.");
+        setMessage(t(locale, "public.expired_block"));
       } else {
-        setMessage("No se pudo completar la acción.");
+        setMessage(t(locale, "public.action_failed"));
       }
     } finally {
       setPending(false);
@@ -56,12 +59,12 @@ export function PublicQuoteActions({
     try {
       const res = await publicCommentAction(token, body, author || undefined);
       if (res.ok) {
-        setMessage("Comentario enviado.");
+        setMessage(t(locale, "public.comment_sent"));
         setBody("");
         setShowComment(false);
         router.refresh();
       } else {
-        setMessage("No se pudo enviar el comentario.");
+        setMessage(t(locale, "public.comment_failed"));
       }
     } finally {
       setPending(false);
@@ -84,7 +87,7 @@ export function PublicQuoteActions({
               onClick={() => act("accept")}
               className="h-12 w-full rounded-[6px] bg-[var(--primary)] text-sm font-semibold tracking-wide text-[var(--on-primary)] uppercase disabled:opacity-60"
             >
-              Aprobar presupuesto
+              {t(locale, "public.accept_cta")}
             </button>
             <div className="grid grid-cols-2 gap-2">
               <button
@@ -93,14 +96,14 @@ export function PublicQuoteActions({
                 onClick={() => act("reject")}
                 className="h-11 rounded-[6px] border border-[var(--error)] text-sm font-semibold text-[var(--error)] uppercase disabled:opacity-60"
               >
-                Rechazar
+                {t(locale, "public.reject_cta")}
               </button>
               <button
                 type="button"
                 onClick={() => setShowComment((v) => !v)}
                 className="h-11 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold uppercase"
               >
-                Sugerir cambios
+                {t(locale, "public.suggest_cta")}
               </button>
             </div>
             {showComment && (
@@ -108,14 +111,16 @@ export function PublicQuoteActions({
                 <input
                   value={author}
                   onChange={(e) => setAuthor(e.target.value)}
-                  placeholder="Tu nombre"
+                  placeholder={t(locale, "public.author_placeholder")}
+                  aria-label={t(locale, "public.author_placeholder")}
                   className="h-10 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 text-sm"
                 />
                 <textarea
                   rows={3}
                   value={body}
                   onChange={(e) => setBody(e.target.value)}
-                  placeholder="Deja una nota o sugerencia de cambios…"
+                  placeholder={t(locale, "public.comment_box_placeholder")}
+                  aria-label={t(locale, "public.comment_placeholder")}
                   className="w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-3 py-2 text-sm"
                 />
                 <button
@@ -124,7 +129,7 @@ export function PublicQuoteActions({
                   onClick={submitComment}
                   className="h-10 w-full rounded-[6px] bg-[var(--primary)] text-sm font-semibold text-[var(--on-primary)] disabled:opacity-60"
                 >
-                  Enviar comentario
+                  {t(locale, "public.send")}
                 </button>
               </div>
             )}
@@ -136,13 +141,12 @@ export function PublicQuoteActions({
             className="h-11 w-full rounded-[6px] border border-[var(--border)] bg-[var(--surface)] text-sm font-semibold"
           >
             {status === "accepted"
-              ? "Presupuesto aprobado"
+              ? t(locale, "public.accepted_cta")
               : status === "rejected"
-                ? "Presupuesto rechazado"
-                : "Enviar comentario"}
+                ? t(locale, "public.rejected_cta")
+                : t(locale, "public.send_comment")}
           </button>
         )}
-        {canAct && status === "sent" && showComment && null}
       </div>
     </div>
   );

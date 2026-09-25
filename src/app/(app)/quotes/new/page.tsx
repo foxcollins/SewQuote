@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { QuoteBuilder } from "@/modules/quotes/quote-builder";
 import { PageHeader } from "@/components/ui/primitives";
 import type { TenantPricingConfig } from "@/modules/pricing/engine";
-import type { Locale } from "@/lib/i18n";
+import { t } from "@/lib/i18n";
 
 export default async function NewQuotePage({
   searchParams,
@@ -97,8 +97,8 @@ export default async function NewQuotePage({
   return (
     <main className="mx-auto max-w-3xl pb-8">
       <PageHeader
-        title="Nuevo presupuesto"
-        subtitle="Cliente → trabajos (N) → servicios/materiales → cálculo → borrador"
+        title={t(ctx.locale, "quotes.new")}
+        subtitle={t(ctx.locale, "quotes.new_hint")}
       />
       <QuoteBuilder
         clients={clientsRes.data ?? []}
@@ -109,7 +109,7 @@ export default async function NewQuotePage({
         categories={catsRes.data ?? []}
         config={config}
         currency={ctx.currency}
-        locale={(ctx.locale as Locale) || "es"}
+        locale={ctx.locale}
         presetClientId={client_id}
         presetClientName={clientName}
         staleDays={ctx.measurementStaleDays}

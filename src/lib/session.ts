@@ -1,3 +1,4 @@
+import { normalizeLocale, type Locale } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/server";
 
 export type SessionContext = {
@@ -6,7 +7,7 @@ export type SessionContext = {
   profileName: string;
   tenantName: string;
   currency: string;
-  locale: string;
+  locale: Locale;
   hourlyRate: number;
   defaultMarginPercent: number;
   defaultWastePercent: number;
@@ -45,7 +46,7 @@ export async function getSessionContext(): Promise<SessionContext | null> {
     profileName: profile.name,
     tenantName: tenant.name,
     currency: tenant.currency,
-    locale: tenant.locale,
+    locale: normalizeLocale(tenant.locale),
     hourlyRate: Number(tenant.hourly_rate),
     defaultMarginPercent: Number(tenant.default_margin_percent),
     defaultWastePercent: Number(tenant.default_waste_percent),
