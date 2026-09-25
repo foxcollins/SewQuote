@@ -119,16 +119,16 @@ function DesktopTopbar({ tenantName }: { tenantName: string }) {
 function MobileHeader({ tenantName }: { tenantName: string }) {
   return (
     <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--canvas)]/92 backdrop-blur-md lg:hidden">
-      <div className="mx-auto flex h-14 max-w-lg items-center justify-between px-4">
+      <div className="mx-auto flex h-14 max-w-lg items-center justify-between gap-2 px-4">
         <Link
           href={"/dashboard" as Route}
-          className="flex items-center gap-2 font-display text-xl tracking-tight text-[var(--ink)]"
+          className="flex min-w-0 items-center gap-2 font-display text-xl tracking-tight text-[var(--ink)]"
         >
           <LogoMark />
-          SewQuote
+          <span className="truncate">SewQuote</span>
         </Link>
-        <div className="flex items-center gap-2">
-          <span className="max-w-[120px] truncate rounded-full bg-[var(--surface-2)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ink-muted)]">
+        <div className="flex min-w-0 shrink-0 items-center gap-2">
+          <span className="max-w-[96px] truncate rounded-full bg-[var(--surface-2)] px-2.5 py-1 text-[11px] font-semibold text-[var(--ink-muted)] sm:max-w-[120px]">
             {tenantName}
           </span>
           <Link

@@ -62,11 +62,11 @@ export default async function PersonDetailPage({
                 key={set.id}
                 className="rounded-[8px] border border-[var(--border)] bg-[var(--surface)] p-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)]"
               >
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <p className="text-sm font-semibold">
+                <div className="mb-2 flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+                  <p className="min-w-0 text-sm font-semibold break-words">
                     {set.label || formatDate(set.recorded_at, locale)}
                   </p>
-                  <p className="text-xs text-[var(--ink-muted)]">
+                  <p className="shrink-0 text-xs whitespace-nowrap text-[var(--ink-muted)]">
                     {formatDate(set.recorded_at, locale)}
                   </p>
                 </div>
@@ -76,13 +76,13 @@ export default async function PersonDetailPage({
                     recomienda confirmar antes de usarlas.
                   </p>
                 )}
-                <dl className="grid grid-cols-3 gap-2">
+                <dl className="grid grid-cols-2 gap-2 sm:grid-cols-3">
                   {(set.measurement_values ?? []).map((v, i) => (
-                    <div key={i} className="rounded-[4px] bg-[var(--surface-2)] px-2 py-1">
-                      <dt className="text-[10px] uppercase text-[var(--ink-muted)]">
+                    <div key={i} className="min-w-0 rounded-[4px] bg-[var(--surface-2)] px-2 py-1">
+                      <dt className="truncate text-[10px] uppercase text-[var(--ink-muted)]">
                         {v.name}
                       </dt>
-                      <dd className="metric text-sm font-semibold">
+                      <dd className="metric truncate text-sm font-semibold">
                         {v.value} {v.unit}
                       </dd>
                     </div>

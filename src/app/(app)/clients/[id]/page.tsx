@@ -75,10 +75,10 @@ export default async function ClientDetailPage({
             <li key={p.id}>
               <Link
                 href={`/persons/${p.id}` as Route}
-                className="flex items-center justify-between rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
+                className="flex items-center justify-between gap-3 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
               >
-                <span className="text-sm font-semibold">{p.name}</span>
-                <span className="text-xs text-[var(--ink-muted)]">
+                <span className="min-w-0 truncate text-sm font-semibold">{p.name}</span>
+                <span className="shrink-0 text-xs whitespace-nowrap text-[var(--ink-muted)]">
                   {p.measurement_sets?.length ?? 0} sets de medidas
                 </span>
               </Link>
@@ -119,12 +119,12 @@ export default async function ClientDetailPage({
             <li key={q.id}>
               <Link
                 href={`/quotes/${q.id}` as Route}
-                className="flex items-center justify-between rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
+                className="flex items-center justify-between gap-3 rounded-[8px] border border-[var(--border)] bg-[var(--surface)] px-4 py-3 shadow-[0_1px_2px_rgba(28,29,31,0.04)] transition-colors hover:border-[var(--primary)]/40"
               >
-                <span className="text-sm font-semibold">
+                <span className="metric min-w-0 truncate text-sm font-semibold">
                   #{String(q.quote_number).padStart(3, "0")}
                 </span>
-                <span className="text-xs uppercase text-[var(--ink-muted)]">
+                <span className="shrink-0 text-xs whitespace-nowrap text-[var(--ink-muted)] uppercase">
                   {q.status}
                 </span>
               </Link>

@@ -49,7 +49,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
       className="space-y-3"
     >
       <input type="hidden" name="person_id" value={personId} />
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <Field label="Etiqueta">
           <input
             name="label"
@@ -69,7 +69,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
 
       <div className="space-y-2">
         {rows.map((row, i) => (
-          <div key={i} className="grid grid-cols-[1fr_80px_56px] gap-2">
+          <div key={i} className="grid grid-cols-[minmax(0,1fr)_72px_52px] gap-2">
             <input
               value={row.name}
               onChange={(e) => {
@@ -78,7 +78,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
                 setRows(next);
               }}
               placeholder="Nombre"
-              className="h-10 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
+              className="h-10 w-full min-w-0 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
             />
             <input
               value={row.value}
@@ -89,7 +89,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
               }}
               placeholder="0"
               inputMode="decimal"
-              className="metric h-10 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
+              className="metric h-10 w-full min-w-0 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
             />
             <input
               value={row.unit}
@@ -98,7 +98,7 @@ export function MeasurementForm({ personId }: { personId: string }) {
                 next[i] = { ...row, unit: e.target.value };
                 setRows(next);
               }}
-              className="h-10 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
+              className="h-10 w-full min-w-0 rounded-[6px] border border-[var(--border)] bg-[var(--surface)] px-2 text-sm"
             />
           </div>
         ))}
