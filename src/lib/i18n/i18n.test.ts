@@ -27,6 +27,16 @@ import {
 const esDict = es as Record<string, string>;
 const ptDict = ptBR as Record<string, string>;
 
+const esPath = join(__dirname, "es.json");
+const ptPath = join(__dirname, "pt-BR.json");
+
+function rawKeys(file: string): string[] {
+  return readFileSync(file, "utf8")
+    .split("\n")
+    .map((line) => /^ {2}"([^"]+)":/.exec(line)?.[1])
+    .filter((key): key is string => Boolean(key));
+}
+
 function placeholders(value: string): string[] {
   return [...value.matchAll(/\{([a-zA-Z0-9_]+)\}/g)].map((m) => m[1]);
 }
@@ -91,6 +101,14 @@ describe("AC-002: paridad de catálogos", () => {
       }
     }
     expect(mismatched).toEqual([]);
+  });
+
+  it("AC-005: ninguna clave está duplicada en el archivo", () => {
+    for (const file of [esPath, ptPath]) {
+      const keys = rawKeys(file);
+      const duplicates = keys.filter((key, i) => keys.indexOf(key) !== i);
+      expect({ file, duplicates }).toEqual({ file, duplicates: [] });
+    }
   });
 
   it("AC-005: toda clave referenciada en el código existe en ambos idiomas", () => {

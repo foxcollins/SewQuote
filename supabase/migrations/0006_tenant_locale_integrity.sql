@@ -24,12 +24,15 @@ declare
   v_tenant_name text;
   v_profile_name text;
   v_locale text;
+  v_default_profile_name text;
 begin
   v_locale := case
     when lower(replace(trim(coalesce(new.raw_user_meta_data ->> 'locale', '')), '_', '-'))
       like 'pt%' then 'pt-BR'
     else 'es'
   end;
+
+  v_default_profile_name := case when v_locale = 'pt-BR' then 'Profissional' else 'Profesional' end;
 
   v_tenant_name := coalesce(
     nullif(trim(new.raw_user_meta_data ->> 'atelier_name'), ''),
@@ -41,7 +44,7 @@ begin
   v_profile_name := coalesce(
     nullif(trim(new.raw_user_meta_data ->> 'full_name'), ''),
     nullif(split_part(coalesce(new.email, ''), '@', 1), ''),
-    'Usuaria'
+    v_default_profile_name
   );
 
   insert into public.tenants (name, locale)
